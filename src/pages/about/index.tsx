@@ -25,27 +25,27 @@ export default function About() {
           <p className="text-base text-zinc-500">
             CATTERY BASED IN OSLO, NORWAY
           </p>
-          <p className="text-sm leading-8 text-zinc-800 text-left">
+          <p className="text-left text-sm leading-8 text-zinc-800">
             (N)Migoto’s is a family driven cattery located in Oslo, Norway. The
             cattery was started in 2006 when our first Norwegian Forest Cat, SC
             (N) Lindbrekka’s Steffi from Vigdis and Lars Nordvik, arrived at our
             house. Over the years, the cattery has grown to become a very
             successful one.
           </p>
-          <p className="text-sm leading-8 text-zinc-800 text-left">
+          <p className="text-left text-sm leading-8 text-zinc-800">
             Our kittens are well-known for their social and excellent temper
             making them perfect for both breeders, exhibitors and families
             looking for the perfect pet. Our kittens regularly meet children of
             different ages, as we always make sure that the kittens grow up with
             lots of humans and activity around them from day one.
           </p>
-          <p className="text-sm leading-8 text-zinc-800 text-left">
+          <p className="text-left text-sm leading-8 text-zinc-800">
             It is important for us that all our cats are part of our family, and
             that they walk as freely as we do around the house. Therefore, we
             always make sure our cats have lots of space to move around and
             about on, both inside our house and outside in our secure cat-run.
           </p>
-          <p className="text-sm leading-8 text-zinc-800 text-left">
+          <p className="text-left text-sm leading-8 text-zinc-800">
             Over the years, the cattery has grown a lot – but our philosophy has
             always been that there is a limit to how many cats a family can take
             care of at once. We are therefore very lucky and grateful to have
@@ -81,6 +81,7 @@ export default function About() {
           src={evaImgOne}
           quality={100}
           alt={"Eva picture"}
+          placeholder="blur"
         />
         <p className="mb-6 text-sm leading-8 text-zinc-800">
           Eva Dahl Eide is the main person behind our (N)Migoto’s Cattery. She
@@ -100,9 +101,18 @@ export default function About() {
         <Image
           src={evaImgThree}
           alt={"Eva holds the Trulse statuett from Norsk skogkattring"}
+          placeholder="blur"
         />
-        <Image src={evaImgFour} alt={"Photo of an article in the paper"} />
-        <Image src={evaImgFive} alt={"Photo 2 of an article in the paper"} />
+        <Image
+          src={evaImgFour}
+          alt={"Photo of an article in the paper"}
+          placeholder="blur"
+        />
+        <Image
+          src={evaImgFive}
+          alt={"Photo 2 of an article in the paper"}
+          placeholder="blur"
+        />
       </section>
       <Footer />
     </>
