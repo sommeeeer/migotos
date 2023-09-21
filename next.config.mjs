@@ -12,7 +12,7 @@ const config = {
       {
         protocol: "https",
         hostname: "www.migotos.com",
-        pathname: "/wp-content/**",
+        pathname: "/**",
       }
     ]
   },
