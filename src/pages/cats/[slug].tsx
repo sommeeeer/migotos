@@ -61,9 +61,9 @@ function Cat({ cat, mother, father }: CatProps) {
             </p>
           )}
         </section>
-        <section className="flex w-full flex-col items-center gap-8 bg-white p-4">
-          <h3 className="font-playfair text-2xl">Information</h3>
-          <div className="-mt-2 text-left text-[#515151]">
+        <section className="flex w-full flex-col gap-8 bg-white p-4 items-center">
+          <h3 className="font-playfair text-2xl self-center">Information</h3>
+          <div className="-mt-2 text-left text-[#515151] leading-8">
             <p>{`Birth: ${birthFormatted}`}</p>
             <p>{`Gender: ${cat.gender}`}</p>
             <p>{`Fertile: ${fertileText}`}</p>
@@ -88,18 +88,20 @@ function Cat({ cat, mother, father }: CatProps) {
             <p>{`Breeder: ${cat.breeder}`}</p>
             <p>{`Owner: ${cat.owner}`}</p>
           </div>
-          <h3 className="font-playfair text-2xl">Pictures</h3>
-          {cat.CatImage.slice(1).map((img) => {
-            return (
-              <CatImage
-                key={img.src}
-                src={img.src}
-                alt={`${cat.name} picture`}
-                width={img.width}
-                height={img.height}
-              />
-            );
-          })}
+          <h3 className="font-playfair text-2xl self-center">Pictures</h3>
+          <section className="flex flex-col gap-4 items-center">
+            {cat.CatImage.slice(1).map((img) => {
+              return (
+                <CatImage
+                  key={img.src}
+                  src={img.src}
+                  alt={`${cat.name} picture`}
+                  width={img.width}
+                  height={img.height}
+                />
+              );
+            })}
+          </section>
         </section>
       </div>
       <Footer />
