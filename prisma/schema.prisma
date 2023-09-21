@@ -1,41 +1,26 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
 
 datasource db {
     provider = "sqlite"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+// Necessary for Next-Auth
 
-    @@index([name])
-}
-
-// Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
     userId            String
     type              String
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String?
+    access_token      String?
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String?
     session_state     String?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -66,4 +51,87 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+// End of Next-Auth
+
+model Cat {
+    id          Int        @id @default(autoincrement())
+    name        String
+    stamnavn    String
+    pedigreeurl String?
+    description String?
+    birth       String
+    gender      String
+    fertile     Boolean
+    father      String
+    mother      String
+    breeder     String
+    owner       String
+    slug        String
+    CatImage    CatImage[]
+}
+
+model CatImage {
+    id     Int    @id @default(autoincrement())
+    cat_id Int
+    src    String
+    width  Int
+    height Int
+    Cat    Cat    @relation(fields: [cat_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Kitten {
+    id        Int     @id @default(autoincrement())
+    litter_id Int
+    name      String
+    stamnavn  String
+    gender    String
+    info      String?
+    Litter    Litter  @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model KittenPictureImage {
+    id                  Int               @id @default(autoincrement())
+    litter_picture_week Int
+    title               String?
+    src                 String
+    width               Int
+    height              Int
+    LitterPictureWeek   LitterPictureWeek @relation(fields: [litter_picture_week], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Litter {
+    id                Int                 @id @default(autoincrement())
+    name              String
+    born              String
+    pedigreeurl       String?
+    mother_img        String
+    father_img        String
+    mother_name       String
+    father_name       String
+    mother_stamnavn   String
+    father_stamnavn   String
+    description       String
+    slug              String?
+    post_image        String?
+    Kitten            Kitten[]
+    LitterPictureWeek LitterPictureWeek[]
+    Tag               Tag[]
+}
+
+model LitterPictureWeek {
+    id                 Int                  @id @default(autoincrement())
+    litter_id          Int
+    name               String
+    link               String
+    KittenPictureImage KittenPictureImage[]
+    Litter             Litter               @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Tag {
+    id        Int    @id @default(autoincrement())
+    value     String
+    litter_id Int
+    Litter    Litter @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
