@@ -52,7 +52,7 @@ export default function Header({ children }: LayoutProps) {
         </div>
         <Navbar isOpen={isMobileOpen} closeMobileMenu={closeMobileMenu} />
       </header>
-      <main className={`flex w-full flex-col items-center pt-4`}>
+      <main className={`flex w-full flex-col items-center`}>
         {children}
       </main>
     </>

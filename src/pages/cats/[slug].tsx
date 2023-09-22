@@ -5,17 +5,17 @@ import Link from "next/link";
 import clsx from "clsx";
 import { findName } from "~/utils/helpers";
 import { type GetStaticPropsContext, type GetStaticPropsResult } from "next";
-import { type CatWithImage } from "~/pages/cats";
+import addBlurredDataurls, { type CatImageWithBlur } from "~/lib/getBase64";
 
-interface CatProps {
-  cat: CatWithImage;
-  mother: Cat;
-  father: Cat;
-}
+type Props = {
+  cat: Cat;
+  catImages: CatImageWithBlur[];
+  mother: Cat | null;
+  father: Cat | null;
+};
 
-function Cat({ cat, mother, father }: CatProps) {
-  const profileImg = cat.CatImage[0];
-
+function Cat({ cat, mother, father, catImages }: Props) {
+  const profileImg = catImages[0];
   if (!profileImg) {
     throw new Error(`Couldnt find profileImg on ${cat.name}`);
   }
@@ -54,6 +54,8 @@ function Cat({ cat, mother, father }: CatProps) {
             width={profileImg.width}
             height={profileImg.height}
             className="mb-2 rounded-full"
+            placeholder="blur"
+            blurDataURL={profileImg.blur}
           />
           {cat.description && (
             <p className="mb-6 max-w-prose text-[15px] leading-8 text-zinc-500">
@@ -61,9 +63,9 @@ function Cat({ cat, mother, father }: CatProps) {
             </p>
           )}
         </section>
-        <section className="flex w-full flex-col gap-8 bg-white p-4 items-center">
-          <h3 className="font-playfair text-2xl self-center">Information</h3>
-          <div className="-mt-2 text-left text-[#515151] leading-8">
+        <section className="flex w-full flex-col items-center gap-8 bg-white p-4">
+          <h3 className="self-center font-playfair text-2xl">Information</h3>
+          <div className="-mt-2 text-left leading-8 text-[#515151]">
             <p>{`Birth: ${birthFormatted}`}</p>
             <p>{`Gender: ${cat.gender}`}</p>
             <p>{`Fertile: ${fertileText}`}</p>
@@ -88,9 +90,9 @@ function Cat({ cat, mother, father }: CatProps) {
             <p>{`Breeder: ${cat.breeder}`}</p>
             <p>{`Owner: ${cat.owner}`}</p>
           </div>
-          <h3 className="font-playfair text-2xl self-center">Pictures</h3>
-          <section className="flex flex-col gap-4 items-center">
-            {cat.CatImage.slice(1).map((img) => {
+          <h3 className="self-center font-playfair text-2xl">Pictures</h3>
+          <section className="flex flex-col items-center gap-4">
+            {catImages.slice(1).map((img) => {
               return (
                 <CatImage
                   key={img.src}
@@ -98,6 +100,8 @@ function Cat({ cat, mother, father }: CatProps) {
                   alt={`${cat.name} picture`}
                   width={img.width}
                   height={img.height}
+                  placeholder="blur"
+                  blurDataURL={img.blur}
                 />
               );
             })}
@@ -107,16 +111,11 @@ function Cat({ cat, mother, father }: CatProps) {
       <Footer />
     </>
   );
-} // const hello = api.example.hello.useQuery({ text: "from tRPC" });
+}
+
 export default Cat;
 
 type Params = { slug: string };
-
-type Props = {
-  cat: Cat;
-  mother: Cat | null;
-  father: Cat | null;
-};
 
 export async function getStaticProps({
   params,
@@ -174,11 +173,16 @@ export async function getStaticProps({
     father = null;
   }
 
+  const imagesWithDataUrls = await addBlurredDataurls(cat.CatImage);
+
+  const catImages = imagesWithDataUrls;
+
   return {
     props: {
       cat,
       mother,
       father,
+      catImages,
     },
   };
 }

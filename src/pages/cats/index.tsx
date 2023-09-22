@@ -1,4 +1,5 @@
-import { PrismaClient, type Cat, type CatImage } from "@prisma/client";
+import { PrismaClient, type CatImage, type Cat } from "@prisma/client";
+import { type GetStaticPropsResult } from "next";
 import BorderText from "~/components/BorderText";
 import CatsGrid from "~/components/CatsGrid";
 import Footer from "~/components/Footer";
@@ -7,19 +8,19 @@ export interface CatWithImage extends Cat {
   CatImage: CatImage[];
 }
 
-interface CatsProps {
+type Props = {
   fertileMaleCats: CatWithImage[];
   fertileFemaleCats: CatWithImage[];
   formerMaleCats: CatWithImage[];
   formerFemaleCats: CatWithImage[];
-}
+};
 
 function Cats({
   fertileMaleCats,
   fertileFemaleCats,
   formerMaleCats,
   formerFemaleCats,
-}: CatsProps) {
+}: Props) {
   return (
     <>
       <div className="flex w-full flex-col items-center bg-zinc-100">
@@ -57,7 +58,7 @@ function Cats({
 }
 export default Cats;
 
-export async function getStaticProps() {
+export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
   // must be async
   const prisma = new PrismaClient();
   const fertileMaleCats = await prisma.cat.findMany({
