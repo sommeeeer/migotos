@@ -109,7 +109,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
   });
 
   const fertileMaleCatsWithBlur = await addBlurToCats(
-    fertileMaleCats,
+    fertileMaleCats as CatWithImage[],
   );
   const fertileFemaleCatsWithBlur = await addBlurToCats(
     fertileFemaleCats as CatWithImage[],
