@@ -7,6 +7,7 @@ interface CatProfileProps {
   tribalName: string;
   slug?: string;
   classNames?: string;
+  blurData?: string;
 }
 
 export default function CatProfile({
@@ -15,6 +16,7 @@ export default function CatProfile({
   tribalName,
   slug,
   classNames = "",
+  blurData,
 }: CatProfileProps) {
   const classes = `flex flex-col items-center gap-2 text-center transition duration-300 ease-in-out ${classNames}`;
 
@@ -28,6 +30,8 @@ export default function CatProfile({
           height={200}
           className="rounded-full"
           quality={100}
+          placeholder="blur"
+          blurDataURL={blurData}
         />
         <h3 className="font-playfair text-2xl">{name}</h3>
         <p className="text-base text-zinc-500">{tribalName}</p>
@@ -44,6 +48,8 @@ export default function CatProfile({
         height={200}
         className="rounded-full"
         quality={100}
+        placeholder="blur"
+        blurDataURL={blurData}
       />
       <h3 className="font-playfair text-2xl">{name}</h3>
       <p className="text-base text-zinc-500">{tribalName}</p>

@@ -1,11 +1,12 @@
-import { PrismaClient, type CatImage, type Cat } from "@prisma/client";
+import { PrismaClient, type Cat } from "@prisma/client";
 import { type GetStaticPropsResult } from "next";
 import BorderText from "~/components/BorderText";
 import CatsGrid from "~/components/CatsGrid";
 import Footer from "~/components/Footer";
+import { addBlurToCats, type CatImageWithBlur } from "~/lib/getBase64";
 
 export interface CatWithImage extends Cat {
-  CatImage: CatImage[];
+  CatImage: CatImageWithBlur[];
 }
 
 type Props = {
@@ -107,12 +108,25 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
     },
   });
 
+  const fertileMaleCatsWithBlur = await addBlurToCats(
+    fertileMaleCats,
+  );
+  const fertileFemaleCatsWithBlur = await addBlurToCats(
+    fertileFemaleCats as CatWithImage[],
+  );
+  const formerMaleCatsWithBlur = await addBlurToCats(
+    formerMaleCats as CatWithImage[],
+  );
+  const formerFemaleCatsWithBlur = await addBlurToCats(
+    formerFemaleCats as CatWithImage[],
+  );
+
   return {
     props: {
-      fertileMaleCats,
-      fertileFemaleCats,
-      formerMaleCats,
-      formerFemaleCats,
+      fertileMaleCats: fertileMaleCatsWithBlur,
+      fertileFemaleCats: fertileFemaleCatsWithBlur,
+      formerMaleCats: formerMaleCatsWithBlur,
+      formerFemaleCats: formerFemaleCatsWithBlur,
     },
   };
 }

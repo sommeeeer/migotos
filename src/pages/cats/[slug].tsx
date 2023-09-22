@@ -8,14 +8,13 @@ import { type GetStaticPropsContext, type GetStaticPropsResult } from "next";
 import addBlurredDataurls, { type CatImageWithBlur } from "~/lib/getBase64";
 
 type Props = {
-  cat: Cat;
-  catImages: CatImageWithBlur[];
+  cat: Cat & { CatImage: CatImageWithBlur[] };
   mother: Cat | null;
   father: Cat | null;
 };
 
-function Cat({ cat, mother, father, catImages }: Props) {
-  const profileImg = catImages[0];
+function Cat({ cat, mother, father }: Props) {
+  const profileImg = cat.CatImage[0];
   if (!profileImg) {
     throw new Error(`Couldnt find profileImg on ${cat.name}`);
   }
@@ -92,7 +91,7 @@ function Cat({ cat, mother, father, catImages }: Props) {
           </div>
           <h3 className="self-center font-playfair text-2xl">Pictures</h3>
           <section className="flex flex-col items-center gap-4">
-            {catImages.slice(1).map((img) => {
+            {cat.CatImage.slice(1).map((img) => {
               return (
                 <CatImage
                   key={img.src}
@@ -177,12 +176,16 @@ export async function getStaticProps({
 
   const catImages = imagesWithDataUrls;
 
+  const catwithBlur = {
+    ...cat,
+    CatImage: catImages,
+  };
+
   return {
     props: {
-      cat,
+      cat: catwithBlur,
       mother,
       father,
-      catImages,
     },
   };
 }
