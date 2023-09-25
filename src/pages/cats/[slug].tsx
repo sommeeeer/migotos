@@ -54,6 +54,7 @@ function Cat({ cat, mother, father }: Props) {
             height={profileImg.height}
             className="mb-2 rounded-full"
             placeholder="blur"
+            quality={100}
             blurDataURL={profileImg.blur}
           />
           {cat.description && (

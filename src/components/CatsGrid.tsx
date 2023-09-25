@@ -1,8 +1,8 @@
 import CatProfile from "~/components/CatProfile";
-import { type CatWithImage } from "~/pages/cats";
+import { type CatWithBlurredImage } from "~/pages/cats";
 
 interface CatsGridProps {
-  cats: CatWithImage[];
+  cats: CatWithBlurredImage[];
 }
 
 export default function CatsGrid({ cats }: CatsGridProps) {

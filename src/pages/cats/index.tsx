@@ -1,4 +1,4 @@
-import { PrismaClient, type Cat } from "@prisma/client";
+import { PrismaClient, type Cat, type CatImage } from "@prisma/client";
 import { type GetStaticPropsResult } from "next";
 import BorderText from "~/components/BorderText";
 import CatsGrid from "~/components/CatsGrid";
@@ -6,14 +6,18 @@ import Footer from "~/components/Footer";
 import { addBlurToCats, type CatImageWithBlur } from "~/lib/getBase64";
 
 export interface CatWithImage extends Cat {
+  CatImage: CatImage[];
+}
+
+export interface CatWithBlurredImage extends Cat {
   CatImage: CatImageWithBlur[];
 }
 
 type Props = {
-  fertileMaleCats: CatWithImage[];
-  fertileFemaleCats: CatWithImage[];
-  formerMaleCats: CatWithImage[];
-  formerFemaleCats: CatWithImage[];
+  fertileMaleCats: CatWithBlurredImage[];
+  fertileFemaleCats: CatWithBlurredImage[];
+  formerMaleCats: CatWithBlurredImage[];
+  formerFemaleCats: CatWithBlurredImage[];
 };
 
 function Cats({
@@ -108,25 +112,26 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
     },
   });
 
-  const fertileMaleCatsWithBlur = await addBlurToCats(
-    fertileMaleCats as CatWithImage[],
-  );
-  const fertileFemaleCatsWithBlur = await addBlurToCats(
-    fertileFemaleCats as CatWithImage[],
-  );
-  const formerMaleCatsWithBlur = await addBlurToCats(
-    formerMaleCats as CatWithImage[],
-  );
-  const formerFemaleCatsWithBlur = await addBlurToCats(
-    formerFemaleCats as CatWithImage[],
-  );
+  const promises = [
+    addBlurToCats(fertileMaleCats),
+    addBlurToCats(fertileFemaleCats),
+    addBlurToCats(formerMaleCats),
+    addBlurToCats(formerFemaleCats),
+  ];
+
+  const [
+    fertileMaleCatsWithBlur,
+    fertileFemaleCatsWithBlur,
+    formerMaleCatsWithBlur,
+    formerFemaleCatsWithBlur,
+  ] = await Promise.all(promises);
 
   return {
     props: {
-      fertileMaleCats: fertileMaleCatsWithBlur,
-      fertileFemaleCats: fertileFemaleCatsWithBlur,
-      formerMaleCats: formerMaleCatsWithBlur,
-      formerFemaleCats: formerFemaleCatsWithBlur,
+      fertileMaleCats: fertileMaleCatsWithBlur!,
+      fertileFemaleCats: fertileFemaleCatsWithBlur!,
+      formerMaleCats: formerMaleCatsWithBlur!,
+      formerFemaleCats: formerFemaleCatsWithBlur!,
     },
   };
 }
