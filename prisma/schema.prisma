@@ -113,7 +113,7 @@ model Litter {
     mother_stamnavn   String
     father_stamnavn   String
     description       String
-    slug              String?
+    slug              String
     post_image        String?
     Kitten            Kitten[]
     LitterPictureWeek LitterPictureWeek[]
