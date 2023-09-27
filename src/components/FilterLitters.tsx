@@ -19,6 +19,7 @@ export default function FilterLitters({
           key={year}
           year={year}
           filterByYear={filterByYear}
+          currentYear={currentYear}
         />
       ))}
     </div>
