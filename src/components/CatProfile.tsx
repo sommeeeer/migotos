@@ -7,7 +7,7 @@ interface CatProfileProps {
   tribalName: string;
   slug?: string;
   classNames?: string;
-  blurData?: string;
+  blurData: string | undefined;
 }
 
 export default function CatProfile({

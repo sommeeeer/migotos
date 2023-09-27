@@ -4,7 +4,7 @@ import type { CatWithBlurredImage, CatWithImage } from "~/pages/cats";
 
 export type CatImageWithBlur = CatImage & { blur: string };
 
-async function getBase64(imageUrl: string) {
+export async function getBase64(imageUrl: string): Promise<string | undefined> {
   try {
     const res = await fetch(imageUrl);
 

@@ -1,0 +1,195 @@
+import { type Cat, type Prisma, PrismaClient } from "@prisma/client";
+import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
+import Link from "next/link";
+import CatProfile from "~/components/CatProfile";
+import Footer from "~/components/Footer";
+import KittenProfile from "~/components/KittenProfile";
+import PictureButton from "~/components/PictureButton";
+import { getBase64 } from "~/lib/getBase64";
+import { findName, formatDate } from "~/utils/helpers";
+
+type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
+  include: {
+    Kitten: true;
+    Tag: true;
+    LitterPictureWeek: true;
+  };
+}>;
+
+type Props = {
+  litter: LitterWithKittensAndTagsAndPictures;
+  mother: Cat | null;
+  father: Cat | null;
+  motherBlurData: string | undefined;
+  fatherBlurData: string | undefined;
+};
+
+function LitterPage({
+  litter,
+  mother,
+  father,
+  motherBlurData,
+  fatherBlurData,
+}: Props) {
+  let mother_slug = "";
+  let father_slug = "";
+  if (mother?.slug) {
+    mother_slug = mother.slug;
+  }
+  if (father?.slug) {
+    father_slug = father.slug;
+  }
+
+  const pictureWeeks = litter.LitterPictureWeek.map((week) => (
+    <PictureButton label={week.name} url={week.link} key={week.id} />
+  ));
+
+  return (
+    <>
+      <div className="flex w-full flex-col items-center bg-zinc-100">
+        <section className="mt-12 flex max-w-4xl flex-col items-center gap-4 p-4 text-center sm:mt-16">
+          <h1 className="font-playfair text-4xl capitalize">
+            <em>{litter.name.toLowerCase()}</em>
+          </h1>
+          <p className="text-lg uppercase text-zinc-500">
+            {formatDate(litter.born)}
+          </p>
+          {litter.pedigreeurl && (
+            <Link
+              href={litter.pedigreeurl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <p className="uppercas text-lg text-[#847143]">PEDIGREE</p>
+            </Link>
+          )}
+          <CatProfile
+            imageSrc={litter.mother_img}
+            name={litter.mother_name}
+            tribalName={litter.mother_stamnavn}
+            slug={mother_slug}
+            classNames="my-8"
+            blurData={motherBlurData}
+          />
+          <CatProfile
+            imageSrc={litter.father_img}
+            name={litter.father_name}
+            tribalName={litter.father_stamnavn}
+            slug={father_slug}
+            classNames="mb-8"
+            blurData={fatherBlurData}
+          />
+          {litter.description.length > 1 &&
+            litter.description.split("\n").map((p, i) => (
+              <p
+                key={i}
+                className="self-start text-left text-[15px] leading-8 text-[#515151]"
+              >
+                {p}
+              </p>
+            ))}
+        </section>
+        <section className="my-6 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
+          {litter.Kitten.map((k, i) => (
+            <KittenProfile
+              key={i}
+              name={k.name}
+              info={k.info ?? ""}
+              stamnavn={k.stamnavn}
+              gender={k.gender}
+            />
+          ))}
+        </section>
+        <section className="flex w-full flex-col items-center gap-2 bg-white p-8 text-center">
+          <header className="mb-6 flex flex-col gap-2">
+            <h1 className="font-playfair text-4xl">Pictures</h1>
+            <p className="text-lg uppercase text-zinc-500">FROM 0-12 WEEKS</p>
+          </header>
+          <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-8">
+            {pictureWeeks}
+          </div>
+        </section>
+      </div>
+      <Footer />
+    </>
+  );
+}
+
+export default LitterPage;
+
+type Params = { slug: string };
+
+export async function getStaticProps({
+  params,
+}: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
+  const slug = params?.slug;
+
+  const prisma = new PrismaClient();
+  const litter = await prisma.litter.findFirst({
+    where: {
+      slug,
+    },
+    include: {
+      Kitten: true,
+      Tag: true,
+      LitterPictureWeek: true,
+    },
+  });
+  if (!litter) {
+    throw new Error(`Couldnt find litter with slug: ${params?.slug}`);
+  }
+  const motherSearchStr = findName(litter.mother_name);
+  const fatherSearchStr = findName(litter.father_name);
+
+  const searchFiltersMother = motherSearchStr.map((partialName) => ({
+    name: {
+      contains: partialName,
+    },
+  }));
+
+  const mother = await prisma.cat.findFirst({
+    where: {
+      OR: searchFiltersMother,
+    },
+  });
+
+  const searchFiltersFather = fatherSearchStr.map((partialName) => ({
+    name: {
+      contains: partialName,
+    },
+  }));
+
+  let father = await prisma.cat.findFirst({
+    where: {
+      OR: searchFiltersFather,
+    },
+  });
+
+  if (father?.name.toLowerCase().includes("georg")) {
+    father = null;
+  }
+
+  const motherBlurData = await getBase64(litter.mother_img);
+  const fatherBlurData = await getBase64(litter.father_img);
+
+  return {
+    props: {
+      litter,
+      mother,
+      father,
+      motherBlurData,
+      fatherBlurData,
+    },
+  };
+}
+
+export async function getStaticPaths() {
+  const prisma = new PrismaClient();
+  const litters = await prisma.litter.findMany();
+
+  const paths = litters.map((litter) => ({
+    params: { slug: litter.slug },
+  }));
+
+  return { paths, fallback: false };
+}
