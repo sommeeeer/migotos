@@ -18,8 +18,10 @@ interface LittersProps {
 
 function Litters({ litters, yearsArray }: LittersProps) {
   const [littersArray, setLittersValue] = useState(litters);
+  const [currentFilter, setCurrentFilter] = useState<string | null>(null);
 
   function filterByYear(year: number | string) {
+    setCurrentFilter(year.toString());
     if (year === "All") {
       setLittersValue(litters);
     } else {
@@ -44,8 +46,12 @@ function Litters({ litters, yearsArray }: LittersProps) {
             Click on their picture for further information.
           </p>
         </section>
-        <FilterLitters years={yearsArray} filterByYear={filterByYear} />
-        <section className="grid max-w-6xl auto-rows-fr gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8 mb-8">
+        <FilterLitters
+          currentYear={currentFilter}
+          years={yearsArray}
+          filterByYear={filterByYear}
+        />
+        <section className="mb-8 grid max-w-6xl auto-rows-fr gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">
           {littersArray.map((litter) => (
             <LitterProfile
               key={litter.id}

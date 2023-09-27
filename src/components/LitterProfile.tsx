@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 interface LitterProfileProps {
   id: number;
@@ -17,7 +18,12 @@ export default function LitterProfile({
   tags,
 }: LitterProfileProps) {
   return (
-    <div className="relative flex h-[216px] w-[352px] flex-col overflow-hidden rounded-md bg-zinc-400">
+    <motion.div
+      className="relative flex h-[216px] w-[352px] flex-col overflow-hidden rounded-md bg-zinc-400"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <Link href={`kittens/${slug}`} style={{ height: "100%" }}>
         {post_image && (
           <Image
@@ -35,6 +41,6 @@ export default function LitterProfile({
         </div>
         <div className="absolute inset-0 bg-black opacity-40"></div>
       </Link>
-    </div>
+    </motion.div>
   );
 }
