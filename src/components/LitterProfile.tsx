@@ -20,8 +20,8 @@ export default function LitterProfile({
   return (
     <motion.div
       className="relative flex h-[216px] w-[352px] flex-col overflow-hidden rounded-md bg-zinc-400"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, scale: 0.2 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
     >
       <Link href={`kittens/${slug}`} style={{ height: "100%" }}>
