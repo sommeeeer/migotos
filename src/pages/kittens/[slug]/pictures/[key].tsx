@@ -1,6 +1,5 @@
 import {
   type Prisma,
-  PrismaClient,
   type KittenPictureImage,
 } from "@prisma/client";
 import type { GetStaticPropsContext, GetStaticPropsResult } from "next";
