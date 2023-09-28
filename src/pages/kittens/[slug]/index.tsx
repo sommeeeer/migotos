@@ -41,7 +41,11 @@ function LitterPage({
   }
 
   const pictureWeeks = litter.LitterPictureWeek.map((week) => (
-    <PictureButton label={week.name} url={week.link} key={week.id} />
+    <PictureButton
+      label={week.name}
+      url={`${litter.slug}/pictures/${week.name}`}
+      key={week.id}
+    />
   ));
 
   return (
@@ -91,7 +95,7 @@ function LitterPage({
               </p>
             ))}
         </section>
-        <section className="my-6 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
+        <section className="my-6 flex flex-col gap-4 sm:grid sm:grid-cols-3 sm:gap-8 md:flex md:flex-row md:gap-14">
           {litter.Kitten.map((k, i) => (
             <KittenProfile
               key={i}

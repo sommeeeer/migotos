@@ -23,6 +23,7 @@ export default function LitterProfile({
       initial={{ opacity: 0, scale: 0.2 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
+      layout
     >
       <Link href={`kittens/${slug}`} style={{ height: "100%" }}>
         {post_image && (
