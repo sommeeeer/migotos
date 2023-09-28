@@ -6,6 +6,7 @@ import {
 import type { GetStaticPropsContext, GetStaticPropsResult } from "next";
 import BorderText from "~/components/BorderText";
 import Image from "next/image";
+import { db } from "~/server/db";
 
 type Props = {
   litter: Prisma.LitterGetPayload<{
@@ -48,9 +49,7 @@ type Params = { slug: string; key: string };
 export async function getStaticProps({
   params,
 }: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
-  const prisma = new PrismaClient();
-
-  const litter = await prisma.litter.findFirst({
+  const litter = await db.litter.findFirst({
     where: {
       slug: params?.slug,
     },
@@ -59,7 +58,7 @@ export async function getStaticProps({
     },
   });
 
-  const images = await prisma.litterPictureWeek.findFirst({
+  const images = await db.litterPictureWeek.findFirst({
     where: {
       litter_id: litter?.id,
       name: params?.key,
@@ -92,8 +91,7 @@ export async function getStaticProps({
 }
 
 export async function getStaticPaths() {
-  const prisma = new PrismaClient();
-  const litters = await prisma.litter.findMany({
+  const litters = await db.litter.findMany({
     include: {
       LitterPictureWeek: true,
     },

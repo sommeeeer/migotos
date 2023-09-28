@@ -1,4 +1,5 @@
-import { PrismaClient, type Cat, type CatImage } from "@prisma/client";
+import { db } from "~/server/db";
+import { type Cat, type CatImage } from "@prisma/client";
 import { type GetStaticPropsResult } from "next";
 import BorderText from "~/components/BorderText";
 import CatsGrid from "~/components/CatsGrid";
@@ -64,9 +65,8 @@ function Cats({
 export default Cats;
 
 export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
-  // must be async
-  const prisma = new PrismaClient();
-  const fertileMaleCats = await prisma.cat.findMany({
+  
+  const fertileMaleCats = await db.cat.findMany({
     where: {
       fertile: true,
       gender: "Male",
@@ -77,7 +77,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       },
     },
   });
-  const fertileFemaleCats = await prisma.cat.findMany({
+  const fertileFemaleCats = await db.cat.findMany({
     where: {
       fertile: true,
       gender: "Female",
@@ -89,7 +89,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
     },
   });
 
-  const formerMaleCats = await prisma.cat.findMany({
+  const formerMaleCats = await db.cat.findMany({
     where: {
       fertile: false,
       gender: "Male",
@@ -100,7 +100,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       },
     },
   });
-  const formerFemaleCats = await prisma.cat.findMany({
+  const formerFemaleCats = await db.cat.findMany({
     where: {
       fertile: false,
       gender: "Female",

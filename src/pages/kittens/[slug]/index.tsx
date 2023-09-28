@@ -1,4 +1,4 @@
-import { type Cat, type Prisma, PrismaClient } from "@prisma/client";
+import { type Cat, type Prisma } from "@prisma/client";
 import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
 import Link from "next/link";
 import CatProfile from "~/components/CatProfile";
@@ -6,6 +6,7 @@ import Footer from "~/components/Footer";
 import KittenProfile from "~/components/KittenProfile";
 import PictureButton from "~/components/PictureButton";
 import { getBase64 } from "~/lib/getBase64";
+import { db } from "~/server/db";
 import { findName, formatDate } from "~/utils/helpers";
 
 type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
@@ -130,8 +131,7 @@ export async function getStaticProps({
 }: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
   const slug = params?.slug;
 
-  const prisma = new PrismaClient();
-  const litter = await prisma.litter.findFirst({
+  const litter = await db.litter.findFirst({
     where: {
       slug,
     },
@@ -153,7 +153,7 @@ export async function getStaticProps({
     },
   }));
 
-  const mother = await prisma.cat.findFirst({
+  const mother = await db.cat.findFirst({
     where: {
       OR: searchFiltersMother,
     },
@@ -165,7 +165,7 @@ export async function getStaticProps({
     },
   }));
 
-  let father = await prisma.cat.findFirst({
+  let father = await db.cat.findFirst({
     where: {
       OR: searchFiltersFather,
     },
@@ -190,8 +190,7 @@ export async function getStaticProps({
 }
 
 export async function getStaticPaths() {
-  const prisma = new PrismaClient();
-  const litters = await prisma.litter.findMany();
+  const litters = await db.litter.findMany();
 
   const paths = litters.map((litter) => ({
     params: { slug: litter.slug },

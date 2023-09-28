@@ -1,9 +1,10 @@
-import { PrismaClient, type Prisma } from "@prisma/client";
+import { type Prisma } from "@prisma/client";
 import type { GetStaticPropsResult } from "next/types";
 import { useState } from "react";
 import FilterLitters from "~/components/FilterLitters";
 import Footer from "~/components/Footer";
 import LitterProfile from "~/components/LitterProfile";
+import { db } from "~/server/db";
 
 type LitterWithTags = Prisma.LitterGetPayload<{
   include: {
@@ -73,10 +74,7 @@ export default Litters;
 export async function getStaticProps(): Promise<
   GetStaticPropsResult<LittersProps>
 > {
-  // must be async
-  const prisma = new PrismaClient();
-
-  const litters = await prisma.litter.findMany({
+  const litters = await db.litter.findMany({
     orderBy: {
       born: "desc",
     },
@@ -85,7 +83,7 @@ export async function getStaticProps(): Promise<
     },
   });
 
-  const distinctYears: { year: number }[] = await prisma.$queryRaw`
+  const distinctYears: { year: number }[] = await db.$queryRaw`
     SELECT DISTINCT SUBSTRING(born, 1, 4) as year FROM Litter ORDER BY year ASC
   `;
 
