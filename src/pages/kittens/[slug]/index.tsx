@@ -63,22 +63,24 @@ function LitterPage({
               <p className="uppercas text-lg text-[#847143]">PEDIGREE</p>
             </Link>
           )}
-          <CatProfile
-            imageSrc={litter.mother_img}
-            name={litter.mother_name}
-            tribalName={litter.mother_stamnavn}
-            slug={mother_slug}
-            classNames="my-8"
-            blurData={motherBlurData}
-          />
-          <CatProfile
-            imageSrc={litter.father_img}
-            name={litter.father_name}
-            tribalName={litter.father_stamnavn}
-            slug={father_slug}
-            classNames="mb-8"
-            blurData={fatherBlurData}
-          />
+          <section className="flex flex-col md:flex-row md:items-end md:gap-20">
+            <CatProfile
+              imageSrc={litter.mother_img}
+              name={litter.mother_name}
+              tribalName={litter.mother_stamnavn}
+              slug={mother_slug}
+              classNames="my-8"
+              blurData={motherBlurData}
+            />
+            <CatProfile
+              imageSrc={litter.father_img}
+              name={litter.father_name}
+              tribalName={litter.father_stamnavn}
+              slug={father_slug}
+              classNames="mb-8"
+              blurData={fatherBlurData}
+            />
+          </section>
           {litter.description.length > 1 &&
             litter.description.split("\n").map((p, i) => (
               <p

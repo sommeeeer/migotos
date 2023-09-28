@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { twMerge } from "tailwind-merge";
 
 interface CatProfileProps {
   imageSrc: string | undefined;
@@ -18,7 +19,10 @@ export default function CatProfile({
   classNames = "",
   blurData,
 }: CatProfileProps) {
-  const classes = `flex flex-col items-center gap-2 text-center transition duration-300 ease-in-out ${classNames}`;
+  const classes = twMerge(
+    "flex flex-col items-center gap-2 text-center transition duration-300 ease-in-out",
+    classNames,
+  );
 
   if (!slug) {
     return (
