@@ -1,137 +1,119 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
-// Necessary for Next-Auth
-
-model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String?
-    access_token      String?
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String?
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
+model BlogPost {
+  id          Int           @id @default(autoincrement())
+  post_date   String        @db.VarChar(255)
+  title       String        @db.VarChar(255)
+  body        String        @db.VarChar(255)
+  image_url   String        @db.VarChar(255)
+  BlogPostTag BlogPostTag[]
 }
 
-model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model BlogPostTag {
+  id           Int      @id @default(autoincrement())
+  value        String   @db.VarChar(255)
+  blog_post_id Int
+  BlogPost     BlogPost @relation(fields: [blog_post_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "BlogPostTag_ibfk_1")
+
+  @@index([blog_post_id], map: "blog_post_id")
 }
-
-model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-}
-
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
-
-    @@unique([identifier, token])
-}
-
-// End of Next-Auth
 
 model Cat {
-    id          Int        @id @default(autoincrement())
-    name        String
-    stamnavn    String
-    pedigreeurl String?
-    description String?
-    birth       String
-    gender      String
-    fertile     Boolean
-    father      String
-    mother      String
-    breeder     String
-    owner       String
-    slug        String
-    CatImage    CatImage[]
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(255)
+  stamnavn    String     @db.VarChar(255)
+  pedigreeurl String?    @db.VarChar(255)
+  description String?    @db.VarChar(255)
+  birth       String     @db.VarChar(255)
+  gender      String     @db.VarChar(255)
+  fertile     Boolean
+  father      String     @db.VarChar(255)
+  mother      String     @db.VarChar(255)
+  breeder     String     @db.VarChar(255)
+  owner       String     @db.VarChar(255)
+  slug        String     @db.VarChar(255)
+  CatImage    CatImage[]
 }
 
 model CatImage {
-    id     Int    @id @default(autoincrement())
-    cat_id Int
-    src    String
-    width  Int
-    height Int
-    Cat    Cat    @relation(fields: [cat_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id      Int    @id @default(autoincrement())
+  cat_id  Int
+  src     String @db.VarChar(255)
+  width   Int
+  height  Int
+  blururl String @db.VarChar(255)
+  Cat     Cat    @relation(fields: [cat_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CatImage_ibfk_1")
+
+  @@index([cat_id], map: "cat_id")
 }
 
 model Kitten {
-    id        Int     @id @default(autoincrement())
-    litter_id Int
-    name      String
-    stamnavn  String
-    gender    String
-    info      String?
-    Litter    Litter  @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        Int     @id @default(autoincrement())
+  litter_id Int
+  name      String  @db.VarChar(255)
+  stamnavn  String  @db.VarChar(255)
+  gender    String  @db.VarChar(255)
+  info      String? @db.VarChar(255)
+  Litter    Litter  @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Kitten_ibfk_1")
+
+  @@index([litter_id], map: "litter_id")
 }
 
 model KittenPictureImage {
-    id                  Int               @id @default(autoincrement())
-    litter_picture_week Int
-    title               String?
-    src                 String
-    width               Int
-    height              Int
-    LitterPictureWeek   LitterPictureWeek @relation(fields: [litter_picture_week], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                  Int               @id @default(autoincrement())
+  litter_picture_week Int
+  title               String?           @db.VarChar(255)
+  src                 String            @db.VarChar(255)
+  width               Int
+  height              Int
+  blururl             String            @db.VarChar(255)
+  LitterPictureWeek   LitterPictureWeek @relation(fields: [litter_picture_week], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "KittenPictureImage_ibfk_1")
+
+  @@index([litter_picture_week], map: "litter_picture_week")
 }
 
 model Litter {
-    id                Int                 @id @default(autoincrement())
-    name              String
-    born              String
-    pedigreeurl       String?
-    mother_img        String
-    father_img        String
-    mother_name       String
-    father_name       String
-    mother_stamnavn   String
-    father_stamnavn   String
-    description       String
-    slug              String
-    post_image        String?
-    Kitten            Kitten[]
-    LitterPictureWeek LitterPictureWeek[]
-    Tag               Tag[]
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(255)
+  born              String              @db.VarChar(255)
+  pedigreeurl       String?             @db.VarChar(255)
+  mother_img        String              @db.VarChar(255)
+  father_img        String              @db.VarChar(255)
+  mother_name       String              @db.VarChar(255)
+  father_name       String              @db.VarChar(255)
+  mother_stamnavn   String              @db.VarChar(255)
+  father_stamnavn   String              @db.VarChar(255)
+  description       String              @db.VarChar(255)
+  slug              String?             @db.VarChar(255)
+  post_image        String?             @db.VarChar(255)
+  Kitten            Kitten[]
+  LitterPictureWeek LitterPictureWeek[]
+  Tag               Tag[]
 }
 
 model LitterPictureWeek {
-    id                 Int                  @id @default(autoincrement())
-    litter_id          Int
-    name               String
-    link               String
-    KittenPictureImage KittenPictureImage[]
-    Litter             Litter               @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                 Int                  @id @default(autoincrement())
+  litter_id          Int
+  name               String               @db.VarChar(255)
+  link               String               @db.VarChar(255)
+  KittenPictureImage KittenPictureImage[]
+  Litter             Litter               @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "LitterPictureWeek_ibfk_1")
+
+  @@index([litter_id], map: "litter_id")
 }
 
 model Tag {
-    id        Int    @id @default(autoincrement())
-    value     String
-    litter_id Int
-    Litter    Litter @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id        Int    @id @default(autoincrement())
+  value     String @db.VarChar(255)
+  litter_id Int
+  Litter    Litter @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Tag_ibfk_1")
+
+  @@index([litter_id], map: "litter_id")
 }
