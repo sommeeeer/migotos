@@ -32,7 +32,7 @@ export default function CatProfile({
           alt={name}
           width={200}
           height={200}
-          className="rounded-full"
+          className="rounded-full shadow-md"
           quality={100}
           placeholder="blur"
           blurDataURL={blurData}
@@ -50,7 +50,7 @@ export default function CatProfile({
         alt={name}
         width={200}
         height={200}
-        className="rounded-full"
+        className="rounded-full shadow-md"
         quality={100}
         placeholder="blur"
         blurDataURL={blurData}

@@ -19,7 +19,7 @@ export default function LitterProfile({
 }: LitterProfileProps) {
   return (
     <motion.div
-      className="relative flex h-[216px] w-[352px] flex-col overflow-hidden rounded-md bg-zinc-400"
+      className="relative flex h-[216px] w-[352px] flex-col overflow-hidden rounded-md bg-zinc-400 shadow-md"
       initial={{ opacity: 0, scale: 0.2 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
