@@ -29,24 +29,26 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <Head>
         <link
           rel="icon"
-          href="static/icons/cropped-socialicon-1-32x32.png"
+          href="https://www.migotos.com/wp-content/uploads/2017/03/cropped-socialicon-1-32x32.png"
           sizes="32x32"
         />
         <link
           rel="icon"
-          href="static/icons/cropped-socialicon-1-192x192.png"
+          href="https://www.migotos.com/wp-content/uploads/2017/03/cropped-socialicon-1-192x192.png"
           sizes="192x192"
         />
         <link
           rel="apple-touch-icon"
-          href="static/icons/cropped-socialicon-1-180x180.png"
+          href="https://www.migotos.com/wp-content/uploads/2017/03/cropped-socialicon-1-180x180.png"
         />
         <meta
           name="msapplication-TileImage"
-          content="static/icons/cropped-socialicon-1-270x270.png"
+          content="https://www.migotos.com/wp-content/uploads/2017/03/cropped-socialicon-1-270x270.png"
         />
       </Head>
-      <div className={`flex flex-col ${poppins.className} ${playfair.variable}`}>
+      <div
+        className={`flex flex-col ${poppins.className} ${playfair.variable}`}
+      >
         <Header>
           <Component {...pageProps} />
         </Header>
