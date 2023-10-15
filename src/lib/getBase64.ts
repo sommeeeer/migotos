@@ -1,6 +1,5 @@
 import { type CatImage } from "@prisma/client";
 import { getPlaiceholder } from "plaiceholder";
-import type { CatWithBlurredImage, CatWithImage } from "~/pages/cats";
 
 export type CatImageWithBlur = CatImage & { blur: string };
 
@@ -35,19 +34,4 @@ export default async function addBlurredDataurls(
   }));
 
   return photosWithBlur;
-}
-
-export async function addBlurToCats(
-  cats: CatWithImage[],
-): Promise<CatWithBlurredImage[]> {
-  const catsWithBlur = await Promise.all(
-    cats.map(async (cat) => {
-      const blurData = await addBlurredDataurls(cat.CatImage);
-      return {
-        ...cat,
-        CatImage: blurData,
-      };
-    }),
-  );
-  return catsWithBlur;
 }

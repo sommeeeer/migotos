@@ -4,21 +4,16 @@ import { type GetStaticPropsResult } from "next";
 import BorderText from "~/components/BorderText";
 import CatsGrid from "~/components/CatsGrid";
 import Footer from "~/components/Footer";
-import { addBlurToCats, type CatImageWithBlur } from "~/lib/getBase64";
 
 export interface CatWithImage extends Cat {
   CatImage: CatImage[];
 }
 
-export interface CatWithBlurredImage extends Cat {
-  CatImage: CatImageWithBlur[];
-}
-
 type Props = {
-  fertileMaleCats: CatWithBlurredImage[];
-  fertileFemaleCats: CatWithBlurredImage[];
-  formerMaleCats: CatWithBlurredImage[];
-  formerFemaleCats: CatWithBlurredImage[];
+  fertileMaleCats: CatWithImage[];
+  fertileFemaleCats: CatWithImage[];
+  formerMaleCats: CatWithImage[];
+  formerFemaleCats: CatWithImage[];
 };
 
 function Cats({
@@ -65,7 +60,6 @@ function Cats({
 export default Cats;
 
 export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
-  
   const fertileMaleCats = await db.cat.findMany({
     where: {
       fertile: true,
@@ -112,26 +106,12 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
     },
   });
 
-  const promises = [
-    addBlurToCats(fertileMaleCats),
-    addBlurToCats(fertileFemaleCats),
-    addBlurToCats(formerMaleCats),
-    addBlurToCats(formerFemaleCats),
-  ];
-
-  const [
-    fertileMaleCatsWithBlur,
-    fertileFemaleCatsWithBlur,
-    formerMaleCatsWithBlur,
-    formerFemaleCatsWithBlur,
-  ] = await Promise.all(promises);
-
   return {
     props: {
-      fertileMaleCats: fertileMaleCatsWithBlur!,
-      fertileFemaleCats: fertileFemaleCatsWithBlur!,
-      formerMaleCats: formerMaleCatsWithBlur!,
-      formerFemaleCats: formerFemaleCatsWithBlur!,
+      fertileMaleCats: fertileMaleCats,
+      fertileFemaleCats: fertileFemaleCats,
+      formerMaleCats: formerMaleCats,
+      formerFemaleCats: formerFemaleCats,
     },
   };
 }

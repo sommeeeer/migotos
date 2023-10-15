@@ -6,7 +6,7 @@ interface LitterProfileProps {
   id: number;
   name: string;
   post_image: string | null;
-  slug: string;
+  slug: string | null;
   tags: string[];
 }
 

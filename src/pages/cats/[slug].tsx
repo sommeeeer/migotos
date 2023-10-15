@@ -1,4 +1,4 @@
-import { type Cat as Cat } from "@prisma/client";
+import { type CatImage as CatImageType, type Cat as Cat } from "@prisma/client";
 import { db } from "~/server/db";
 import Footer from "~/components/Footer";
 import CatImage from "~/components/CatImage";
@@ -6,10 +6,9 @@ import Link from "next/link";
 import clsx from "clsx";
 import { findName } from "~/utils/helpers";
 import { type GetStaticPropsContext, type GetStaticPropsResult } from "next";
-import addBlurredDataurls, { type CatImageWithBlur } from "~/lib/getBase64";
 
 type Props = {
-  cat: Cat & { CatImage: CatImageWithBlur[] };
+  cat: Cat & { CatImage: CatImageType[] };
   mother: Cat | null;
   father: Cat | null;
 };
@@ -56,7 +55,7 @@ function Cat({ cat, mother, father }: Props) {
             className="mb-2 rounded-full"
             placeholder="blur"
             quality={100}
-            blurDataURL={profileImg.blur}
+            blurDataURL={profileImg.blururl}
           />
           {cat.description && (
             <p className="mb-6 max-w-prose text-[15px] leading-8 text-zinc-500">
@@ -102,7 +101,7 @@ function Cat({ cat, mother, father }: Props) {
                   width={img.width}
                   height={img.height}
                   placeholder="blur"
-                  blurDataURL={img.blur}
+                  blurDataURL={img.blururl}
                 />
               );
             })}
@@ -173,18 +172,9 @@ export async function getStaticProps({
     father = null;
   }
 
-  const imagesWithDataUrls = await addBlurredDataurls(cat.CatImage);
-
-  const catImages = imagesWithDataUrls;
-
-  const catwithBlur = {
-    ...cat,
-    CatImage: catImages,
-  };
-
   return {
     props: {
-      cat: catwithBlur,
+      cat,
       mother,
       father,
     },
