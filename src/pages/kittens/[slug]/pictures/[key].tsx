@@ -1,7 +1,4 @@
-import {
-  type Prisma,
-  type KittenPictureImage,
-} from "@prisma/client";
+import { type Prisma, type KittenPictureImage } from "@prisma/client";
 import type { GetStaticPropsContext, GetStaticPropsResult } from "next";
 import BorderText from "~/components/BorderText";
 import Image from "next/image";
@@ -16,7 +13,7 @@ type Props = {
   groupedImages: Record<string, KittenPictureImage[]>;
 };
 
-function KittenPictures({ litter, groupedImages }: Props) {
+function KittenPictures({ groupedImages }: Props) {
   return (
     <div className="flex flex-col gap-4 px-2">
       {Object.entries(groupedImages).map(([key, images]) => (
@@ -31,6 +28,8 @@ function KittenPictures({ litter, groupedImages }: Props) {
                   width={650}
                   height={400}
                   style={{ height: "100%", objectFit: "cover" }}
+                  placeholder="blur"
+                  blurDataURL={image.blururl}
                 />
               </div>
             ))}
