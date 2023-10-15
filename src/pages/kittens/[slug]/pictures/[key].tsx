@@ -3,6 +3,7 @@ import type { GetStaticPropsContext, GetStaticPropsResult } from "next";
 import BorderText from "~/components/BorderText";
 import Image from "next/image";
 import { db } from "~/server/db";
+import Footer from "~/components/Footer";
 
 type Props = {
   litter: Prisma.LitterGetPayload<{
@@ -15,28 +16,31 @@ type Props = {
 
 function KittenPictures({ groupedImages }: Props) {
   return (
-    <div className="flex flex-col gap-4 px-2">
-      {Object.entries(groupedImages).map(([key, images]) => (
-        <div key={key}>
-          <BorderText text={key} />
-          <div className="flex flex-col gap-2">
-            {images.map((image) => (
-              <div key={image.id}>
-                <Image
-                  src={image.src}
-                  alt={image.title ?? ""}
-                  width={650}
-                  height={400}
-                  style={{ height: "100%", objectFit: "cover" }}
-                  placeholder="blur"
-                  blurDataURL={image.blururl}
-                />
-              </div>
-            ))}
+    <>
+      <div className="flex flex-col gap-4 px-2">
+        {Object.entries(groupedImages).map(([key, images]) => (
+          <div key={key}>
+            <BorderText text={key} />
+            <div className="flex flex-col gap-2">
+              {images.map((image) => (
+                <div key={image.id}>
+                  <Image
+                    src={image.src}
+                    alt={image.title ?? ""}
+                    width={650}
+                    height={400}
+                    style={{ height: "100%", objectFit: "cover" }}
+                    placeholder="blur"
+                    blurDataURL={image.blururl}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <Footer />
+    </>
   );
 }
 
