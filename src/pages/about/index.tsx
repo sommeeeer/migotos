@@ -18,13 +18,15 @@ export default function About() {
         </title>
       </Head>
       <div className="flex w-full flex-col items-center bg-zinc-100">
-        <section className="mt-8 flex max-w-3xl flex-col gap-10 px-6 pt-8 text-center">
-          <h1 className="font-playfair text-3xl font-normal">
-            <em>Migoto’s&nbsp;</em>Norwegian Forest Cat
-          </h1>
-          <p className="text-base text-zinc-500">
-            CATTERY BASED IN OSLO, NORWAY
-          </p>
+        <section className="mt-8 flex max-w-3xl flex-col gap-14 px-6 pt-12 text-center">
+          <header className="flex flex-col gap-4">
+            <h1 className="font-playfair text-4xl font-normal">
+              <em>Migoto’s&nbsp;</em>Norwegian Forest Cat
+            </h1>
+            <p className="text-lg text-zinc-500">
+              CATTERY BASED IN OSLO, NORWAY
+            </p>
+          </header>
           <p className="text-left text-sm leading-8 text-zinc-800">
             (N)Migoto’s is a family driven cattery located in Oslo, Norway. The
             cattery was started in 2006 when our first Norwegian Forest Cat, SC
@@ -71,11 +73,13 @@ export default function About() {
           </div>
         </section>
       </div>
-      <section className="flex w-full max-w-3xl flex-col items-center gap-6 bg-white p-20 px-8 text-center ">
-        <h1 className="font-playfair text-3xl">
-          <em>Meet</em> Eva
-        </h1>
-        <p className="text-base text-zinc-500">THE MIGOTO’S BREEDER</p>
+      <section className="flex w-full max-w-3xl flex-col items-center gap-12 bg-white p-20 px-8 text-center ">
+        <header className="flex flex-col gap-4">
+          <h1 className="font-playfair text-3xl">
+            <em>Meet</em> Eva
+          </h1>
+          <p className="text-base text-zinc-500">THE MIGOTO’S BREEDER</p>
+        </header>
         <Image
           className="my-4 rounded-full"
           src={evaImgOne}
@@ -83,7 +87,7 @@ export default function About() {
           alt={"Eva picture"}
           placeholder="blur"
         />
-        <p className="mb-6 text-sm leading-8 text-zinc-800">
+        <p className="mb-6 text-left text-sm leading-8 text-zinc-800">
           Eva Dahl Eide is the main person behind our (N)Migoto’s Cattery. She
           makes sure our cats stay healthy and happy, and always finds the
           perfect home for our kittens. Eva is the chair person in NORAK (Norway
