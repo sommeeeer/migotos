@@ -7,24 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model BlogPost {
-  id          Int           @id @default(autoincrement())
-  post_date   String        @db.VarChar(255)
-  title       String        @db.VarChar(255)
-  body        String        @db.VarChar(255)
-  image_url   String        @db.VarChar(255)
-  BlogPostTag BlogPostTag[]
-}
-
-model BlogPostTag {
-  id           Int      @id @default(autoincrement())
-  value        String   @db.VarChar(255)
-  blog_post_id Int
-  BlogPost     BlogPost @relation(fields: [blog_post_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "BlogPostTag_ibfk_1")
-
-  @@index([blog_post_id], map: "blog_post_id")
-}
-
 model Cat {
   id          Int        @id @default(autoincrement())
   name        String     @db.VarChar(255)
@@ -116,4 +98,19 @@ model Tag {
   Litter    Litter @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Tag_ibfk_1")
 
   @@index([litter_id], map: "litter_id")
+}
+
+model BlogPost {
+  id        Int           @id @default(autoincrement())
+  post_date DateTime      @db.Date
+  title     String        @db.VarChar(255)
+  body      String        @db.VarChar(255)
+  image_url String?       @db.VarChar(255)
+  tags      BlogPostTag[]
+}
+
+model BlogPostTag {
+  id        Int        @id @default(autoincrement())
+  value     String     @db.VarChar(255)
+  blogposts BlogPost[]
 }

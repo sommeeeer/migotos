@@ -27,6 +27,7 @@
     "hamburger-react": "^2.5.0",
     "next": "^13.5.4",
     "next-auth": "^4.23.2",
+    "next-superjson-plugin": "^0.5.9",
     "no-scroll": "^2.1.1",
     "plaiceholder": "^3.0.0",
     "react": "18.2.0",
