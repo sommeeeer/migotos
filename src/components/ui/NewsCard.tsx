@@ -9,9 +9,17 @@ interface Props {
   tags: string[];
   image_src: string | null;
   id: number;
+  priority?: boolean;
 }
 
-export default function NewsCard({ title, date, tags, image_src, id }: Props) {
+export default function NewsCard({
+  title,
+  date,
+  tags,
+  image_src,
+  id,
+  priority,
+}: Props) {
   return (
     <div
       className="flex max-w-sm cursor-pointer flex-col justify-between overflow-hidden rounded bg-slate-50 shadow-md"
@@ -25,6 +33,7 @@ export default function NewsCard({ title, date, tags, image_src, id }: Props) {
           width={384}
           height={167}
           quality={100}
+          priority={priority}
         />
       ) : (
         <div className="h-[200px] w-full bg-gray-300"></div>
@@ -56,7 +65,7 @@ function Tag({ value, ...rest }: { value: string } & ComponentProps<"span">) {
   return (
     <span
       {...rest}
-      className="mb-2 mr-2 inline-block rounded-full px-3 py-1 text-xs font-semibold text-gray-700 outline outline-1  transition-colors duration-200 hover:bg-zinc-200 hover:outline-2 tracking-wide"
+      className="mb-2 mr-2 inline-block rounded-full px-3 py-1 text-xs font-semibold tracking-wide text-gray-700 outline  outline-1 transition-colors duration-200 hover:bg-zinc-200 hover:outline-2"
     >
       {value}
     </span>

@@ -32,7 +32,7 @@ function News({ blogPosts }: Props) {
           </p>
         </section>
         <section className="mb-8 grid max-w-6xl gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">
-          {blogPosts.map((blogPost) => (
+          {blogPosts.map((blogPost, idx) => (
             <NewsCard
               key={blogPost.id}
               title={blogPost.title}
@@ -40,6 +40,7 @@ function News({ blogPosts }: Props) {
               tags={blogPost.tags.map((tag) => tag.blogposttag.value as string)}
               image_src={blogPost.image_url}
               id={blogPost.id}
+              priority={idx === 0}
             />
           ))}
         </section>
