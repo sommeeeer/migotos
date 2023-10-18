@@ -1,3 +1,4 @@
+import router from "next/router";
 import type { ComponentProps } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -16,6 +17,10 @@ export default function Tag({
         "tracking-wid mb-2 mr-2 inline-block cursor-pointer rounded-full px-3 py-1 text-xs font-semibold text-gray-700 transition-colors duration-200 hover:bg-zinc-200 hover:outline-2",
         className,
       )}
+      onClick={(e) => {
+        e.stopPropagation();
+        void router.push(`/news/tag/${value.toLowerCase()}`);
+      }}
     >
       {value}
     </span>
