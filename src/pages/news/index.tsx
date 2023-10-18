@@ -26,7 +26,7 @@ function News({ blogPosts }: Props) {
           <h1 className="font-playfair text-4xl">
             <em>All Blog Posts</em>
           </h1>
-          <p className="text-base uppercase text-zinc-600"></p>
+          <p className="text-base text-zinc-600">{`Total posts: ${blogPosts.length}`}</p>
           <p className="text-base leading-loose text-zinc-500">
             Click on the card to read more.
           </p>
