@@ -26,7 +26,7 @@ function News({ blogPosts }: Props) {
             <NewsCard
               key={blogPost.id}
               title={blogPost.title}
-              date={blogPost.post_date.toDateString()}
+              date={blogPost.post_date}
               tags={["Testing", "Super"]}
               image_src={blogPost.image_url}
               id={blogPost.id}
