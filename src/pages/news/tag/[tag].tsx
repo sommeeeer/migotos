@@ -14,7 +14,7 @@ function TagPage({ blogPosts }: Props) {
   const title = params?.tag;
   return (
     <>
-      <div className="flex w-full flex-col items-center gap-8 bg-zinc-100">
+      <div className="flex w-full flex-col items-center gap-8">
         <section className="mt-16 flex max-w-6xl flex-col gap-4 px-4 text-center">
           <h1 className="font-playfair text-4xl">
             <em className="capitalize">{title}</em>
