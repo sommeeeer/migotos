@@ -1,7 +1,7 @@
 import Image from "next/image";
 import router from "next/router";
-import type { ComponentProps } from "react";
 import { format } from "date-fns";
+import Tag from "./Tag";
 
 interface Props {
   title: string;
@@ -58,16 +58,5 @@ export default function NewsCard({
         ))}
       </div>
     </div>
-  );
-}
-
-function Tag({ value, ...rest }: { value: string } & ComponentProps<"span">) {
-  return (
-    <span
-      {...rest}
-      className="mb-2 mr-2 inline-block rounded-full px-3 py-1 text-xs font-semibold tracking-wide text-gray-700 outline  outline-1 transition-colors duration-200 hover:bg-zinc-200 hover:outline-2"
-    >
-      {value}
-    </span>
   );
 }
