@@ -32,6 +32,7 @@ function LitterPage({
   motherBlurData,
   fatherBlurData,
 }: Props) {
+  
   let mother_slug = "";
   let father_slug = "";
   if (mother?.slug) {
@@ -40,6 +41,12 @@ function LitterPage({
   if (father?.slug) {
     father_slug = father.slug;
   }
+
+  const isWeeks = litter.LitterPictureWeek.some(
+    (week) => !isNaN(+week.name.charAt(0)),
+  );
+
+  const picturesSubHeading = isWeeks ? 'FROM 0-12 WEEKS' : 'CLICK ON NAME'
 
   const pictureWeeks = litter.LitterPictureWeek.map((week) => (
     <PictureButton
@@ -110,7 +117,7 @@ function LitterPage({
         <section className="flex w-full flex-col items-center gap-2 bg-white p-8 text-center">
           <header className="mb-6 flex flex-col gap-2">
             <h1 className="font-playfair text-4xl">Pictures</h1>
-            <p className="text-lg uppercase text-zinc-500">FROM 0-12 WEEKS</p>
+            <p className="text-lg uppercase text-zinc-500">{picturesSubHeading}</p>
           </header>
           <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-8">
             {pictureWeeks}
