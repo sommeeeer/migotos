@@ -1,6 +1,7 @@
 import Image from "next/image";
 import router from "next/router";
 import type { ComponentProps } from "react";
+import { format } from "date-fns";
 
 interface Props {
   title: string;
@@ -31,7 +32,9 @@ export default function NewsCard({ title, date, tags, image_src, id }: Props) {
 
       <div className="flex flex-col gap-4 px-6 py-4">
         <div className="mb-2 text-xl font-bold">{title}</div>
-        <p className="text-gray-600">{date}</p>
+        <p className="text-gray-600">
+          {format(new Date(date), "MMMM d, yyyy")}
+        </p>
       </div>
       <div className="self-start px-6 pb-2 pt-4">
         {tags.map((tag) => (
