@@ -30,7 +30,7 @@ function TagPage({ blogPosts }: Props) {
               key={blogPost.id}
               title={blogPost.title}
               date={blogPost.post_date}
-              tags={blogPost.tags.map((tag) => tag.blogposttag.value as string)}
+              tags={blogPost.tags.map((tag) => tag.blogposttag.value)}
               image_src={blogPost.image_url}
               id={blogPost.id}
               priority={idx === 0}
