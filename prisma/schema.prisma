@@ -103,10 +103,10 @@ model Tag {
 
 model BlogPost {
   id        Int                     @id @default(autoincrement())
-  post_date String                  @db.VarChar(255)
   title     String                  @db.VarChar(255)
   body      String                  @db.VarChar(255)
   image_url String?                 @db.VarChar(255)
+  post_date DateTime                @db.Date
   tags      BlogPostToBlogPostTag[]
 }
 
@@ -117,11 +117,11 @@ model BlogPostTag {
 }
 
 model BlogPostToBlogPostTag {
-  blogpost       BlogPost    @relation(fields: [blogpost_id], references: [id])
   blogpost_id    Int
-  blogposttag    BlogPostTag @relation(fields: [blogposttag_id], references: [id])
   blogposttag_id Int
+  blogpost       BlogPost    @relation(fields: [blogpost_id], references: [id])
+  blogposttag    BlogPostTag @relation(fields: [blogposttag_id], references: [id])
 
   @@id([blogpost_id, blogposttag_id])
-  @@index([blogposttag_id], map: "blogposttag_id")
+  @@index([blogposttag_id], map: "BlogPostToBlogPostTag_blogposttag_id_fkey")
 }

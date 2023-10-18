@@ -5,7 +5,7 @@ import Tag from "./Tag";
 
 interface Props {
   title: string;
-  date: string;
+  date: Date;
   tags: string[];
   image_src: string | null;
   id: number;
@@ -22,7 +22,7 @@ export default function NewsCard({
 }: Props) {
   return (
     <div
-      className="flex max-w-sm cursor-pointer flex-col justify-between overflow-hidden rounded bg-slate-50 shadow-md"
+      className="flex max-w-sm cursor-pointer flex-col justify-between overflow-hidden rounded bg-zinc-100 shadow-md"
       onClick={() => void router.push(`/news/${id}`)}
     >
       {image_src ? (
@@ -41,9 +41,7 @@ export default function NewsCard({
 
       <div className="flex flex-col gap-4 px-6 py-4">
         <div className="mb-2 text-xl font-bold">{title}</div>
-        <p className="text-gray-600">
-          {format(new Date(date), "MMMM d, yyyy")}
-        </p>
+        <p className="text-gray-600">{format(date, "MMMM d, yyyy")}</p>
       </div>
       <div className="self-start px-6 pb-2 pt-4">
         {tags.map((tag) => (
