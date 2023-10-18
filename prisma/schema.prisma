@@ -102,25 +102,25 @@ model Tag {
 }
 
 model BlogPost {
-  id                    Int                     @id @default(autoincrement())
-  post_date             String                  @db.VarChar(255)
-  title                 String                  @db.VarChar(255)
-  body                  String                  @db.VarChar(255)
-  image_url             String?                 @db.VarChar(255)
-  BlogPostToBlogPostTag BlogPostToBlogPostTag[]
+  id        Int                     @id @default(autoincrement())
+  post_date String                  @db.VarChar(255)
+  title     String                  @db.VarChar(255)
+  body      String                  @db.VarChar(255)
+  image_url String?                 @db.VarChar(255)
+  tags      BlogPostToBlogPostTag[]
 }
 
 model BlogPostTag {
-  id                    Int                     @id @default(autoincrement())
-  value                 String                  @unique(map: "value") @db.VarChar(255)
-  BlogPostToBlogPostTag BlogPostToBlogPostTag[]
+  id    Int                     @id @default(autoincrement())
+  value String                  @unique @db.VarChar(255)
+  posts BlogPostToBlogPostTag[]
 }
 
 model BlogPostToBlogPostTag {
+  blogpost       BlogPost    @relation(fields: [blogpost_id], references: [id])
   blogpost_id    Int
+  blogposttag    BlogPostTag @relation(fields: [blogposttag_id], references: [id])
   blogposttag_id Int
-  BlogPost       BlogPost    @relation(fields: [blogpost_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "BlogPostToBlogPostTag_ibfk_1")
-  BlogPostTag    BlogPostTag @relation(fields: [blogposttag_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "BlogPostToBlogPostTag_ibfk_2")
 
   @@id([blogpost_id, blogposttag_id])
   @@index([blogposttag_id], map: "blogposttag_id")

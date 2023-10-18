@@ -56,7 +56,7 @@ function Tag({ value, ...rest }: { value: string } & ComponentProps<"span">) {
   return (
     <span
       {...rest}
-      className="mb-2 mr-2 inline-block rounded-full px-3 py-1 text-xs font-semibold text-gray-700 outline outline-1  transition-colors duration-200 hover:bg-zinc-200 hover:outline-2"
+      className="mb-2 mr-2 inline-block rounded-full px-3 py-1 text-xs font-semibold text-gray-700 outline outline-1  transition-colors duration-200 hover:bg-zinc-200 hover:outline-2 tracking-wide"
     >
       {value}
     </span>
