@@ -1,18 +1,8 @@
-import type { Prisma } from "@prisma/client";
 import { type GetStaticPropsResult } from "next/types";
 import Footer from "~/components/Footer";
 import NewsCard from "~/components/ui/NewsCard";
 import { db } from "~/server/db";
-
-type BlogPostWithTags = Prisma.BlogPostGetPayload<{
-  include: {
-    tags: {
-      select: {
-        blogposttag: true;
-      };
-    };
-  };
-}>;
+import type { BlogPostWithTags } from "~/utils/types";
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -21,8 +11,8 @@ type Props = {
 function News({ blogPosts }: Props) {
   return (
     <>
-      <div className="flex w-full flex-col items-center gap-8 bg-zinc-100">
-        <section className="mt-16 flex max-w-6xl flex-col gap-4 px-4 text-center">
+      <div className="flex w-full flex-col items-center gap-8">
+        <section className="mt-8 flex max-w-6xl flex-col gap-4 px-4 text-center">
           <h1 className="font-playfair text-4xl">
             <em>All Blog Posts</em>
           </h1>

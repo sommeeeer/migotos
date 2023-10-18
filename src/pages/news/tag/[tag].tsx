@@ -1,19 +1,9 @@
-import type { Prisma } from "@prisma/client";
 import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
 import { useParams } from "next/navigation";
 import Footer from "~/components/Footer";
 import NewsCard from "~/components/ui/NewsCard";
 import { db } from "~/server/db";
-
-type BlogPostWithTags = Prisma.BlogPostGetPayload<{
-  include: {
-    tags: {
-      select: {
-        blogposttag: true;
-      };
-    };
-  };
-}>;
+import type { BlogPostWithTags } from "~/utils/types";
 
 type Props = {
   blogPosts: BlogPostWithTags[];
