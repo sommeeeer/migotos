@@ -49,7 +49,9 @@ export default function NewsCard({
         {tags.map((tag) => (
           <Tag
             key={tag}
+            className="outline outline-1"
             value={tag}
+            color="text-gray-700"
             onClick={(e) => {
               e.stopPropagation();
               void router.push(`/news/tag/${tag.toLowerCase()}`);

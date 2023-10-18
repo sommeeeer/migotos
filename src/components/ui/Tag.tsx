@@ -1,13 +1,21 @@
 import type { ComponentProps } from "react";
+import { twMerge } from "tailwind-merge";
 
 export default function Tag({
   value,
+  className,
   ...rest
-}: { value: string } & ComponentProps<"span">) {
+}: {
+  value: string;
+  className?: string;
+} & ComponentProps<"span">) {
   return (
     <span
       {...rest}
-      className="mb-2 mr-2 inline-block cursor-pointer rounded-full px-3 py-1 text-xs font-semibold tracking-wide text-gray-700  outline outline-1 transition-colors duration-200 hover:bg-zinc-200 hover:outline-2"
+      className={twMerge(
+        "tracking-wid mb-2 mr-2 inline-block cursor-pointer rounded-full px-3 py-1 text-xs font-semibold text-gray-700 transition-colors duration-200 hover:bg-zinc-200 hover:outline-2",
+        className,
+      )}
     >
       {value}
     </span>
