@@ -21,6 +21,7 @@ model Cat {
   breeder     String     @db.VarChar(255)
   owner       String     @db.VarChar(255)
   slug        String     @db.VarChar(255)
+  nickname    String?    @db.VarChar(50)
   CatImage    CatImage[]
 }
 
@@ -106,11 +107,11 @@ model BlogPost {
   title     String        @db.VarChar(255)
   body      String        @db.VarChar(255)
   image_url String?       @db.VarChar(255)
-  tags      BlogPostTag[]
+  tags      BlogPostTag[] @relation("BlogPostToBlogPostTag")
 }
 
 model BlogPostTag {
   id        Int        @id @default(autoincrement())
   value     String     @db.VarChar(255)
-  blogposts BlogPost[]
+  blogposts BlogPost[] @relation("BlogPostToBlogPostTag")
 }
