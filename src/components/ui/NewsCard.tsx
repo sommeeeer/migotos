@@ -52,7 +52,7 @@ export default function NewsCard({
             value={tag}
             onClick={(e) => {
               e.stopPropagation();
-              console.log("tag: ", tag);
+              void router.push(`/news/tag/${tag.toLowerCase()}`);
             }}
           />
         ))}
