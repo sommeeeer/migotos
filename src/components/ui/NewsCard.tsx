@@ -1,4 +1,5 @@
 import Image from "next/image";
+import router from "next/router";
 import type { ComponentProps } from "react";
 
 interface Props {
@@ -6,19 +7,23 @@ interface Props {
   date: string;
   tags: string[];
   image_src: string | null;
+  id: number;
 }
 
-export default function NewsCard({ title, date, tags, image_src }: Props) {
+export default function NewsCard({ title, date, tags, image_src, id }: Props) {
   return (
-    <div className="flex max-w-sm cursor-pointer flex-col justify-between overflow-hidden rounded shadow-md bg-slate-50">
+    <div
+      className="flex max-w-sm cursor-pointer flex-col justify-between overflow-hidden rounded bg-slate-50 shadow-md"
+      onClick={() => void router.push(`/news/${id}`)}
+    >
       {image_src ? (
         <Image
-          className="h-[200px] w-full object-cover"
+          className="h-[200px] object-cover"
           src={image_src ?? ""}
           alt="Sunset in the mountains"
           width={384}
-          quality={100}
           height={167}
+          quality={100}
         />
       ) : (
         <div className="h-[200px] w-full bg-gray-300"></div>
@@ -33,7 +38,10 @@ export default function NewsCard({ title, date, tags, image_src }: Props) {
           <Tag
             key={tag}
             value={tag}
-            onClick={() => console.log("tag: ", tag)}
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log("tag: ", tag);
+            }}
           />
         ))}
       </div>

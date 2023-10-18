@@ -29,6 +29,7 @@ function News({ blogPosts }: Props) {
               date={blogPost.post_date.toDateString()}
               tags={["Testing", "Super"]}
               image_src={blogPost.image_url}
+              id={blogPost.id}
             />
           ))}
         </section>
