@@ -1,6 +1,5 @@
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
 import { BsInstagram, BsFacebook } from "react-icons/bs";
 import Footer from "~/components/Footer";
 import evaImgOne from "../../../public/static/eva-250x-250.jpg";
@@ -56,20 +55,20 @@ export default function About() {
             taken care of and lives with other families.
           </p>
           <div className="mb-12 flex items-center justify-center gap-4">
-            <Link
+            <a
               href="https://www.facebook.com/eva.d.eide"
               rel="noopener noreferrer"
               target="_blank"
             >
               <BsFacebook className="h-10 w-10 text-zinc-700 hover:relative hover:bottom-[2px] hover:text-zinc-400" />
-            </Link>
-            <Link
+            </a>
+            <a
               href="https://www.instagram.com/migotos/"
               rel="noopener noreferrer"
               target="_blank"
             >
               <BsInstagram className="h-10 w-10 text-zinc-700 hover:relative hover:bottom-[2px] hover:text-zinc-400" />
-            </Link>
+            </a>
           </div>
         </section>
       </div>
