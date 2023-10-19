@@ -29,7 +29,7 @@ export default function Contact() {
         setStatus("error");
       }
     },
-    onError(error, variables, context) {
+    onError() {
       setStatus("error");
     },
   });
