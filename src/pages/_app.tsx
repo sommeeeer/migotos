@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import Head from "next/head";
 import Header from "~/components/Header";
+import NextNProgress from "nextjs-progressbar";
 
 import { Poppins, Playfair_Display } from "next/font/google";
 
@@ -50,6 +51,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         className={`flex flex-col ${poppins.className} ${playfair.variable}`}
       >
         <Header>
+          <NextNProgress />
           <Component {...pageProps} />
         </Header>
       </div>
