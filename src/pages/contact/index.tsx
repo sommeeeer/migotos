@@ -2,16 +2,40 @@ import Footer from "~/components/Footer";
 import TextareaAutosize from "react-textarea-autosize";
 import { contactSchema } from "~/lib/validators/contact";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { api } from "~/utils/api";
+import type { z } from "zod";
+import { useState } from "react";
+import { clear } from "console";
+import clsx from "clsx";
+import { BiCheck, BiError } from "react-icons/bi";
 
 export default function Contact() {
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
   });
+  const [status, setStatus] = useState<StatusType>("");
+  const { mutate, isLoading } = api.contact.hello.useMutation({
+    onSuccess(data) {
+      if (data.success) {
+        setStatus("sent");
+        reset();
+      } else {
+        setStatus("error");
+      }
+    },
+    onError(error, variables, context) {
+      setStatus("error");
+    },
+  });
+
+  const onSubmit: SubmitHandler<z.infer<typeof contactSchema>> = (data) =>
+    mutate(data);
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -23,10 +47,11 @@ export default function Contact() {
           </h3>
         </div>
       </section>
+      {status && <StatusMessage status={status} />}
       <section className="mt-10 flex max-w-4xl flex-col p-4">
         <p className="text-lg text-[#7d7d7d]">YOU CAN DROP A LINE</p>
         <form
-          onSubmit={handleSubmit((d) => console.log(d))}
+          onSubmit={handleSubmit(onSubmit)}
           className="mb-14 flex flex-col gap-4"
         >
           <input
@@ -35,7 +60,7 @@ export default function Contact() {
             placeholder="Name"
           />
           {errors?.name?.message && (
-            <ErrorParagraph message={errors.name.message as string} />
+            <ErrorParagraph message={errors.name?.message} />
           )}
           <input
             className="h-14 rounded-sm border-2 border-solid border-gray-200 px-5 py-4 text-base"
@@ -43,7 +68,7 @@ export default function Contact() {
             placeholder="Email"
           />
           {errors.email?.message && (
-            <ErrorParagraph message={errors.email.message as string} />
+            <ErrorParagraph message={errors.email?.message} />
           )}
           <input
             className="h-14 rounded-sm border-2 border-solid border-gray-200 px-5 py-4 text-base"
@@ -51,7 +76,7 @@ export default function Contact() {
             placeholder="Subject"
           />
           {errors.subject?.message && (
-            <ErrorParagraph message={errors.subject.message as string} />
+            <ErrorParagraph message={errors.subject?.message} />
           )}
 
           <TextareaAutosize
@@ -61,12 +86,13 @@ export default function Contact() {
             minRows={4}
           />
           {errors.message?.message && (
-            <ErrorParagraph message={errors.message.message as string} />
+            <ErrorParagraph message={errors.message?.message} />
           )}
 
           <input
             className="h-14 w-4/6 cursor-pointer rounded-sm border-2 border-solid border-gray-200 px-5 py-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white"
             type="submit"
+            disabled={isLoading}
           />
         </form>
         <Footer />
@@ -80,3 +106,36 @@ function ErrorParagraph({ message }: { message: string }) {
     <p className="text-sm text-[#bf1650] before:content-['⚠_']">{message}</p>
   );
 }
+
+function StatusMessage({ status }: { status: StatusType }) {
+  if (status === "") return null;
+
+  const sent = status === "sent";
+  const error = status === "error";
+
+  let statusMessage;
+  if (sent) {
+    statusMessage = "Message sent!\nYou will hear from us soon.";
+  }
+
+  if (error) {
+    statusMessage = "Error sending message. Please try again.";
+  }
+
+  return (
+    <div className="mt-4 flex flex-col items-center gap-2">
+      {error && <BiError className="h-10 w-10 fill-red-600" />}
+      {sent && <BiCheck className="h-10 w-10 fill-green-600" />}
+      <p
+        className={clsx(
+          "text-center text-lg text-green-600",
+          sent ? "whitespace-break-spaces text-green-600" : "text-red-600",
+        )}
+      >
+        {statusMessage}
+      </p>
+    </div>
+  );
+}
+
+type StatusType = "" | "sent" | "error";

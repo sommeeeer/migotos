@@ -125,3 +125,12 @@ model BlogPostToBlogPostTag {
   @@id([blogpost_id, blogposttag_id])
   @@index([blogposttag_id], map: "BlogPostToBlogPostTag_blogposttag_id_fkey")
 }
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(55)
+  email     String   @db.VarChar(101)
+  subject   String   @db.VarChar(255)
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+}
