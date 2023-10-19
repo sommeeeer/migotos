@@ -6,9 +6,11 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/utils/api";
 import type { z } from "zod";
 import { useState } from "react";
-import { clear } from "console";
 import clsx from "clsx";
 import { BiCheck, BiError } from "react-icons/bi";
+import { BsFacebook, BsInstagram } from "react-icons/bs";
+
+type StatusType = "" | "sent" | "error";
 
 export default function Contact() {
   const {
@@ -95,6 +97,7 @@ export default function Contact() {
             disabled={isLoading}
           />
         </form>
+        <ContactInfo />
         <Footer />
       </section>
     </div>
@@ -138,4 +141,36 @@ function StatusMessage({ status }: { status: StatusType }) {
   );
 }
 
-type StatusType = "" | "sent" | "error";
+function ContactInfo() {
+  return (
+    <div className="my-12 flex flex-col gap-12">
+      <div className="flex flex-col gap-4">
+        <h3 className="text-xl text-[#7d7d7d]">FOLLOW US ON</h3>
+        <div className="flex gap-4">
+          <a
+            href="https://www.facebook.com/eva.d.eide"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <BsFacebook className="h-10 w-10 text-zinc-700 hover:relative hover:bottom-[2px] hover:text-zinc-400" />
+          </a>
+          <a
+            href="https://www.instagram.com/migotos/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <BsInstagram className="h-10 w-10 text-zinc-700 hover:relative hover:bottom-[2px] hover:text-zinc-400" />
+          </a>
+        </div>
+      </div>
+      <div className="flex flex-col gap-1">
+        <h3 className="text-xl text-[#7d7d7d]">EMAIL</h3>
+        <a href={"mailto:eva@migotos.com"}>eva@migotos.com</a>
+      </div>
+      <div className="flex flex-col gap-1">
+        <h3 className="text-xl text-[#7d7d7d]">TELEPHONE NUMBER</h3>
+        <a href={"tel:+4797689786"}>+47 97 68 97 86</a>
+      </div>
+    </div>
+  );
+}
