@@ -50,7 +50,7 @@ export default function Contact() {
         </div>
       </section>
       {status && <StatusMessage status={status} />}
-      <section className="mt-10 flex max-w-4xl flex-col p-4">
+      <section className="mt-10 flex flex-col p-4 max-w-2xl w-full">
         <p className="text-lg text-[#7d7d7d]">YOU CAN DROP A LINE</p>
         <form
           onSubmit={handleSubmit(onSubmit)}
