@@ -14,7 +14,7 @@ type Props = {
 function BlogPost({ blogPost }: Props) {
   return (
     <>
-      <div className="flex w-full flex-col items-center gap-8 px-2 py-4">
+      <div className="flex flex-col max-w-5xl items-center gap-8 px-2 py-4">
         <header className="flex flex-col items-center gap-4">
           <h1 className="text-center text-2xl">{blogPost.title}</h1>
           <div className="flex w-full items-center justify-center gap-2 border-b-2 border-t-zinc-100 text-[#777777]">
