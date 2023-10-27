@@ -1,16 +1,11 @@
-import { type Prisma } from "@prisma/client";
 import type { GetStaticPropsResult } from "next/types";
 import { useState } from "react";
 import FilterLitters from "~/components/FilterLitters";
 import Footer from "~/components/Footer";
 import LitterProfile from "~/components/LitterProfile";
 import { db } from "~/server/db";
+import type { LitterWithTags } from "~/utils/types";
 
-type LitterWithTags = Prisma.LitterGetPayload<{
-  include: {
-    Tag: true;
-  };
-}>;
 
 interface LittersProps {
   litters: LitterWithTags[];

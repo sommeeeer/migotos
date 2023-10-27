@@ -9,3 +9,9 @@ export type BlogPostWithTags = Prisma.BlogPostGetPayload<{
     };
   };
 }>;
+
+export type LitterWithTags = Prisma.LitterGetPayload<{
+  include: {
+    Tag: true;
+  };
+}>;
