@@ -12,7 +12,7 @@ model Cat {
   name        String     @db.VarChar(255)
   stamnavn    String     @db.VarChar(255)
   pedigreeurl String?    @db.VarChar(255)
-  description String?    @db.VarChar(255)
+  description String?    @db.VarChar(500)
   birth       String     @db.VarChar(255)
   gender      String     @db.VarChar(255)
   fertile     Boolean
@@ -44,7 +44,6 @@ model Kitten {
   stamnavn  String  @db.VarChar(255)
   gender    String  @db.VarChar(255)
   info      String? @db.VarChar(255)
-  Litter    Litter  @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Kitten_ibfk_1")
 
   @@index([litter_id], map: "litter_id")
 }
@@ -65,7 +64,6 @@ model KittenPictureImage {
 model Litter {
   id                Int                 @id @default(autoincrement())
   name              String              @db.VarChar(255)
-  born              String              @db.VarChar(255)
   pedigreeurl       String?             @db.VarChar(255)
   mother_img        String              @db.VarChar(255)
   father_img        String              @db.VarChar(255)
@@ -73,10 +71,10 @@ model Litter {
   father_name       String              @db.VarChar(255)
   mother_stamnavn   String              @db.VarChar(255)
   father_stamnavn   String              @db.VarChar(255)
-  description       String              @db.VarChar(255)
+  description       String?             @db.VarChar(2000)
   slug              String?             @db.VarChar(255)
   post_image        String?             @db.VarChar(255)
-  Kitten            Kitten[]
+  born              DateTime?           @db.Date
   LitterPictureWeek LitterPictureWeek[]
   Tag               Tag[]
 }
@@ -130,7 +128,7 @@ model ContactMessage {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(55)
   email     String   @db.VarChar(101)
-  subject   String   @db.VarChar(255)
   message   String   @db.Text
   createdAt DateTime @default(now())
+  subject   String   @db.VarChar(255)
 }
