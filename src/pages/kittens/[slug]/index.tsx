@@ -101,7 +101,7 @@ function LitterPage({
             </p>
           ))}
         </section>
-        <section className="my-6 flex flex-col gap-4 sm:grid sm:grid-cols-3 sm:gap-8 md:flex md:flex-row md:gap-14">
+        <section className="my-6 flex flex-col mx-2 justify-center flex-wrap gap-4 sm:grid sm:grid-cols-3 sm:gap-8 md:flex md:flex-row md:gap-14">
           {litter.Kitten.map((k, i) => (
             <KittenProfile
               key={i}
