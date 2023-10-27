@@ -32,7 +32,6 @@ function LitterPage({
   motherBlurData,
   fatherBlurData,
 }: Props) {
-  
   let mother_slug = "";
   let father_slug = "";
   if (mother?.slug) {
@@ -46,7 +45,7 @@ function LitterPage({
     (week) => !isNaN(+week.name.charAt(0)),
   );
 
-  const picturesSubHeading = isWeeks ? 'FROM 0-12 WEEKS' : 'CLICK ON NAME'
+  const picturesSubHeading = isWeeks ? "FROM 0-12 WEEKS" : "CLICK ON NAME";
 
   const pictureWeeks = litter.LitterPictureWeek.map((week) => (
     <PictureButton
@@ -64,7 +63,7 @@ function LitterPage({
             <em>{litter.name.toLowerCase()}</em>
           </h1>
           <p className="text-lg uppercase text-zinc-500">
-            {formatDate(litter.born)}
+            {formatDate(litter.born.toISOString())}
           </p>
           {litter.pedigreeurl && (
             <Link
@@ -93,15 +92,14 @@ function LitterPage({
               blurData={fatherBlurData}
             />
           </section>
-          {litter.description.length > 1 &&
-            litter.description.split("\n").map((p, i) => (
-              <p
-                key={i}
-                className="self-start text-left text-[15px] leading-8 text-[#515151]"
-              >
-                {p}
-              </p>
-            ))}
+          {litter.description?.split("\n").map((p, i) => (
+            <p
+              key={i}
+              className="self-start text-left text-[15px] leading-8 text-[#515151]"
+            >
+              {p}
+            </p>
+          ))}
         </section>
         <section className="my-6 flex flex-col gap-4 sm:grid sm:grid-cols-3 sm:gap-8 md:flex md:flex-row md:gap-14">
           {litter.Kitten.map((k, i) => (
@@ -117,7 +115,9 @@ function LitterPage({
         <section className="flex w-full flex-col items-center gap-2 bg-white p-8 text-center">
           <header className="mb-6 flex flex-col gap-2">
             <h1 className="font-playfair text-4xl">Pictures</h1>
-            <p className="text-lg uppercase text-zinc-500">{picturesSubHeading}</p>
+            <p className="text-lg uppercase text-zinc-500">
+              {picturesSubHeading}
+            </p>
           </header>
           <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-8">
             {pictureWeeks}
