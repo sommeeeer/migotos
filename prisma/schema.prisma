@@ -44,6 +44,8 @@ model Kitten {
   stamnavn  String  @db.VarChar(255)
   gender    String  @db.VarChar(255)
   info      String? @db.VarChar(255)
+  Litter    Litter  @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Kitten_ibfk_1")
+
 
   @@index([litter_id], map: "litter_id")
 }
@@ -74,9 +76,10 @@ model Litter {
   description       String?             @db.VarChar(2000)
   slug              String?             @db.VarChar(255)
   post_image        String?             @db.VarChar(255)
-  born              DateTime?           @db.Date
+  born              DateTime            @db.Date
   LitterPictureWeek LitterPictureWeek[]
   Tag               Tag[]
+  Kitten            Kitten[]
 }
 
 model LitterPictureWeek {
