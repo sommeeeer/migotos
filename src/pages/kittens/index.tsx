@@ -84,8 +84,9 @@ export async function getStaticProps(): Promise<
   });
 
   const distinctYears: { year: number }[] = await db.$queryRaw`
-    SELECT DISTINCT SUBSTRING(born, 1, 4) as year FROM Litter ORDER BY year ASC
+    SELECT DISTINCT YEAR(born) as year FROM Litter ORDER BY year ASC
   `;
+
 
   const yearsArray = distinctYears.map((year) => year.year);
 
