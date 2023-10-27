@@ -1,3 +1,4 @@
+import { signIn, signOut, useSession } from "next-auth/react";
 import type { GetStaticPropsResult } from "next/types";
 import LitterProfile from "~/components/LitterProfile";
 import NewsCard from "~/components/ui/NewsCard";
@@ -10,12 +11,20 @@ type Props = {
 };
 
 export default function Home({ blogPosts, litters }: Props) {
+  const { data: session, status } = useSession();
+  console.log(session, status);
   return (
     <div className="mt-4 flex flex-col items-center gap-8 p-4">
       <h1>Welcome to Migotos</h1>
       <h1 className="font-playfair text-4xl">
         <em>The Latest</em> Litters
       </h1>
+      {status === "unauthenticated" && (
+        <button onClick={() => void signIn()}>Login</button>
+      )}
+      {status === "authenticated" && (
+        <button onClick={() => void signOut()}>Logout</button>
+      )}
       <section className="mb-8 grid max-w-6xl gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">
         {litters.map((litter) => (
           <LitterProfile
