@@ -51,7 +51,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         className={`flex flex-col ${poppins.className} ${playfair.variable}`}
       >
         <Header>
-          <NextNProgress />
+          <NextNProgress options={{ showSpinner: false }} />
           <Component {...pageProps} />
         </Header>
       </div>
