@@ -3,6 +3,7 @@ import type { GetStaticPropsResult } from "next/types";
 import LitterProfile from "~/components/LitterProfile";
 import NewsCard from "~/components/ui/NewsCard";
 import { db } from "~/server/db";
+import { popupCenter } from "~/utils/helpers";
 import type { BlogPostWithTags, LitterWithTags } from "~/utils/types";
 
 type Props = {
@@ -12,7 +13,7 @@ type Props = {
 
 export default function Home({ blogPosts, litters }: Props) {
   const { data: session, status } = useSession();
-  
+
   return (
     <div className="mt-4 flex flex-col items-center gap-8 p-4">
       <h1>Welcome to Migotos</h1>
@@ -20,7 +21,9 @@ export default function Home({ blogPosts, litters }: Props) {
         <em>The Latest</em> Litters
       </h1>
       {status === "unauthenticated" && (
-        <button onClick={() => void signIn()}>Login</button>
+        <button onClick={() => popupCenter("/google-signin", "Google Signin")}>
+          Login
+        </button>
       )}
       {status === "authenticated" && (
         <button onClick={() => void signOut()}>Logout</button>
