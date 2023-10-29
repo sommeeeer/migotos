@@ -84,7 +84,15 @@ function BlogPost({ blogPost }: Props) {
 
           <hr />
           <div className="mt-8">
-            {session ? <CommentForm /> : <LoginButton />}
+            {session ? (
+              <CommentForm
+                session={session}
+                postId={blogPost.id}
+                refetchPosts={refetch}
+              />
+            ) : (
+              <LoginButton />
+            )}
           </div>
         </div>
       </div>

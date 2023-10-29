@@ -4,12 +4,21 @@ import TextareaAutosize from "react-textarea-autosize";
 import type { z } from "zod";
 import { commentSchema } from "~/lib/validators/comment";
 import ErrorParagraph from "./ui/ErrorParagraph";
+import type { Session } from "next-auth";
+import Image from "next/image";
+import { api } from "~/utils/api";
 
 interface CommentFormProps {
-  submitHandler?: (e: React.FormEvent<HTMLFormElement>) => void;
+  session: Session;
+  postId: number;
+  refetchPosts: () => void;
 }
 
-export default function CommentForm({ submitHandler }: CommentFormProps) {
+export default function CommentForm({
+  postId,
+  session,
+  refetchPosts,
+}: CommentFormProps) {
   const {
     register,
     reset,
@@ -19,36 +28,54 @@ export default function CommentForm({ submitHandler }: CommentFormProps) {
     resolver: zodResolver(commentSchema),
   });
 
+  const { mutate, isLoading } = api.comment.addComment.useMutation({
+    onSuccess: () => {
+      console.log("success");
+      reset();
+      refetchPosts();
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   const onSubmit: SubmitHandler<z.infer<typeof commentSchema>> = (data) =>
-    console.log(data);
+    mutate({ postId: postId, comment: data.message });
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-      <h3 className="text-base">LEAVE A REPLY</h3>
-
-      <input
-        className="h-8 rounded-sm border-2 border-solid border-gray-200 px-4 py-5 text-base"
-        {...register("name")}
-        placeholder="Name"
-      />
-      {errors?.name?.message && (
-        <ErrorParagraph message={errors.name?.message} />
-      )}
-
-      <TextareaAutosize
-        className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-        {...register("message")}
-        placeholder="Message"
-        minRows={4}
-      />
-      {errors.message?.message && (
-        <ErrorParagraph message={errors.message?.message} />
-      )}
-      <button
-        className="h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 p-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
-        type="submit"
-      >
-        Post Comment
-      </button>
-    </form>
+    <>
+      <div className="flex flex-col gap-2">
+        <p className="text-lg">Logged in as:</p>
+        <div className="flex items-center gap-2">
+          <p className="text-lg font-semibold">{session.user.name}</p>
+          {session.user.image && (
+            <Image
+              src={session.user.image}
+              width={32}
+              height={32}
+              className="rounded-lg"
+              alt="User avatar"
+            />
+          )}
+        </div>
+      </div>
+      <h3 className="mb-2 text-base">LEAVE A REPLY</h3>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+        <TextareaAutosize
+          className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+          {...register("message")}
+          placeholder="Message"
+          minRows={4}
+        />
+        {errors.message?.message && (
+          <ErrorParagraph message={errors.message?.message} />
+        )}
+        <button
+          className="h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 p-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
+          type="submit"
+        >
+          Post Comment
+        </button>
+      </form>
+    </>
   );
 }

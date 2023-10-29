@@ -46,6 +46,23 @@ export const commentRouter = createTRPCRouter({
       });
       return deletedComment;
     }),
+  addComment: protectedProcedure
+    .input(
+      z.object({
+        postId: z.number(),
+        comment: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const comment = await db.newsComment.create({
+        data: {
+          comment: input.comment,
+          post_id: input.postId,
+          user_id: ctx.session.user.id,
+        },
+      });
+      return comment;
+    }),
   // getAll: publicProcedure.query(({ ctx }) => {
   //   return ctx.db.example.findMany();
   // }),
