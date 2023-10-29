@@ -8,12 +8,26 @@ import CommentForm from "~/components/CommentForm";
 import Tag from "~/components/ui/Tag";
 import { db } from "~/server/db";
 import type { BlogPostWithTags } from "~/utils/types";
+import { api } from "~/utils/api";
+import { useSession } from "next-auth/react";
+import LoginButton from "~/components/LoginButton";
+import LoadingSpinner from "~/components/ui/LoadingSpinner";
 
 type Props = {
   blogPost: BlogPostWithTags;
 };
 
 function BlogPost({ blogPost }: Props) {
+  const { data: session, status } = useSession();
+  const {
+    isLoading,
+    isError,
+    isFetching,
+    data: comments,
+    error,
+    refetch,
+  } = api.comment.getBlogPostComments.useQuery(blogPost.id);
+
   return (
     <>
       <div className="flex max-w-5xl flex-col items-center gap-8 px-2 py-4">
@@ -45,24 +59,32 @@ function BlogPost({ blogPost }: Props) {
           alt={`${blogPost.title} image`}
           quality={100}
         />
-        <div className="border-t border-zinc-200 w-full mb-4" />
+        <div className="mb-4 w-full border-t border-zinc-200" />
 
         <div className="flex flex-col gap-2">
-          <h1 className="text-lg uppercase text-[#777777]">0 comments</h1>
-          <Comment
-            avatar_src="https://lh3.googleusercontent.com/a/ACg8ocJdW6dUWFUd-4ddyaznE6Ny8sQQSNp2K9Ie9F6chWAH=s96-c"
-            date="December 3, 2009 at 9:47 am"
-            name="Sean Platt"
-            message="These are rules of page turning fiction, which is also magnetic copy;
-        drawing them in close and selling them on turning the page and spending
-        their time. When I first started writing, flowery language was my
-        achilles heal. And while it still has its place, sales copy isn
-        t it."
-          />
+          <h1 className="text-lg uppercase text-[#777777]">
+            {comments?.length ?? "0"} comments
+          </h1>
+          <div className="mt-2 flex flex-col gap-6">
+            {isLoading && <LoadingSpinner />}
+            {comments?.map((comment) => (
+              <Comment
+                key={comment.id}
+                commentId={comment.id}
+                userId={comment.user.id}
+                avatar_src={comment.user?.image}
+                date={comment.createdAt.toLocaleDateString()}
+                name={comment.user.name!}
+                message={comment.comment}
+                session={session ?? null}
+                refetchPosts={refetch}
+              />
+            ))}
+          </div>
 
           <hr />
           <div className="mt-8">
-            <CommentForm />
+            {session ? <CommentForm /> : <LoginButton />}
           </div>
         </div>
       </div>

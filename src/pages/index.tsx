@@ -13,7 +13,6 @@ type Props = {
 export default function Home({ blogPosts, litters }: Props) {
   const { data: session, status } = useSession();
   
-  console.log(session?.user)
   return (
     <div className="mt-4 flex flex-col items-center gap-8 p-4">
       <h1>Welcome to Migotos</h1>
