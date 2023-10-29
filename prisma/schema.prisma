@@ -102,12 +102,13 @@ model Tag {
 }
 
 model BlogPost {
-  id        Int                     @id @default(autoincrement())
-  title     String                  @db.VarChar(255)
-  body      String                  @db.VarChar(255)
-  image_url String?                 @db.VarChar(255)
-  post_date DateTime                @db.Date
-  tags      BlogPostToBlogPostTag[]
+  id          Int                     @id @default(autoincrement())
+  title       String                  @db.VarChar(255)
+  body        String                  @db.VarChar(255)
+  image_url   String?                 @db.VarChar(255)
+  post_date   DateTime                @db.Date
+  tags        BlogPostToBlogPostTag[]
+  NewsComment NewsComment[]
 }
 
 model BlogPostTag {
@@ -133,6 +134,17 @@ model ContactMessage {
   message   String   @db.Text
   createdAt DateTime @default(now())
   subject   String   @db.VarChar(255)
+}
+
+model NewsComment {
+  id        Int      @id @default(autoincrement())
+  user_id   String
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post_id   Int
+  Post      BlogPost @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  comment   String   @db.VarChar(500)
+  email     String?  @db.VarChar(101)
+  createdAt DateTime @default(now())
 }
 
 // Next AUTH models
@@ -164,14 +176,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
-  role          Role      @default(USER)
+  role          Role          @default(USER)
   accounts      Account[]
   sessions      Session[]
+  NewsComment   NewsComment[]
 }
 
 model VerificationToken {
