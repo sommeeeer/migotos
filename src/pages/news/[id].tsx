@@ -61,8 +61,7 @@ function BlogPost({ blogPost }: Props) {
           quality={100}
         />
         <div className="mb-4 w-full border-t border-zinc-200" />
-
-        <div className="flex flex-col gap-2 px-2">
+        <div className="flex flex-col gap-2 px-2 w-full">
           <h1 className="text-lg uppercase text-[#777777]">
             {comments?.length ?? "0"} comments
           </h1>
