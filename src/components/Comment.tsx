@@ -1,4 +1,5 @@
-import { Session } from "next-auth";
+import { formatDistanceToNow } from "date-fns";
+import type { Session } from "next-auth";
 import Image from "next/image";
 import { MdDeleteForever } from "react-icons/md";
 import { api } from "~/utils/api";
@@ -6,7 +7,7 @@ import { api } from "~/utils/api";
 interface CommentProps {
   name: string;
   message: string;
-  date: string;
+  date: Date;
   avatar_src: string | null;
   session: Session | null;
   userId: string;
@@ -52,7 +53,7 @@ export default function Comment({
         )}
         <h1 className="text-lg">{name}</h1>
         <span className="text-sm text-[#777777]">
-          <time>{date}</time>
+          <time>{formatDistanceToNow(date)} ago</time>
         </span>
         {session?.user.id === userId && (
           <button
@@ -64,7 +65,7 @@ export default function Comment({
         )}
       </div>
       <div className="rounded-lg bg-gray-100 px-4 py-3">
-        <p className="text-base">{message}</p>
+        <p className="max-w-3xl whitespace-normal text-base">{message}</p>
       </div>
     </div>
   );

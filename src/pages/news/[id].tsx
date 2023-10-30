@@ -65,7 +65,7 @@ function BlogPost({ blogPost }: Props) {
           <h1 className="text-lg uppercase text-[#777777]">
             {comments?.length ?? "0"} comments
           </h1>
-          <div className="mt-2 flex flex-col gap-6">
+          <div className="mt-2 flex flex-col gap-6 max-w-2xl">
             {isLoading && <LoadingSpinner />}
             {comments?.map((comment) => (
               <Comment
@@ -73,7 +73,7 @@ function BlogPost({ blogPost }: Props) {
                 commentId={comment.id}
                 userId={comment.user.id}
                 avatar_src={comment.user?.image}
-                date={comment.createdAt.toLocaleDateString()}
+                date={comment.createdAt}
                 name={comment.user.name!}
                 message={comment.comment}
                 session={session ?? null}
