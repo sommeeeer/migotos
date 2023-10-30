@@ -3,6 +3,8 @@ import type { Session } from "next-auth";
 import Image from "next/image";
 import { MdDeleteForever } from "react-icons/md";
 import { api } from "~/utils/api";
+import LoadingSpinner from "./ui/LoadingSpinner";
+import { motion } from "framer-motion";
 
 interface CommentProps {
   name: string;
@@ -40,7 +42,12 @@ export default function Comment({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <motion.div
+      className="flex flex-col gap-2"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3 } }}
+      exit={{ opacity: 0, transition: { duration: 0.3 } }}
+    >
       <div className="flex items-center gap-1">
         {avatar_src && (
           <Image
@@ -60,13 +67,18 @@ export default function Comment({
             className="rounded-lg p-1 hover:bg-gray-200"
             onClick={() => deleteComment(commentId)}
           >
-            <MdDeleteForever className="h-5 w-5 fill-gray-600" />
+            {isLoading && <LoadingSpinner className="h-5 w-5" />}
+            {!isLoading && (
+              <MdDeleteForever className="h-5 w-5 fill-gray-600" />
+            )}
           </button>
         )}
       </div>
       <div className="rounded-lg bg-gray-100 px-4 py-3">
-        <p className="max-w-3xl whitespace-normal text-base">{message}</p>
+        <p className="max-w-3xl whitespace-normal break-words text-base">
+          {message}
+        </p>
       </div>
-    </div>
+    </motion.div>
   );
 }

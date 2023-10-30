@@ -12,6 +12,7 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import LoginButton from "~/components/LoginButton";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
+import { AnimatePresence, motion } from "framer-motion";
 
 type Props = {
   blogPost: BlogPostWithTags;
@@ -65,21 +66,23 @@ function BlogPost({ blogPost }: Props) {
           <h1 className="text-lg uppercase text-[#777777]">
             {comments?.length ?? "0"} comments
           </h1>
-          <div className="mt-2 flex flex-col gap-6 max-w-2xl">
-            {isLoading && <LoadingSpinner />}
-            {comments?.map((comment) => (
-              <Comment
-                key={comment.id}
-                commentId={comment.id}
-                userId={comment.user.id}
-                avatar_src={comment.user?.image}
-                date={comment.createdAt}
-                name={comment.user.name!}
-                message={comment.comment}
-                session={session ?? null}
-                refetchPosts={refetch}
-              />
-            ))}
+          <div className="mt-2 flex max-w-2xl flex-col gap-6">
+            <AnimatePresence>
+              {isLoading && <LoadingSpinner />}
+              {comments?.map((comment) => (
+                <Comment
+                  key={comment.id}
+                  commentId={comment.id}
+                  userId={comment.user.id}
+                  avatar_src={comment.user?.image}
+                  date={comment.createdAt}
+                  name={comment.user.name!}
+                  message={comment.comment}
+                  session={session ?? null}
+                  refetchPosts={refetch}
+                />
+              ))}
+            </AnimatePresence>
           </div>
 
           <hr />

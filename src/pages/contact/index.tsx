@@ -100,7 +100,7 @@ export default function Contact() {
           >
             {isLoading ? (
               <>
-                <LoadingSpinner />
+                <LoadingSpinner className="mr-3"/>
                 Loading...
               </>
             ) : (
