@@ -65,7 +65,7 @@ export default function CommentForm({
       <h3 className="mb-2 text-base">LEAVE A REPLY</h3>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
         <TextareaAutosize
-          className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+          className="h-14 max-w-3xl rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
           {...register("message")}
           placeholder="Message"
           minRows={4}
@@ -75,7 +75,7 @@ export default function CommentForm({
           <ErrorParagraph message={errors.message?.message} />
         )}
         <button
-          className="h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 p-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
+          className="h-14 w-4/6 max-w-xs cursor-pointer rounded-md border-2 border-solid border-gray-200 p-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
           type="submit"
           disabled={isLoading}
         >

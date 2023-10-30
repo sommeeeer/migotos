@@ -31,7 +31,7 @@ function BlogPost({ blogPost }: Props) {
 
   return (
     <>
-      <div className="flex max-w-5xl flex-col items-center gap-8 px-2 py-4">
+      <div className="flex max-w-3xl flex-col items-center gap-8 px-2 py-4">
         <header className="flex flex-col items-center gap-4">
           <h1 className="text-center text-2xl">{blogPost.title}</h1>
           <div className="flex w-full items-center justify-center gap-2 border-b-2 border-t-zinc-100 text-[#777777]">
@@ -50,7 +50,7 @@ function BlogPost({ blogPost }: Props) {
             </div>
           </div>
         </header>
-        <p className="whitespace-break-spaces p-4 text-base">
+        <p className="whitespace-break-spaces py-2 text-base max-w-2xl">
           {blogPost.body.trim()}
         </p>
         <Image
@@ -62,7 +62,7 @@ function BlogPost({ blogPost }: Props) {
         />
         <div className="mb-4 w-full border-t border-zinc-200" />
 
-        <div className="flex flex-col gap-2 self-stretch px-2">
+        <div className="flex flex-col gap-2 px-2">
           <h1 className="text-lg uppercase text-[#777777]">
             {comments?.length ?? "0"} comments
           </h1>

@@ -20,14 +20,6 @@ export default function Home({ blogPosts, litters }: Props) {
       <h1 className="font-playfair text-4xl">
         <em>The Latest</em> Litters
       </h1>
-      {status === "unauthenticated" && (
-        <button onClick={() => popupCenter("/google-signin", "Google Signin")}>
-          Login
-        </button>
-      )}
-      {status === "authenticated" && (
-        <button onClick={() => void signOut()}>Logout</button>
-      )}
       <section className="mb-8 grid max-w-6xl gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">
         {litters.map((litter) => (
           <LitterProfile

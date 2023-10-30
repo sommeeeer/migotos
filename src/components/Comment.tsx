@@ -74,10 +74,8 @@ export default function Comment({
           </button>
         )}
       </div>
-      <div className="max-w-sm sm:max-w-lg md:max-w-xl rounded-lg bg-gray-100 px-4 py-3">
-        <p className="whitespace-normal break-words text-base">
-          {message}
-        </p>
+      <div className="max-w-xs self-start rounded-lg bg-gray-100 px-3 py-3 sm:max-w-xl md:max-w-3xl">
+        <p className="whitespace-normal break-words text-base">{message}</p>
       </div>
     </motion.div>
   );

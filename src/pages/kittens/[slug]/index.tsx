@@ -141,7 +141,7 @@ function LitterPage({
           </div>
         </section>
       </div>
-      <section className="flex flex-col w-full max-w-5xl px-4">
+      <section className="flex flex-col w-full max-w-5xl px-4 gap-4">
         <AnimatePresence>
           {isLoading && <LoadingSpinner />}
           {comments?.map((comment) => (

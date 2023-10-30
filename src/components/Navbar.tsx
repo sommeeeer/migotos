@@ -10,7 +10,15 @@ interface NavbarProps {
 
 function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
   const router = useRouter();
-  const links = ["About", "Cats", "Kittens", "News", "Contact", "Instagram"];
+  const links = [
+    "About",
+    "Cats",
+    "Kittens",
+    "News",
+    "Contact",
+    "Login",
+    "Instagram",
+  ];
 
   return (
     <AnimatePresence>
