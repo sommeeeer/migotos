@@ -5,6 +5,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { api } from "~/utils/api";
 import LoadingSpinner from "./ui/LoadingSpinner";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 interface CommentProps {
   name: string;
@@ -30,10 +31,9 @@ export default function Comment({
   const { mutate, isLoading } = api.comment.deleteComment.useMutation({
     onSuccess: () => {
       refetchPosts();
-      console.log("deleted ");
     },
     onError: () => {
-      console.log("error");
+      console.log("Error while trying to delete comment");
     },
   });
 
