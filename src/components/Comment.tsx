@@ -74,8 +74,8 @@ export default function Comment({
           </button>
         )}
       </div>
-      <div className="rounded-lg bg-gray-100 px-4 py-3">
-        <p className="max-w-3xl whitespace-normal break-words text-base">
+      <div className="max-w-sm sm:max-w-lg md:max-w-xl rounded-lg bg-gray-100 px-4 py-3">
+        <p className="whitespace-normal break-words text-base">
           {message}
         </p>
       </div>

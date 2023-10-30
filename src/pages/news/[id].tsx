@@ -62,7 +62,7 @@ function BlogPost({ blogPost }: Props) {
         />
         <div className="mb-4 w-full border-t border-zinc-200" />
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 self-stretch px-2">
           <h1 className="text-lg uppercase text-[#777777]">
             {comments?.length ?? "0"} comments
           </h1>
@@ -85,7 +85,6 @@ function BlogPost({ blogPost }: Props) {
             </AnimatePresence>
           </div>
 
-          <hr />
           <div className="mt-8">
             {session ? (
               <CommentForm

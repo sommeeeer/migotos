@@ -6,10 +6,15 @@ import CatProfile from "~/components/CatProfile";
 import Footer from "~/components/Footer";
 import KittenProfile from "~/components/KittenProfile";
 import PictureButton from "~/components/PictureButton";
+import Comment from "~/components/Comment";
+import CommentForm from "~/components/CommentForm";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { getBase64 } from "~/lib/getBase64";
 import { db } from "~/server/db";
 import { findName, formatDate } from "~/utils/helpers";
+import { useSession } from "next-auth/react";
+import { api } from "~/utils/api";
+import LoginButton from "~/components/LoginButton";
 
 type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
   include: {
@@ -34,6 +39,16 @@ function LitterPage({
   motherBlurData,
   fatherBlurData,
 }: Props) {
+  const { data: session, status } = useSession();
+  const {
+    isLoading,
+    data: comments,
+    refetch,
+  } = api.comment.getComments.useQuery({
+    id: litter.id,
+    commentType: "litter_id",
+  });
+
   let mother_slug = "";
   let father_slug = "";
   if (mother?.slug) {
@@ -59,7 +74,7 @@ function LitterPage({
 
   return (
     <>
-      <div className="flex w-full flex-col items-center bg-zinc-100">
+      <div className="mb-10 flex w-full flex-col items-center border-b bg-zinc-100">
         <section className="mt-12 flex max-w-4xl flex-col items-center gap-4 p-4 text-center sm:mt-16">
           <h1 className="font-playfair text-4xl capitalize">
             <em>{litter.name.toLowerCase()}</em>
@@ -126,22 +141,36 @@ function LitterPage({
           </div>
         </section>
       </div>
-      <AnimatePresence>
-        {isLoading && <LoadingSpinner />}
-        {comments?.map((comment) => (
-          <Comment
-            key={comment.id}
-            commentId={comment.id}
-            userId={comment.user.id}
-            avatar_src={comment.user?.image}
-            date={comment.createdAt}
-            name={comment.user.name!}
-            message={comment.comment}
-            session={session ?? null}
-            refetchPosts={refetch}
-          />
-        ))}
-      </AnimatePresence>
+      <section className="flex flex-col w-full max-w-5xl px-4">
+        <AnimatePresence>
+          {isLoading && <LoadingSpinner />}
+          {comments?.map((comment) => (
+            <Comment
+              key={comment.id}
+              commentId={comment.id}
+              userId={comment.user.id}
+              avatar_src={comment.user?.image}
+              date={comment.createdAt}
+              name={comment.user.name!}
+              message={comment.comment}
+              session={session ?? null}
+              refetchPosts={refetch}
+            />
+          ))}
+        </AnimatePresence>
+        <div className="my-8">
+          {session ? (
+            <CommentForm
+              session={session}
+              id={litter.id}
+              refetchPosts={refetch}
+              commentType="litter_id"
+            />
+          ) : (
+            <LoginButton />
+          )}
+        </div>
+      </section>
       <Footer />
     </>
   );

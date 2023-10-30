@@ -6,6 +6,13 @@ import Link from "next/link";
 import clsx from "clsx";
 import { findName } from "~/utils/helpers";
 import { type GetStaticPropsContext, type GetStaticPropsResult } from "next";
+import { useSession } from "next-auth/react";
+import { api } from "~/utils/api";
+import CommentForm from "~/components/CommentForm";
+import Comment from "~/components/Comment";
+import LoginButton from "~/components/LoginButton";
+import { AnimatePresence } from "framer-motion";
+import LoadingSpinner from "~/components/ui/LoadingSpinner";
 
 type Props = {
   cat: Cat & { CatImage: CatImageType[] };
@@ -14,6 +21,16 @@ type Props = {
 };
 
 function Cat({ cat, mother, father }: Props) {
+  const { data: session, status } = useSession();
+  const {
+    isLoading,
+    data: comments,
+    refetch,
+  } = api.comment.getComments.useQuery({
+    id: cat.id,
+    commentType: "cat_id",
+  });
+
   const profileImg = cat.CatImage[0];
   if (!profileImg) {
     throw new Error(`Couldnt find profileImg on ${cat.name}`);
@@ -108,6 +125,36 @@ function Cat({ cat, mother, father }: Props) {
           </section>
         </section>
       </div>
+      <section className="flex w-full max-w-5xl flex-col px-4 mt-12">
+        <AnimatePresence>
+          {isLoading && <LoadingSpinner />}
+          {comments?.map((comment) => (
+            <Comment
+              key={comment.id}
+              commentId={comment.id}
+              userId={comment.user.id}
+              avatar_src={comment.user?.image}
+              date={comment.createdAt}
+              name={comment.user.name!}
+              message={comment.comment}
+              session={session ?? null}
+              refetchPosts={refetch}
+            />
+          ))}
+        </AnimatePresence>
+        <div className="my-8">
+          {session ? (
+            <CommentForm
+              session={session}
+              id={cat.id}
+              refetchPosts={refetch}
+              commentType="cat_id"
+            />
+          ) : (
+            <LoginButton />
+          )}
+        </div>
+      </section>
       <Footer />
     </>
   );
