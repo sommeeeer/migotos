@@ -14,7 +14,6 @@ interface LayoutProps {
 
 export default function Header({ children }: LayoutProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
   function closeMobileMenu() {
     noScroll.off();
     setIsMobileOpen(false);
