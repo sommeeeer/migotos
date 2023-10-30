@@ -7,6 +7,7 @@ import ErrorParagraph from "./ui/ErrorParagraph";
 import type { Session } from "next-auth";
 import Image from "next/image";
 import { api } from "~/utils/api";
+import LoadingSpinner from "./ui/LoadingSpinner";
 
 interface CommentFormProps {
   session: Session;
@@ -65,6 +66,7 @@ export default function CommentForm({
           {...register("message")}
           placeholder="Message"
           minRows={4}
+          disabled={isLoading}
         />
         {errors.message?.message && (
           <ErrorParagraph message={errors.message?.message} />
@@ -72,8 +74,16 @@ export default function CommentForm({
         <button
           className="h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 p-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
           type="submit"
+          disabled={isLoading}
         >
-          Post Comment
+          {isLoading ? (
+            <>
+              <LoadingSpinner />
+              Loading...
+            </>
+          ) : (
+            "Post Comment"
+          )}
         </button>
       </form>
     </>
