@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#comment-container {
+  position: relative;
+}
+
+#comment-container::before {
+  content: "";
+  display: inline-block;
+  border-top: 0;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #f3f4f6;
+  border-left: 6px solid transparent;
+  position: absolute;
+  top: -6px;
+  left: 12px;
+}
