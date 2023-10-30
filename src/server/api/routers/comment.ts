@@ -6,14 +6,20 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import { db } from "~/server/db";
+import { CommentType } from "~/utils/types";
 
 export const commentRouter = createTRPCRouter({
-  getBlogPostComments: publicProcedure
-    .input(z.number())
+  getComments: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        commentType: CommentType,
+      }),
+    )
     .query(async ({ input }) => {
-      const comments = await db.newsComment.findMany({
+      const comments = await db.comment.findMany({
         where: {
-          post_id: input,
+          [input.commentType]: input.id,
         },
         include: {
           user: true,
@@ -28,7 +34,7 @@ export const commentRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const comment = await db.newsComment.findUnique({
+      const comment = await db.comment.findUnique({
         where: {
           id: input.id,
         },
@@ -39,7 +45,7 @@ export const commentRouter = createTRPCRouter({
       if (comment.user_id !== ctx.session.user.id) {
         throw new Error("You can't delete this comment");
       }
-      const deletedComment = await db.newsComment.delete({
+      const deletedComment = await db.comment.delete({
         where: {
           id: input.id,
         },
@@ -49,15 +55,16 @@ export const commentRouter = createTRPCRouter({
   addComment: protectedProcedure
     .input(
       z.object({
-        postId: z.number(),
+        id: z.number(),
         comment: z.string(),
+        commentType: CommentType,
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const comment = await db.newsComment.create({
+      const comment = await db.comment.create({
         data: {
           comment: input.comment,
-          post_id: input.postId,
+          [input.commentType]: input.id,
           user_id: ctx.session.user.id,
         },
       });

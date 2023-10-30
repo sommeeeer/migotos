@@ -22,12 +22,12 @@ function BlogPost({ blogPost }: Props) {
   const { data: session, status } = useSession();
   const {
     isLoading,
-    isError,
-    isFetching,
     data: comments,
-    error,
     refetch,
-  } = api.comment.getBlogPostComments.useQuery(blogPost.id);
+  } = api.comment.getComments.useQuery({
+    id: blogPost.id,
+    commentType: "post_id",
+  });
 
   return (
     <>
@@ -90,8 +90,9 @@ function BlogPost({ blogPost }: Props) {
             {session ? (
               <CommentForm
                 session={session}
-                postId={blogPost.id}
+                id={blogPost.id}
                 refetchPosts={refetch}
+                commentType="post_id"
               />
             ) : (
               <LoginButton />

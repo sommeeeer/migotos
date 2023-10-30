@@ -8,17 +8,20 @@ import type { Session } from "next-auth";
 import Image from "next/image";
 import { api } from "~/utils/api";
 import LoadingSpinner from "./ui/LoadingSpinner";
+import type { CommentType } from "~/utils/types";
 
 interface CommentFormProps {
   session: Session;
-  postId: number;
+  id: number;
   refetchPosts: () => void;
+  commentType: z.infer<typeof CommentType>;
 }
 
 export default function CommentForm({
-  postId,
+  id,
   session,
   refetchPosts,
+  commentType,
 }: CommentFormProps) {
   const {
     register,
@@ -41,7 +44,7 @@ export default function CommentForm({
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof commentSchema>> = (data) =>
-    mutate({ postId: postId, comment: data.message });
+    mutate({ id, commentType, comment: data.message });
   return (
     <>
       <div className="flex flex-col gap-2">

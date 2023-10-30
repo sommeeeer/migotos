@@ -8,22 +8,22 @@ datasource db {
 }
 
 model Cat {
-  id          Int          @id @default(autoincrement())
-  name        String       @db.VarChar(255)
-  stamnavn    String       @db.VarChar(255)
-  pedigreeurl String?      @db.VarChar(255)
-  description String?      @db.VarChar(500)
-  birth       String       @db.VarChar(255)
-  gender      String       @db.VarChar(255)
+  id          Int        @id @default(autoincrement())
+  name        String     @db.VarChar(255)
+  stamnavn    String     @db.VarChar(255)
+  pedigreeurl String?    @db.VarChar(255)
+  description String?    @db.VarChar(500)
+  birth       String     @db.VarChar(255)
+  gender      String     @db.VarChar(255)
   fertile     Boolean
-  father      String       @db.VarChar(255)
-  mother      String       @db.VarChar(255)
-  breeder     String       @db.VarChar(255)
-  owner       String       @db.VarChar(255)
-  slug        String       @db.VarChar(255)
-  nickname    String?      @db.VarChar(50)
+  father      String     @db.VarChar(255)
+  mother      String     @db.VarChar(255)
+  breeder     String     @db.VarChar(255)
+  owner       String     @db.VarChar(255)
+  slug        String     @db.VarChar(255)
+  nickname    String?    @db.VarChar(50)
   CatImage    CatImage[]
-  CatComment  CatComment[]
+  comments    Comment[]
 }
 
 model CatImage {
@@ -80,7 +80,7 @@ model Litter {
   LitterPictureWeek LitterPictureWeek[]
   Tag               Tag[]
   Kitten            Kitten[]
-  LitterComment     LitterComment[]
+  comments          Comment[]
 }
 
 model LitterPictureWeek {
@@ -104,13 +104,13 @@ model Tag {
 }
 
 model BlogPost {
-  id          Int                     @id @default(autoincrement())
-  title       String                  @db.VarChar(255)
-  body        String                  @db.VarChar(255)
-  image_url   String?                 @db.VarChar(255)
-  post_date   DateTime                @db.Date
-  tags        BlogPostToBlogPostTag[]
-  NewsComment NewsComment[]
+  id        Int                     @id @default(autoincrement())
+  title     String                  @db.VarChar(255)
+  body      String                  @db.VarChar(255)
+  image_url String?                 @db.VarChar(255)
+  post_date DateTime                @db.Date
+  tags      BlogPostToBlogPostTag[]
+  comments  Comment[]
 }
 
 model BlogPostTag {
@@ -138,37 +138,19 @@ model ContactMessage {
   subject   String   @db.VarChar(255)
 }
 
-model NewsComment {
-  id        Int      @id @default(autoincrement())
+model Comment {
+  id        Int       @id @default(autoincrement())
   user_id   String
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  post_id   Int
-  Post      BlogPost @relation(fields: [post_id], references: [id], onDelete: Cascade)
-  comment   String   @db.VarChar(500)
-  email     String?  @db.VarChar(101)
-  createdAt DateTime @default(now())
-}
-
-model LitterComment {
-  id        Int      @id @default(autoincrement())
-  user_id   String
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  litter_id Int
-  Litter    Litter   @relation(fields: [litter_id], references: [id], onDelete: Cascade)
-  comment   String   @db.VarChar(500)
-  email     String?  @db.VarChar(101)
-  createdAt DateTime @default(now())
-}
-
-model CatComment {
-  id        Int      @id @default(autoincrement())
-  user_id   String
-  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  cat_id    Int
-  Cat       Cat      @relation(fields: [cat_id], references: [id], onDelete: Cascade)
-  comment   String   @db.VarChar(500)
-  email     String?  @db.VarChar(101)
-  createdAt DateTime @default(now())
+  user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  post_id   Int?
+  Post      BlogPost? @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  litter_id Int?
+  Litter    Litter?   @relation(fields: [litter_id], references: [id], onDelete: Cascade)
+  cat_id    Int?
+  Cat       Cat?      @relation(fields: [cat_id], references: [id], onDelete: Cascade)
+  comment   String    @db.VarChar(500)
+  email     String?   @db.VarChar(101)
+  createdAt DateTime  @default(now())
 }
 
 // Next AUTH models
@@ -200,17 +182,15 @@ model Session {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?         @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          Role            @default(USER)
+  role          Role      @default(USER)
   accounts      Account[]
   sessions      Session[]
-  NewsComment   NewsComment[]
-  LitterComment LitterComment[]
-  CatComment    CatComment[]
+  comments      Comment[]
 }
 
 model VerificationToken {

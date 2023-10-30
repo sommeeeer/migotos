@@ -1,10 +1,12 @@
 import { type Cat, type Prisma } from "@prisma/client";
+import { AnimatePresence } from "framer-motion";
 import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
 import Link from "next/link";
 import CatProfile from "~/components/CatProfile";
 import Footer from "~/components/Footer";
 import KittenProfile from "~/components/KittenProfile";
 import PictureButton from "~/components/PictureButton";
+import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { getBase64 } from "~/lib/getBase64";
 import { db } from "~/server/db";
 import { findName, formatDate } from "~/utils/helpers";
@@ -101,7 +103,7 @@ function LitterPage({
             </p>
           ))}
         </section>
-        <section className="my-6 flex flex-col mx-2 justify-center flex-wrap gap-4 sm:grid sm:grid-cols-3 sm:gap-8 md:flex md:flex-row md:gap-14">
+        <section className="mx-2 my-6 flex flex-col flex-wrap justify-center gap-4 sm:grid sm:grid-cols-3 sm:gap-8 md:flex md:flex-row md:gap-14">
           {litter.Kitten.map((k, i) => (
             <KittenProfile
               key={i}
@@ -124,6 +126,22 @@ function LitterPage({
           </div>
         </section>
       </div>
+      <AnimatePresence>
+        {isLoading && <LoadingSpinner />}
+        {comments?.map((comment) => (
+          <Comment
+            key={comment.id}
+            commentId={comment.id}
+            userId={comment.user.id}
+            avatar_src={comment.user?.image}
+            date={comment.createdAt}
+            name={comment.user.name!}
+            message={comment.comment}
+            session={session ?? null}
+            refetchPosts={refetch}
+          />
+        ))}
+      </AnimatePresence>
       <Footer />
     </>
   );
