@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.0.x"]
 }
 
 datasource db {
@@ -64,23 +65,25 @@ model KittenPictureImage {
 }
 
 model Litter {
-  id                Int                 @id @default(autoincrement())
-  name              String              @db.VarChar(255)
-  pedigreeurl       String?             @db.VarChar(255)
-  mother_img        String              @db.VarChar(255)
-  father_img        String              @db.VarChar(255)
-  mother_name       String              @db.VarChar(255)
-  father_name       String              @db.VarChar(255)
-  mother_stamnavn   String              @db.VarChar(255)
-  father_stamnavn   String              @db.VarChar(255)
-  description       String?             @db.VarChar(2000)
-  slug              String?             @db.VarChar(255)
-  post_image        String?             @db.VarChar(255)
-  born              DateTime            @db.Date
-  LitterPictureWeek LitterPictureWeek[]
-  Tag               Tag[]
-  Kitten            Kitten[]
-  comments          Comment[]
+  id                 Int                 @id @default(autoincrement())
+  name               String              @db.VarChar(255)
+  pedigreeurl        String?             @db.VarChar(255)
+  mother_img         String              @db.VarChar(255)
+  mother_img_blururl String              @db.VarChar(255)
+  father_img         String              @db.VarChar(255)
+  father_img_blururl String              @db.VarChar(255)
+  mother_name        String              @db.VarChar(255)
+  father_name        String              @db.VarChar(255)
+  mother_stamnavn    String              @db.VarChar(255)
+  father_stamnavn    String              @db.VarChar(255)
+  description        String?             @db.VarChar(2000)
+  slug               String?             @db.VarChar(255)
+  post_image         String?             @db.VarChar(255)
+  born               DateTime            @db.Date
+  LitterPictureWeek  LitterPictureWeek[]
+  Tag                Tag[]
+  Kitten             Kitten[]
+  comments           Comment[]
 }
 
 model LitterPictureWeek {
