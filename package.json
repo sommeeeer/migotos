@@ -33,13 +33,11 @@
     "nextjs-progressbar": "^0.0.16",
     "no-scroll": "^2.1.1",
     "npm": "^10.2.1",
-    "plaiceholder": "^3.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.47.0",
     "react-icons": "^4.11.0",
     "react-textarea-autosize": "^8.5.3",
-    "sharp": "^0.32.6",
     "superjson": "^1.13.3",
     "tailwind-merge": "^1.14.0",
     "zod": "^3.22.4"
@@ -53,17 +51,17 @@
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
     "autoprefixer": "^10.4.16",
+    "aws-cdk-lib": "2.101.1",
+    "constructs": "10.2.69",
     "eslint": "^8.52.0",
     "eslint-config-next": "^13.5.6",
     "postcss": "^8.4.31",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
     "prisma": "^5.5.2",
-    "tailwindcss": "^3.3.5",
-    "typescript": "^5.2.2",
     "sst": "^2.32.2",
-    "aws-cdk-lib": "2.101.1",
-    "constructs": "10.2.69"
+    "tailwindcss": "^3.3.5",
+    "typescript": "^5.2.2"
   },
   "ct3aMetadata": {
     "initVersion": "7.20.2"

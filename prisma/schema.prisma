@@ -78,8 +78,8 @@ model Litter {
   slug               String?             @db.VarChar(255)
   post_image         String?             @db.VarChar(255)
   born               DateTime            @db.Date
-  mother_img_blururl String?             @db.VarChar(255)
-  father_img_blururl String?             @db.VarChar(255)
+  mother_img_blururl String              @db.VarChar(255)
+  father_img_blururl String              @db.VarChar(255)
   comments           Comment[]
   Kitten             Kitten[]
   LitterPictureWeek  LitterPictureWeek[]

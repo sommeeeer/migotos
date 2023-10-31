@@ -9,7 +9,6 @@ import PictureButton from "~/components/PictureButton";
 import Comment from "~/components/Comment";
 import CommentForm from "~/components/CommentForm";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { getBase64 } from "~/lib/getBase64";
 import { db } from "~/server/db";
 import { findName, formatDate } from "~/utils/helpers";
 import { useSession } from "next-auth/react";
@@ -28,16 +27,12 @@ type Props = {
   litter: LitterWithKittensAndTagsAndPictures;
   mother: Cat | null;
   father: Cat | null;
-  motherBlurData: string | undefined;
-  fatherBlurData: string | undefined;
 };
 
 function LitterPage({
   litter,
   mother,
   father,
-  motherBlurData,
-  fatherBlurData,
 }: Props) {
   const { data: session, status } = useSession();
   const {
@@ -98,7 +93,7 @@ function LitterPage({
               tribalName={litter.mother_stamnavn}
               slug={mother_slug}
               classNames="my-8"
-              blurData={motherBlurData}
+              blurData={litter.mother_img_blururl}
             />
             <CatProfile
               imageSrc={litter.father_img}
@@ -106,7 +101,7 @@ function LitterPage({
               tribalName={litter.father_stamnavn}
               slug={father_slug}
               classNames="mb-8"
-              blurData={fatherBlurData}
+              blurData={litter.mother_img_blururl}
             />
           </section>
           {litter.description?.split("\n").map((p, i) => (
@@ -229,16 +224,11 @@ export async function getStaticProps({
     father = null;
   }
 
-  const motherBlurData = await getBase64(litter.mother_img);
-  const fatherBlurData = await getBase64(litter.father_img);
-
   return {
     props: {
       litter,
       mother,
       father,
-      motherBlurData,
-      fatherBlurData,
     },
   };
 }
