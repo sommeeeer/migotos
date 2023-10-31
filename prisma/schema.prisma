@@ -69,9 +69,7 @@ model Litter {
   name               String              @db.VarChar(255)
   pedigreeurl        String?             @db.VarChar(255)
   mother_img         String              @db.VarChar(255)
-  mother_img_blururl String              @db.VarChar(255)
   father_img         String              @db.VarChar(255)
-  father_img_blururl String              @db.VarChar(255)
   mother_name        String              @db.VarChar(255)
   father_name        String              @db.VarChar(255)
   mother_stamnavn    String              @db.VarChar(255)
@@ -80,10 +78,12 @@ model Litter {
   slug               String?             @db.VarChar(255)
   post_image         String?             @db.VarChar(255)
   born               DateTime            @db.Date
+  mother_img_blururl String?             @db.VarChar(255)
+  father_img_blururl String?             @db.VarChar(255)
+  comments           Comment[]
+  Kitten             Kitten[]
   LitterPictureWeek  LitterPictureWeek[]
   Tag                Tag[]
-  Kitten             Kitten[]
-  comments           Comment[]
 }
 
 model LitterPictureWeek {
@@ -144,19 +144,23 @@ model ContactMessage {
 model Comment {
   id        Int       @id @default(autoincrement())
   user_id   String
-  user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   post_id   Int?
-  Post      BlogPost? @relation(fields: [post_id], references: [id], onDelete: Cascade)
   litter_id Int?
-  Litter    Litter?   @relation(fields: [litter_id], references: [id], onDelete: Cascade)
   cat_id    Int?
-  Cat       Cat?      @relation(fields: [cat_id], references: [id], onDelete: Cascade)
   comment   String    @db.VarChar(500)
   email     String?   @db.VarChar(101)
   createdAt DateTime  @default(now())
+  Cat       Cat?      @relation(fields: [cat_id], references: [id], onDelete: Cascade)
+  Litter    Litter?   @relation(fields: [litter_id], references: [id], onDelete: Cascade)
+  Post      BlogPost? @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([cat_id], map: "Comment_cat_id_fkey")
+  @@index([litter_id], map: "Comment_litter_id_fkey")
+  @@index([post_id], map: "Comment_post_id_fkey")
+  @@index([user_id], map: "Comment_user_id_fkey")
 }
 
-// Next AUTH models
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -170,10 +174,10 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Session {
@@ -182,6 +186,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Session_userId_fkey")
 }
 
 model User {
@@ -192,8 +198,8 @@ model User {
   image         String?
   role          Role      @default(USER)
   accounts      Account[]
-  sessions      Session[]
   comments      Comment[]
+  sessions      Session[]
 }
 
 model VerificationToken {
