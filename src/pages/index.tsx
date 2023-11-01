@@ -1,9 +1,8 @@
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import type { GetStaticPropsResult } from "next/types";
 import LitterProfile from "~/components/LitterProfile";
 import NewsCard from "~/components/ui/NewsCard";
 import { db } from "~/server/db";
-import { popupCenter } from "~/utils/helpers";
 import type { BlogPostWithTags, LitterWithTags } from "~/utils/types";
 
 type Props = {
