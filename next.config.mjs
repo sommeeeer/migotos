@@ -12,7 +12,12 @@ const config = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "www.migotos.com",
+        hostname: "**.migotos.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "migotos.com",
         pathname: "/**",
       },
       {
