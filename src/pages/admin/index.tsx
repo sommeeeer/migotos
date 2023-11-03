@@ -12,7 +12,7 @@ export default function Admin() {
   }
 
   if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized. You can't access this page.</div>;
+    return <div>Unauthorized. You cant access this page.</div>;
   }
   return <Layout>hi</Layout>;
 }

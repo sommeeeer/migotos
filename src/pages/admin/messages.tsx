@@ -5,6 +5,7 @@ import type { GetServerSidePropsResult } from "next";
 import { db } from "~/server/db";
 import { format } from "date-fns";
 import { BiMessageAltDetail } from "react-icons/bi";
+import { Button } from "~/components/ui/Button";
 
 type MessagesProps = {
   messages: ContactMessage[];
