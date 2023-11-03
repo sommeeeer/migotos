@@ -1,7 +1,10 @@
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { type NextRouter, useRouter } from "next/router";
+import { popupCenter } from "~/utils/helpers";
+import LoadingSpinner from "./ui/LoadingSpinner";
 
 interface NavbarProps {
   isOpen: boolean;
@@ -10,15 +13,7 @@ interface NavbarProps {
 
 function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
   const router = useRouter();
-  const links = [
-    "About",
-    "Cats",
-    "Kittens",
-    "News",
-    "Contact",
-    "Login",
-    "Instagram",
-  ];
+  const links = ["About", "Cats", "Kittens", "News", "Contact", "Instagram"];
 
   return (
     <AnimatePresence>
@@ -40,6 +35,7 @@ function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
                 closeMobileMenu={closeMobileMenu}
               />
             ))}
+            <LoginNavButton closeMobileMenu={closeMobileMenu} />
           </nav>
         </motion.div>
       ) : (
@@ -53,6 +49,7 @@ function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
               closeMobileMenu={closeMobileMenu}
             />
           ))}
+          <LoginNavButton closeMobileMenu={closeMobileMenu} />
         </nav>
       )}
     </AnimatePresence>
@@ -88,6 +85,38 @@ function NavItem({
     >
       {text}
     </Link>
+  );
+}
+
+function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
+  const { data: session, status } = useSession();
+
+  const isLoading = status === "loading";
+
+  function Login() {
+    popupCenter("/google-signin", "Google Sign In"), closeMobileMenu();
+  }
+
+  function Logout() {
+    void signOut();
+  }
+
+  return (
+    <button
+      onClick={session ? Logout : Login}
+      disabled={isLoading}
+      className="mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg md:hover:text-hoverbg"
+    >
+      {isLoading ? (
+        <>
+          <LoadingSpinner className="mr-3" />
+        </>
+      ) : session ? (
+        "Logout"
+      ) : (
+        "Login"
+      )}
+    </button>
   );
 }
 
