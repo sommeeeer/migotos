@@ -1,4 +1,4 @@
-import { Role, type User } from "@prisma/client";
+import { Prisma, Role, type User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import Layout from "../Layout";
 import type { GetServerSidePropsResult } from "next";
@@ -34,8 +34,14 @@ import clsx from "clsx";
 import { FaComments } from "react-icons/fa";
 import Link from "next/link";
 
+type UserWithComment = Prisma.UserGetPayload<{
+  include: {
+    comments: true;
+  };
+}>;
+
 type UsersProps = {
-  users: User[];
+  users: UserWithComment[];
 };
 
 export default function Users({ users }: UsersProps) {
@@ -87,6 +93,7 @@ export default function Users({ users }: UsersProps) {
               <TableHead>Verified email</TableHead>
               <TableHead>Image</TableHead>
               <TableHead>Role</TableHead>
+              <TableHead>Total comments</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -108,6 +115,7 @@ export default function Users({ users }: UsersProps) {
                   />
                 </TableCell>
                 <TableCell>{user.role}</TableCell>
+                <TableCell>{user.comments.length}</TableCell>
                 <TableCell>
                   {format(user.createdAt, "dd/MM/yyyy HH:mm:ss")}
                 </TableCell>
@@ -193,6 +201,9 @@ export async function getServerSideProps(): Promise<
   const users = await db.user.findMany({
     orderBy: {
       role: "desc",
+    },
+    include: {
+      comments: true,
     },
   });
 
