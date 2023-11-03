@@ -11,7 +11,7 @@ type Props = {
 
 export default function Home({ blogPosts, litters }: Props) {
   return (
-    <div className="mt-4 flex flex-col items-center gap-8 p-4">
+    <div className="mt-4 flex flex-col items-center gap-8">
       <h1>Welcome to Migotos</h1>
       <h1 className="font-playfair text-4xl">
         <em>The Latest</em> Litters
