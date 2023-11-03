@@ -35,20 +35,36 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 type MessagesProps = {
   messages: ContactMessage[];
 };
 
 export default function Messages({ messages }: MessagesProps) {
-  const { data: session, status } = useSession();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const { mutate } = api.contact.delete.useMutation({
+    onSuccess: () => {
+      refreshData();
+    },
+    onError: () => {
+      console.log("Error while trying to delete comment");
+    },
+  });
+  // Call this function whenever you want to
+  // refresh props!
+  const refreshData = () => {
+    void router.replace(router.asPath);
+  };
 
   if (!session || session.user.role !== Role.ADMIN) {
     return <div>Unauthorized.</div>;
   }
 
   function deleteMessage(id: number) {
-    console.log(id);
+    mutate(id);
   }
 
   return (
@@ -58,6 +74,7 @@ export default function Messages({ messages }: MessagesProps) {
           <TableCaption>A list of all messages.</TableCaption>
           <TableHeader className="bold bg-gray-50 uppercase text-gray-700">
             <TableRow>
+              <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Subject</TableHead>
               <TableHead>Email</TableHead>
@@ -68,6 +85,7 @@ export default function Messages({ messages }: MessagesProps) {
           <TableBody>
             {messages.map((message) => (
               <TableRow key={message.id} className="text-base">
+                <TableCell>{message.id}</TableCell>
                 <TableCell>{message.name}</TableCell>
                 <TableCell className="max-w-xs overflow-hidden text-ellipsis px-3 py-4">
                   {message.subject}
@@ -125,7 +143,7 @@ export default function Messages({ messages }: MessagesProps) {
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
-                          className="bg-red-500 hover:bg-red-600"
+                            className="bg-red-500 hover:bg-red-600"
                             onClick={() => deleteMessage(message.id)}
                           >
                             Delete

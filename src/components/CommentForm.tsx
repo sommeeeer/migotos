@@ -34,7 +34,6 @@ export default function CommentForm({
 
   const { mutate, isLoading } = api.comment.addComment.useMutation({
     onSuccess: () => {
-      console.log("success");
       reset();
       refetchPosts();
     },

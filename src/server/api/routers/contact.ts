@@ -1,8 +1,9 @@
+import { z } from "zod";
 import { contactSchema } from "~/lib/validators/contact";
 
 import {
   createTRPCRouter,
-  // protectedProcedure,
+  protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 import { db } from "~/server/db";
@@ -19,12 +20,12 @@ export const contactRouter = createTRPCRouter({
     });
     return { success: true, msg };
   }),
-
-  // getAll: publicProcedure.query(({ ctx }) => {
-  //   return ctx.db.example.findMany();
-  // }),
-
-  // getSecretMessage: protectedProcedure.query(() => {
-  //   return "you can now see this secret message!";
-  // }),
+  delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
+    const msg = await db.contactMessage.findFirst({ where: { id: input } });
+    if (!msg) {
+      return { success: false, msg: "Message not found" };
+    }
+    await db.contactMessage.delete({ where: { id: input } });
+    return { success: true, msg };
+  }),
 });
