@@ -1,6 +1,6 @@
 import { Role, type User } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import Layout from "./Layout";
+import Layout from "../Layout";
 import type { GetServerSidePropsResult } from "next";
 import { db } from "~/server/db";
 import { format } from "date-fns";
@@ -31,6 +31,8 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import clsx from "clsx";
+import { FaComments } from "react-icons/fa";
+import Link from "next/link";
 
 type UsersProps = {
   users: User[];
@@ -171,6 +173,9 @@ export default function Users({ users }: UsersProps) {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
+                    <Link href={`/admin/users/${user.id}`}>
+                      <FaComments className="h-8 w-8" />
+                    </Link>
                   </div>
                 </TableCell>
               </TableRow>

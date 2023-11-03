@@ -125,7 +125,7 @@ export default function Messages({ messages }: MessagesProps) {
                     </Dialog>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <button className="hover:-slate-300">
+                        <button>
                           <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
                         </button>
                       </AlertDialogTrigger>

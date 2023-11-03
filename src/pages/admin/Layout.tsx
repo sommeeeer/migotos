@@ -1,20 +1,26 @@
 import Link from "next/link";
 import { MdDashboard } from "react-icons/md";
 import { HiUsers } from "react-icons/hi";
-import { BiNews, BiSolidCat } from "react-icons/bi";
+import { BiMessageSquareDetail, BiNews, BiSolidCat } from "react-icons/bi";
 import { FaCat } from "react-icons/fa";
 import { useRouter } from "next/router";
 import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
+import { Toaster } from "~/components/ui/toaster";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  
+
   return (
     <div className="flex h-screen self-stretch">
+      <Toaster />
+
       {/* Left-side menu */}
       <div className="w-1/5 rounded-sm bg-zinc-800 p-4 text-white">
-        <h1 className="text-2xl font-bold">Admin</h1>
+        <h1 className="text-2xl font-bold">
+          {router.pathname.split("/").at(-1)![0]?.toUpperCase() +
+            router.pathname.split("/").at(-1)!.slice(1)}
+        </h1>
         <ul className="mt-4">
           <li className="mb-2">
             <Link
@@ -56,7 +62,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 ),
               )}
             >
-              <HiUsers className="mr-2 h-6 w-6" />
+              <BiMessageSquareDetail className="mr-2 h-6 w-6" />
               Messages
             </Link>
           </li>
