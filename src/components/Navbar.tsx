@@ -5,6 +5,7 @@ import Link from "next/link";
 import { type NextRouter, useRouter } from "next/router";
 import { popupCenter } from "~/utils/helpers";
 import LoadingSpinner from "./ui/LoadingSpinner";
+import { Role } from "@prisma/client";
 
 interface NavbarProps {
   isOpen: boolean;
@@ -79,8 +80,8 @@ function NavItem({
       className={clsx(
         "mr-4 text-3xl font-medium md:text-lg",
         isActive
-          ? "pointer-events-none text-zinc-500 md:text-hoverbg"
-          : "transition-colors duration-300 hover:text-zinc-400 md:hover:text-hoverbg",
+          ? "md:text-hoverbg pointer-events-none text-zinc-500"
+          : "md:hover:text-hoverbg transition-colors duration-300 hover:text-zinc-400",
       )}
     >
       {text}
@@ -101,11 +102,45 @@ function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
     void signOut();
   }
 
+  function Button() {
+    return (
+      <button
+        onClick={session ? Logout : Login}
+        disabled={isLoading}
+        className="md:hover:text-hoverbg mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg"
+      >
+        {isLoading ? (
+          <>
+            <LoadingSpinner className="mr-3" />
+          </>
+        ) : session ? (
+          "Logout"
+        ) : (
+          "Login"
+        )}
+      </button>
+    );
+  }
+
+  if (session?.user.role === Role.ADMIN) {
+    return (
+      <>
+        <Button />
+
+        <Link
+          href="/admin"
+          onClick={closeMobileMenu}
+          className={clsx("mr-4 text-3xl font-medium md:text-lg")}
+        >Admin</Link>
+      </>
+    );
+  }
+
   return (
     <button
       onClick={session ? Logout : Login}
       disabled={isLoading}
-      className="mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg md:hover:text-hoverbg"
+      className="md:hover:text-hoverbg mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg"
     >
       {isLoading ? (
         <>

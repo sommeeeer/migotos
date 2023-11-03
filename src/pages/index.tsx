@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/react";
 import type { GetStaticPropsResult } from "next/types";
 import LitterProfile from "~/components/LitterProfile";
 import NewsCard from "~/components/ui/NewsCard";
@@ -11,8 +10,6 @@ type Props = {
 };
 
 export default function Home({ blogPosts, litters }: Props) {
-  const { data: session, status } = useSession();
-
   return (
     <div className="mt-4 flex flex-col items-center gap-8 p-4">
       <h1>Welcome to Migotos</h1>
