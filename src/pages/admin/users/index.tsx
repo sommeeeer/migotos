@@ -33,6 +33,7 @@ import Image from "next/image";
 import clsx from "clsx";
 import { FaComments } from "react-icons/fa";
 import Link from "next/link";
+import { cn } from "~/lib/utils";
 
 type UserWithComment = Prisma.UserGetPayload<{
   include: {
@@ -151,8 +152,14 @@ export default function Users({ users }: UsersProps) {
                     </AlertDialog>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <button className="hover:-slate-300">
-                          <RiAdminFill className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
+                        <button>
+                          <RiAdminFill
+                            className={cn(
+                              "h-8 w-8 transition-colors duration-200 hover:text-zinc-600",
+                              user.role === Role.ADMIN &&
+                                "fill-gray-500 hover:fill-red-500",
+                            )}
+                          />
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
@@ -182,7 +189,7 @@ export default function Users({ users }: UsersProps) {
                       </AlertDialogContent>
                     </AlertDialog>
                     <Link href={`/admin/users/${user.id}`}>
-                      <FaComments className="h-8 w-8" />
+                      <FaComments className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
                     </Link>
                   </div>
                 </TableCell>

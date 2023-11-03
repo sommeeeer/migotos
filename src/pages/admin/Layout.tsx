@@ -10,6 +10,15 @@ import { Toaster } from "~/components/ui/toaster";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const splittedPath = router.pathname.split("/");
+  console.log(splittedPath)
+  let heading = "Dashboard";
+  if (splittedPath.length <= 3) {
+    heading =
+      splittedPath.at(-1)![0]?.toUpperCase() + splittedPath.at(-1)!.slice(1);
+  } else {
+    heading = splittedPath.at(2)![0]?.toUpperCase() + splittedPath.at(2)!.slice(1);
+  }
 
   return (
     <div className="flex h-screen self-stretch">
@@ -17,10 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Left-side menu */}
       <div className="w-1/5 rounded-sm bg-zinc-800 p-4 text-white">
-        <h1 className="text-2xl font-bold">
-          {router.pathname.split("/").at(-1)![0]?.toUpperCase() +
-            router.pathname.split("/").at(-1)!.slice(1)}
-        </h1>
+        <h1 className="text-2xl font-bold">{heading}</h1>
         <ul className="mt-4">
           <li className="mb-2">
             <Link
