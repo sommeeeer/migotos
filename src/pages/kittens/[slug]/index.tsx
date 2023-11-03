@@ -29,11 +29,7 @@ type Props = {
   father: Cat | null;
 };
 
-function LitterPage({
-  litter,
-  mother,
-  father,
-}: Props) {
+function LitterPage({ litter, mother, father }: Props) {
   const { data: session, status } = useSession();
   const {
     isLoading,
@@ -61,7 +57,7 @@ function LitterPage({
 
   const pictureWeeks = litter.LitterPictureWeek.map((week) => (
     <PictureButton
-      label={week.name}
+      label={week.name.replace("-", " ")}
       url={`${litter.slug}/pictures/${week.name}`}
       key={week.id}
     />
@@ -83,7 +79,7 @@ function LitterPage({
               rel="noopener noreferrer"
               target="_blank"
             >
-              <p className="uppercas text-lg text-[#847143]">PEDIGREE</p>
+              <p className="text-lg uppercase text-[#847143]">PEDIGREE</p>
             </Link>
           )}
           <section className="flex flex-col md:flex-row md:items-end md:gap-20">
