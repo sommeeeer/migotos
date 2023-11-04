@@ -11,7 +11,6 @@ import { Toaster } from "~/components/ui/toaster";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const splittedPath = router.pathname.split("/");
-  console.log(splittedPath)
   let heading = "Dashboard";
   if (splittedPath.length <= 3) {
     heading =
@@ -19,6 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   } else {
     heading = splittedPath.at(2)![0]?.toUpperCase() + splittedPath.at(2)!.slice(1);
   }
+
 
   return (
     <div className="flex h-screen self-stretch">
