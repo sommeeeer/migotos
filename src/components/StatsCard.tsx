@@ -2,6 +2,7 @@ import { FaCat, FaComments } from "react-icons/fa";
 import { BiMessageSquareDetail, BiNews, BiSolidCat } from "react-icons/bi";
 import { HiUsers } from "react-icons/hi";
 import { type AdminProps } from "~/pages/admin";
+import { BsImages } from "react-icons/bs";
 
 export default function StatsCard({ counts }: AdminProps) {
   return (
@@ -26,6 +27,7 @@ export default function StatsCard({ counts }: AdminProps) {
             <span className="text-blue-500">67</span>
             <div className="flex items-center gap-2">
               <span>Blogposts</span>
+              <BiNews />
             </div>
             <span className="text-blue-500">8</span>
             <div className="flex items-center gap-2">
@@ -48,6 +50,30 @@ export default function StatsCard({ counts }: AdminProps) {
             <div className="flex items-center gap-2">
               <span>Messages</span>
               <BiMessageSquareDetail />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <h4 className="w-24 border-b-2 border-dotted border-b-slate-200 text-lg text-gray-600">
+            Photos
+          </h4>
+          <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-2 text-xl">
+            <span className="text-blue-500">{counts.catImagesCount}</span>
+            <div className="flex items-center gap-2">
+              <span>Cat images</span>
+              <FaCat />
+            </div>
+            <span className="text-blue-500">{counts.litterImagesCount}</span>
+            <div className="flex items-center gap-2">
+              <span>Kitten images</span>
+              <BiSolidCat />
+            </div>
+            <span className="text-blue-700">
+              = {counts.litterImagesCount + counts.catImagesCount}
+            </span>
+            <div className="flex items-center gap-2">
+              <span>Total images</span>
+              <BsImages />
             </div>
           </div>
         </div>
