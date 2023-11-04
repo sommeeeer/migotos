@@ -109,7 +109,7 @@ model Tag {
 model BlogPost {
   id        Int                     @id @default(autoincrement())
   title     String                  @db.VarChar(255)
-  body      String                  @db.VarChar(255)
+  body      String                  @db.VarChar(2000)
   image_url String?                 @db.VarChar(255)
   post_date DateTime                @db.Date
   tags      BlogPostToBlogPostTag[]
