@@ -48,3 +48,15 @@ export function popupCenter(url: string, title: string) {
   );
   newWindow?.focus();
 }
+
+export async function uploadS3(file: File, uploadUrl: string) {
+  const image = await fetch(uploadUrl, {
+    body: file,
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type,
+      "Content-Disposition": `attachment; filename="${file.name}"`,
+    },
+  });
+  return image;
+}

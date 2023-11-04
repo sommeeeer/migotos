@@ -25,6 +25,12 @@ const config = {
         hostname: "lh3.googleusercontent.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname:
+          "lillemagga-newsite-site-publicbucket5c3dbab0-1xax511ruu4gv.s3.eu-north-1.amazonaws.com",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {
