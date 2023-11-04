@@ -12,14 +12,14 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import LoginButton from "~/components/LoginButton";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 type Props = {
   blogPost: BlogPostWithTags;
 };
 
 function BlogPost({ blogPost }: Props) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const {
     isLoading,
     data: comments,
@@ -50,18 +50,20 @@ function BlogPost({ blogPost }: Props) {
             </div>
           </div>
         </header>
-        <p className="whitespace-break-spaces py-2 text-base max-w-2xl">
+        <p className="max-w-2xl whitespace-break-spaces py-2 text-base leading-loose">
           {blogPost.body.trim()}
         </p>
-        <Image
-          src={blogPost.image_url ?? ""}
-          width={384}
-          height={167}
-          alt={`${blogPost.title} image`}
-          quality={100}
-        />
+        {blogPost.image_url && (
+          <Image
+            src={blogPost.image_url}
+            width={384}
+            height={167}
+            alt={`${blogPost.title} image`}
+            quality={100}
+          />
+        )}
         <div className="mb-4 w-full border-t border-zinc-200" />
-        <div className="flex flex-col gap-2 px-2 w-full">
+        <div className="flex w-full flex-col gap-2 px-2">
           <h1 className="text-lg uppercase text-[#777777]">
             {comments?.length ?? "0"} comments
           </h1>
