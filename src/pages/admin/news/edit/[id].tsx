@@ -139,6 +139,13 @@ export default function EditBlogPost({
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!form.formState.isDirty) {
+      toast({
+        variant: "destructive",
+        description: "No changes detected.",
+      });
+      return;
+    }
     const { title, body, post_date } = values;
     if (!title || !body || !post_date) {
       toast({
