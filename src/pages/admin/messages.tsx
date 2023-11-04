@@ -117,7 +117,7 @@ export default function Messages({ messages }: MessagesProps) {
                               </span>
                             </a>
                           </div>
-                          <DialogDescription className="pt-4 text-lg  text-gray-800 ">
+                          <DialogDescription className="whitespace-break-spaces pt-4  text-lg text-gray-800">
                             {message.message}
                           </DialogDescription>
                         </DialogHeader>
