@@ -64,8 +64,7 @@ export default function Users({ users }: UsersProps) {
       console.log("Error while trying to give admin to user");
     },
   });
-  // Call this function whenever you want to
-  // refresh props!
+  
   const refreshData = () => {
     void router.replace(router.asPath);
   };

@@ -1,17 +1,13 @@
-import { type BlogPost, Role, type BlogPostTag } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
 
-import Layout from "../../Layout";
+import Layout from "../Layout";
 import { format } from "date-fns";
-import { db } from "~/server/db";
-import {
-  type GetServerSidePropsContext,
-  type GetServerSidePropsResult,
-} from "next/types";
-import { AiFillEdit } from "react-icons/ai";
+import { type GetServerSidePropsResult } from "next/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
+
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -43,11 +39,10 @@ import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
 import { uploadS3 } from "~/utils/helpers";
+import { MdOutlinePostAdd } from "react-icons/md";
 
-type EditBlogPostProps = {
-  blogpost: BlogPost;
+type NewBlogPostProps = {
   uploadUrl: string;
-  tags: BlogPostTag[];
 };
 
 const formSchema = z.object({
@@ -59,52 +54,43 @@ const formSchema = z.object({
     .string()
     .min(5, { message: "Body must be atleast 5 characters long." })
     .max(2000, { message: "Body must be less than 2000 characters long." }),
-  post_date: z
-    .date()
-    .max(new Date(), { message: "Date cannot be in the future." }),
+  post_date: z.date(),
 });
 
-export default function EditBlogPost({
-  blogpost,
-  uploadUrl,
-  tags,
-}: EditBlogPostProps) {
+export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  console.log(tags);
 
   const [isUploading, setIsUploading] = useState(false);
   const [file, setFile] = useState<File | undefined>(undefined);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(
-    blogpost.image_url ?? undefined,
-  );
-  const [imageKey, setImageKey] = useState(0);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const [imageKey, setImageKey] = useState(0); // Initialize with an initial key
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: blogpost.title,
-      body: blogpost.body,
-      post_date: blogpost.post_date,
+      body: "",
+      post_date: new Date(),
+      title: "",
     },
   });
 
-  const { mutate, isLoading } = api.blogpost.updateBlogPost.useMutation({
+  const { mutate, isLoading } = api.blogpost.createBlogPost.useMutation({
     onSuccess: (data) => {
       console.log(data);
       toast({
         variant: "default",
         title: "Success",
         color: "green",
-        description: "Blogpost updated successfully.",
+        description: "Blogpost successfully added.",
       });
-      void router.replace(router.asPath);
+      void router.back();
     },
     onError: () => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Something went wrong while updating. Please try again",
+        description: "Something went wrong. Please try again.",
       });
     },
   });
@@ -145,23 +131,15 @@ export default function EditBlogPost({
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!form.formState.isDirty) {
-      toast({
-        variant: "destructive",
-        description: "No changes detected.",
-      });
-      return;
-    }
     const { title, body, post_date } = values;
-    if (!title || !body || !post_date) {
+    if (!title || !body || !post_date || !imageUrl) {
       toast({
         variant: "destructive",
-        description: "Please fill out all fields.",
+        description: "Please fill out all fields and upload an image.",
       });
       return;
     }
     mutate({
-      id: blogpost.id,
       title,
       body,
       post_date: addHours(post_date, 2),
@@ -172,8 +150,8 @@ export default function EditBlogPost({
   return (
     <Layout>
       <div className="flex items-center gap-2">
-        <h1 className="text-2xl">Edit Blogpost (ID: {blogpost.id})</h1>
-        <AiFillEdit className="mb-4 h-12 w-12" />
+        <h1 className="text-2xl">Create New BlogPost</h1>
+        <MdOutlinePostAdd className="mb-4 h-12 w-12" />
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
         <Form {...form}>
@@ -185,7 +163,7 @@ export default function EditBlogPost({
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input disabled={isLoading} {...field} />
+                    <Input {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -214,8 +192,8 @@ export default function EditBlogPost({
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
                           disabled={isLoading}
+                          variant={"outline"}
                           className={cn(
                             "w-[240px] pl-3 text-left font-normal",
                             !field.value && "text-muted-foreground",
@@ -254,14 +232,14 @@ export default function EditBlogPost({
                   src={`${imageUrl}?version=${imageKey}}`}
                   width={300}
                   height={300}
-                  alt={`${blogpost.title} image`}
+                  alt={`blogpost image`}
                   quality={100}
                 />
               ) : (
                 <span className="text-lg">NULL</span>
               )}
               <Label>URL to Image</Label>
-              <Input value={imageUrl ?? ""} readOnly disabled={isLoading} />
+              <Input value={imageUrl ?? ""} readOnly />
               <Label>Select New Image</Label>
               <Input
                 type="file"
@@ -285,7 +263,7 @@ export default function EditBlogPost({
                 Upload
               </Button>
               <div className="mt-4 flex gap-1">
-                <Button type="button" onClick={() => router.back()}>
+                <Button type="button" onClick={() => router.back()} disabled={isLoading}>
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isLoading}>
@@ -303,31 +281,9 @@ export default function EditBlogPost({
   );
 }
 
-export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
-): Promise<GetServerSidePropsResult<EditBlogPostProps>> {
-  if (!ctx.query?.id || typeof ctx.query.id !== "string") {
-    return {
-      notFound: true,
-    };
-  }
-
-  const blogpost = await db.blogPost.findFirst({
-    where: {
-      id: +ctx.query.id,
-    },
-  });
-  if (!blogpost) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const tags = await db.blogPostTag.findMany({
-    orderBy: {
-      value: "desc",
-    },
-  });
+export async function getServerSideProps(): Promise<
+  GetServerSidePropsResult<NewBlogPostProps>
+> {
   const command = new PutObjectCommand({
     ACL: "public-read",
     Key: crypto.randomUUID(),
@@ -337,9 +293,7 @@ export async function getServerSideProps(
 
   return {
     props: {
-      blogpost,
       uploadUrl,
-      tags,
     },
   };
 }
