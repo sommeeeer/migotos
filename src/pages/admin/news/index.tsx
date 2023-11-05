@@ -69,7 +69,7 @@ export default function News({ blogposts }: NewsProps) {
         <Link
           className={twMerge(
             buttonVariants(),
-            "bg-green-400 hover:bg-green-600",
+            "bg-green-600 hover:bg-green-700",
           )}
           href={"/admin/news/new"}
         >
