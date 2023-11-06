@@ -9,6 +9,8 @@ import { type Dispatch, type SetStateAction, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 
 import { AiOutlineCloseCircle } from "react-icons/ai";
+import { FaFacebook } from "react-icons/fa";
+import colors from "tailwindcss/colors";
 
 interface NavbarProps {
   isOpen: boolean;
@@ -106,7 +108,7 @@ function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
   }
 
   function LoginLogoutButton() {
-    const [showLoginPanel, setShowLoginPanel] = useState(false);
+    const [showLoginPanel, setShowLoginPanel] = useState(true);
 
     return (
       <div className="relative">
@@ -129,18 +131,25 @@ function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
-            className="absolute -left-1/2 flex flex-col items-start rounded-xl bg-gray-200 p-4 transition-all duration-300 ease-out"
+            className="absolute -left-2/3 flex h-36 w-36 flex-col items-start rounded-xl bg-gray-200 p-4 transition-all duration-300 ease-out"
           >
             <button
               onClick={() => setShowLoginPanel(false)}
               className="absolute right-0 top-0 p-1 hover:scale-110"
             >
-              <AiOutlineCloseCircle />
+              <AiOutlineCloseCircle className="h-6 w-6"/>
             </button>
-            <span className="block">Login via</span>
-            <button className="group" onClick={() => signIn("google")}>
-              <FcGoogle className="h-16 w-16 self-center group-hover:scale-105" />
-            </button>
+            <div className="flex gap-2 self-center justify-self-center h-full">
+              <button className="group" onClick={() => signIn("google")}>
+                <FcGoogle className="h-16 w-16 group-hover:scale-105" />
+              </button>
+              <button className="group" onClick={() => signIn("google")}>
+                <FaFacebook
+                  color={colors.blue[700]}
+                  className="h-14 w-14 group-hover:scale-105"
+                />
+              </button>
+            </div>
           </motion.div>
         )}
       </div>
