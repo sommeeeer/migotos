@@ -1,6 +1,6 @@
 import { type ContactMessage, Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import Layout from "./Layout";
+import Layout from "../Layout";
 import type { GetServerSidePropsResult } from "next";
 import { db } from "~/server/db";
 import { format } from "date-fns";

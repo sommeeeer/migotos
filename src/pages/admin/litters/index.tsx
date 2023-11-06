@@ -1,9 +1,9 @@
 import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
 
-import Layout from "./Layout";
+import Layout from "../Layout";
 
-export default function Cats() {
+export default function Litters() {
   const { data: session, status } = useSession();
 
   if (!session || session.user.role !== Role.ADMIN) {

@@ -256,6 +256,7 @@ export default function EditBlogPost({
                   height={300}
                   alt={`${blogpost.title} image`}
                   quality={100}
+                  priority
                 />
               ) : (
                 <span className="text-lg">NULL</span>
