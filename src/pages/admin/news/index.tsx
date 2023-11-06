@@ -32,7 +32,7 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { api } from "~/utils/api";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 type NewsProps = {
   blogposts: BlogPost[];
