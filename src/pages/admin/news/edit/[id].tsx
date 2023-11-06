@@ -153,7 +153,7 @@ export default function EditBlogPost({
       id: blogpost.id,
       title,
       body,
-      post_date: addHours(post_date, 1),
+      post_date: addHours(post_date, 2),
       image_url: imageUrl ?? null,
     });
   }
