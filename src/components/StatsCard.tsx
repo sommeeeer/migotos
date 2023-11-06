@@ -14,22 +14,22 @@ export default function StatsCard({ counts }: AdminProps) {
             Content
           </h4>
           <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-2 text-xl">
-            <span className="text-blue-500">52</span>
+            <span className="text-blue-500">{counts.catsCount}</span>
             <div className="flex items-center gap-2">
               <span>Cats</span>
               <FaCat />
             </div>
-            <span className="text-blue-500">83</span>
+            <span className="text-blue-500">{counts.litterCount}</span>
             <div className="flex items-center gap-2">
               <span>Litters</span>
               <BiSolidCat />
             </div>
-            <span className="text-blue-500">67</span>
+            <span className="text-blue-500">{counts.blogCount}</span>
             <div className="flex items-center gap-2">
               <span>Blogposts</span>
               <BiNews />
             </div>
-            <span className="text-blue-500">8</span>
+            <span className="text-blue-500">{counts.usersCount}</span>
             <div className="flex items-center gap-2">
               <span>Users</span>
               <HiUsers />
