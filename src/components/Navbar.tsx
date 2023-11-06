@@ -1,11 +1,14 @@
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
-import { signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { type NextRouter, useRouter } from "next/router";
-import { popupCenter } from "~/utils/helpers";
 import LoadingSpinner from "./ui/LoadingSpinner";
 import { Role } from "@prisma/client";
+import { type Dispatch, type SetStateAction, useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+
+import { AiOutlineCloseCircle } from "react-icons/ai";
 
 interface NavbarProps {
   isOpen: boolean;
@@ -80,8 +83,8 @@ function NavItem({
       className={clsx(
         "mr-4 text-3xl font-medium md:text-lg",
         isActive
-          ? "md:text-hoverbg pointer-events-none text-zinc-500"
-          : "md:hover:text-hoverbg transition-colors duration-300 hover:text-zinc-400",
+          ? "pointer-events-none text-zinc-500 md:text-hoverbg"
+          : "transition-colors duration-300 hover:text-zinc-400 md:hover:text-hoverbg",
       )}
     >
       {text}
@@ -94,65 +97,72 @@ function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
 
   const isLoading = status === "loading";
 
-  function Login() {
-    popupCenter("/google-signin", "Google Sign In"), closeMobileMenu();
+  function Login(setShowLoginPanel: Dispatch<SetStateAction<boolean>>) {
+    setShowLoginPanel((prevState) => !prevState);
   }
 
   function Logout() {
     void signOut();
   }
 
-  function Button() {
+  function LoginLogoutButton() {
+    const [showLoginPanel, setShowLoginPanel] = useState(false);
+
     return (
-      <button
-        onClick={session ? Logout : Login}
-        disabled={isLoading}
-        className="md:hover:text-hoverbg mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg"
-      >
-        {isLoading ? (
-          <>
-            <LoadingSpinner className="mr-3" />
-          </>
-        ) : session ? (
-          "Logout"
-        ) : (
-          "Login"
+      <div className="relative">
+        <button
+          onClick={session ? Logout : () => Login(setShowLoginPanel)}
+          disabled={isLoading}
+          className="mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg md:hover:text-hoverbg"
+        >
+          {isLoading ? (
+            <>
+              <LoadingSpinner className="mr-3" />
+            </>
+          ) : session ? (
+            "Logout"
+          ) : (
+            "Login"
+          )}
+        </button>
+        {showLoginPanel && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
+            className="absolute -left-1/2 flex flex-col items-start rounded-xl bg-gray-200 p-4 transition-all duration-300 ease-out"
+          >
+            <button
+              onClick={() => setShowLoginPanel(false)}
+              className="absolute right-0 top-0 p-1 hover:scale-110"
+            >
+              <AiOutlineCloseCircle />
+            </button>
+            <span className="block">Login via</span>
+            <button className="group" onClick={() => signIn("google")}>
+              <FcGoogle className="h-16 w-16 self-center group-hover:scale-105" />
+            </button>
+          </motion.div>
         )}
-      </button>
+      </div>
     );
   }
 
   if (session?.user.role === Role.ADMIN) {
     return (
       <>
-        <Button />
-
+        <LoginLogoutButton />
         <Link
           href="/admin"
           onClick={closeMobileMenu}
           className={clsx("mr-4 text-3xl font-medium md:text-lg")}
-        >Admin</Link>
+        >
+          Admin
+        </Link>
       </>
     );
   }
 
-  return (
-    <button
-      onClick={session ? Logout : Login}
-      disabled={isLoading}
-      className="md:hover:text-hoverbg mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg"
-    >
-      {isLoading ? (
-        <>
-          <LoadingSpinner className="mr-3" />
-        </>
-      ) : session ? (
-        "Logout"
-      ) : (
-        "Login"
-      )}
-    </button>
-  );
+  return <LoginLogoutButton />;
 }
 
 export default Navbar;
