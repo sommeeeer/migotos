@@ -7,6 +7,7 @@
  * need to use are documented accordingly near the end.
  */
 
+import { Role } from "@prisma/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
@@ -109,8 +110,11 @@ export const publicProcedure = t.procedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session?.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!ctx.session?.user || ctx.session.user.role !== Role.ADMIN) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You are not authorized",
+    });
   }
   return next({
     ctx: {

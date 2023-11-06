@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { contactSchema } from "~/lib/validators/contact";
 
@@ -18,14 +19,17 @@ export const contactRouter = createTRPCRouter({
         message: input.message,
       },
     });
-    return { success: true, msg };
+    return msg;
   }),
   delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
     const msg = await db.contactMessage.findFirst({ where: { id: input } });
     if (!msg) {
-      return { success: false, msg: "Message not found" };
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Message not found",
+      });
     }
     await db.contactMessage.delete({ where: { id: input } });
-    return { success: true, msg };
+    return msg;
   }),
 });
