@@ -11,7 +11,6 @@ import {
 import { AiFillEdit } from "react-icons/ai";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import z from "zod";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -43,6 +42,8 @@ import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
 import { uploadS3 } from "~/utils/helpers";
+import { editBlogPostSchema } from "~/lib/validators/blogpost";
+import { type z } from "zod";
 
 type EditBlogPostProps = {
   blogpost: BlogPost;
@@ -50,28 +51,12 @@ type EditBlogPostProps = {
   tags: BlogPostTag[];
 };
 
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(5, { message: "Title must be atleast 5 characters long." })
-    .max(255, { message: "Title must be less than 255 characters long." }),
-  body: z
-    .string()
-    .min(5, { message: "Body must be atleast 5 characters long." })
-    .max(2000, { message: "Body must be less than 2000 characters long." }),
-  post_date: z
-    .date()
-    .max(new Date(), { message: "Date cannot be in the future." }),
-});
-
 export default function EditBlogPost({
   blogpost,
   uploadUrl,
-  tags,
 }: EditBlogPostProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  console.log(tags);
 
   const [isUploading, setIsUploading] = useState(false);
   const [file, setFile] = useState<File | undefined>(undefined);
@@ -80,18 +65,21 @@ export default function EditBlogPost({
   );
   const [imageKey, setImageKey] = useState(0);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof editBlogPostSchema>>({
+    resolver: zodResolver(editBlogPostSchema),
     defaultValues: {
       title: blogpost.title,
       body: blogpost.body,
       post_date: blogpost.post_date,
     },
   });
-
   const { mutate, isLoading } = api.blogpost.updateBlogPost.useMutation({
     onSuccess: (data) => {
-      console.log(data);
+      form.reset({
+        title: data.title,
+        body: data.body,
+        post_date: data.post_date,
+      });
       toast({
         variant: "default",
         title: "Success",
@@ -144,7 +132,7 @@ export default function EditBlogPost({
     }
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof editBlogPostSchema>) {
     if (!form.formState.isDirty) {
       toast({
         variant: "destructive",
@@ -160,11 +148,12 @@ export default function EditBlogPost({
       });
       return;
     }
+
     mutate({
       id: blogpost.id,
       title,
       body,
-      post_date: addHours(post_date, 2),
+      post_date: addHours(post_date, 1),
       image_url: imageUrl ?? null,
     });
   }
