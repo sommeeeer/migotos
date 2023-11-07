@@ -41,12 +41,12 @@ export default function StatsCard({ counts }: AdminProps) {
             Discussions
           </h4>
           <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-2 text-xl">
-            <span className="text-blue-500">15</span>
+            <span className="text-blue-500">{counts.commentsCount}</span>
             <div className="flex items-center gap-2">
               <span>Comments</span>
               <FaComments />
             </div>
-            <span className="text-blue-500">7</span>
+            <span className="text-blue-500">{counts.messageCount}</span>
             <div className="flex items-center gap-2">
               <span>Messages</span>
               <BiMessageSquareDetail />
