@@ -1,10 +1,8 @@
+import { Role } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 import { CommentType } from "~/utils/types";
 
@@ -27,7 +25,7 @@ export const commentRouter = createTRPCRouter({
       });
       return comments;
     }),
-  deleteComment: protectedProcedure
+  deleteComment: publicProcedure
     .input(
       z.object({
         id: z.number(),
@@ -40,10 +38,19 @@ export const commentRouter = createTRPCRouter({
         },
       });
       if (!comment) {
-        throw new Error("Comment not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Comment not found",
+        });
       }
-      if (comment.user_id !== ctx.session.user.id) {
-        throw new Error("You can't delete this comment");
+      if (
+        ctx.session?.user.role !== Role.ADMIN &&
+        comment.user_id !== ctx.session?.user.id
+      ) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to delete this comment",
+        });
       }
       const deletedComment = await db.comment.delete({
         where: {
@@ -52,7 +59,7 @@ export const commentRouter = createTRPCRouter({
       });
       return deletedComment;
     }),
-  addComment: protectedProcedure
+  addComment: publicProcedure
     .input(
       z.object({
         id: z.number(),
@@ -61,6 +68,12 @@ export const commentRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (!ctx.session?.user) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You must be logged in to comment",
+        });
+      }
       const comment = await db.comment.create({
         data: {
           comment: input.comment,
@@ -70,11 +83,4 @@ export const commentRouter = createTRPCRouter({
       });
       return comment;
     }),
-  // getAll: publicProcedure.query(({ ctx }) => {
-  //   return ctx.db.example.findMany();
-  // }),
-
-  // getSecretMessage: protectedProcedure.query(() => {
-  //   return "you can now see this secret message!";
-  // }),
 });
