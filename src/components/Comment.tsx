@@ -5,7 +5,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { api } from "~/utils/api";
 import LoadingSpinner from "./ui/LoadingSpinner";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { Role } from "@prisma/client";
 
 interface CommentProps {
   name: string;
@@ -62,7 +62,7 @@ export default function Comment({
         <span className="text-sm text-[#777777]">
           <time>{formatDistanceToNow(date)} ago</time>
         </span>
-        {session?.user.id === userId && (
+        {(session?.user.id === userId || session?.user.role === Role.ADMIN) && (
           <button
             className="rounded-lg p-1 hover:bg-gray-200"
             onClick={() => deleteComment(commentId)}
