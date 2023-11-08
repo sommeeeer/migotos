@@ -14,7 +14,6 @@ model Cat {
   stamnavn    String     @db.VarChar(255)
   pedigreeurl String?    @db.VarChar(255)
   description String?    @db.VarChar(500)
-  birth       String     @db.VarChar(255)
   gender      String     @db.VarChar(255)
   fertile     Boolean
   father      String     @db.VarChar(255)
@@ -22,7 +21,8 @@ model Cat {
   breeder     String     @db.VarChar(255)
   owner       String     @db.VarChar(255)
   slug        String     @db.VarChar(255)
-  nickname    String?    @db.VarChar(50)
+  nickname    String    @db.VarChar(50)
+  birth       DateTime   @db.Date
   CatImage    CatImage[]
   comments    Comment[]
 }
