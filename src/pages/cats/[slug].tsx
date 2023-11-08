@@ -37,7 +37,7 @@ function Cat({ cat, mother, father }: Props) {
   }
 
   const fertileText = cat.fertile ? "Yes" : "No";
-  const birthFormatted = new Date(cat.birth).toLocaleDateString();
+  const birthFormatted = cat.birth.toLocaleDateString();
 
   return (
     <>
