@@ -10,18 +10,18 @@ datasource db {
 
 model Cat {
   id          Int        @id @default(autoincrement())
-  name        String     @db.VarChar(255)
-  stamnavn    String     @db.VarChar(255)
+  name        String     @db.VarChar(100)
+  stamnavn    String     @db.VarChar(100)
   pedigreeurl String?    @db.VarChar(255)
   description String?    @db.VarChar(500)
-  gender      String     @db.VarChar(255)
+  gender      Gender    
   fertile     Boolean
-  father      String     @db.VarChar(255)
-  mother      String     @db.VarChar(255)
-  breeder     String     @db.VarChar(255)
-  owner       String     @db.VarChar(255)
+  father      String     @db.VarChar(100)
+  mother      String     @db.VarChar(100)
+  breeder     String     @db.VarChar(100)
+  owner       String     @db.VarChar(100)
   slug        String     @db.VarChar(255)
-  nickname    String    @db.VarChar(50)
+  nickname    String     @db.VarChar(50)
   birth       DateTime   @db.Date
   CatImage    CatImage[]
   comments    Comment[]
@@ -214,4 +214,9 @@ model VerificationToken {
 enum Role {
   USER
   ADMIN
+}
+
+enum Gender {
+  Female
+  Male
 }
