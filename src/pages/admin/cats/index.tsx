@@ -1,13 +1,175 @@
-import { Role } from "@prisma/client";
+import { Role, type Cat } from "@prisma/client";
 import { useSession } from "next-auth/react";
 
 import Layout from "../Layout";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/components/ui/table";
+import { db } from "~/server/db";
+import { type GetServerSidePropsResult } from "next/types";
+import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+import Link from "next/link";
+import { buttonVariants } from "~/components/ui/button";
+import { twMerge } from "tailwind-merge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
+import { api } from "~/utils/api";
+import { useRouter } from "next/router";
+import { FaCat } from "react-icons/fa";
+import { format } from "date-fns";
 
-export default function Cats() {
+type CatsProps = {
+  cats: Cat[];
+};
+
+export default function Cats({ cats }: CatsProps) {
   const { data: session, status } = useSession();
+  const router = useRouter();
+  const { mutate: mutateDeleteCat } = api.blogpost.deleteBlogPost.useMutation({
+    onSuccess: () => {
+      refreshData();
+    },
+    onError: () => {
+      console.log("Error while trying to delete comment");
+    },
+  });
 
   if (!session || session.user.role !== Role.ADMIN) {
     return <div>Unauthorized.</div>;
   }
-  return <Layout>hi</Layout>;
+
+  function deleteCat(id: number) {
+    mutateDeleteCat(id);
+  }
+
+  const refreshData = () => {
+    void router.replace(router.asPath);
+  };
+
+  return (
+    <Layout>
+      <div className="mb-4 flex flex-col items-start gap-4 rounded-lg bg-white p-4 shadow">
+        <Link
+          className={twMerge(
+            buttonVariants(),
+            "bg-green-600 hover:bg-green-700",
+          )}
+          href={"/admin/cats/new"}
+        >
+          <FaCat className="mr-1 h-4 w-4" />
+          New Cat
+        </Link>
+        <Table className="max-w-[115rem]">
+          <TableCaption>A list of all cats.</TableCaption>
+          <TableHeader className="bold bg-gray-50 uppercase text-gray-700">
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Nickname</TableHead>
+              <TableHead>Stamnavn</TableHead>
+              <TableHead>PedigreeURL</TableHead>
+              <TableHead>Birth</TableHead>
+              <TableHead>Gender</TableHead>
+              <TableHead>Fertile</TableHead>
+              <TableHead>Breeder</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {cats.map((cat) => (
+              <TableRow key={cat.id} className="text-base">
+                <TableCell>{cat.id}</TableCell>
+                <TableCell>{cat.name}</TableCell>
+                <TableCell>{cat.nickname}</TableCell>
+                <TableCell>{cat.stamnavn}</TableCell>
+                <TableCell className="max-w-[10rem]">
+                  {cat.pedigreeurl ? (
+                    <a
+                      className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+                      href={cat.pedigreeurl}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      Link
+                    </a>
+                  ) : (
+                    <p>NONE</p>
+                  )}
+                </TableCell>
+                <TableCell>{format(cat.birth, "dd/MM/yyyy")}</TableCell>
+                <TableCell>{cat.gender}</TableCell>
+                <TableCell>{cat.fertile ? "Yes" : "No"}</TableCell>
+                <TableCell>{cat.breeder}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                    <Link href={`/admin/cats/edit/${cat.id}`}>
+                      <AiFillEdit className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600" />
+                    </Link>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button className="hover:-slate-300">
+                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
+                        </button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete this cat and remove the data from the server.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-500 hover:bg-red-600"
+                            onClick={() => deleteCat(cat.id)}
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </Layout>
+  );
+}
+
+export async function getServerSideProps(): Promise<
+  GetServerSidePropsResult<CatsProps>
+> {
+  const cats = await db.cat.findMany({
+    orderBy: {
+      birth: "desc",
+    },
+  });
+
+  return {
+    props: {
+      cats,
+    },
+  };
 }
