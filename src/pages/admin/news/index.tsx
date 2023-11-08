@@ -17,7 +17,7 @@ import { type GetServerSidePropsResult } from "next/types";
 import Image from "next/image";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import Link from "next/link";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { buttonVariants } from "~/components/ui/button";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 import {
@@ -39,7 +39,7 @@ type NewsProps = {
 };
 
 export default function News({ blogposts }: NewsProps) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const { mutate: mutateDeleteBlogPost } =
     api.blogpost.deleteBlogPost.useMutation({
