@@ -22,7 +22,7 @@ export const blogpostRouter = createTRPCRouter({
   deleteBlogPost: protectedProcedure
     .input(z.number())
     .mutation(async ({ input }) => {
-      const blogpost = await db.blogPost.findUnique({
+      const blogpost = await db.blogPost.findFirst({
         where: {
           id: input,
         },
