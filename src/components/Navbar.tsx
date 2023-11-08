@@ -108,7 +108,7 @@ function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
   }
 
   function LoginLogoutButton() {
-    const [showLoginPanel, setShowLoginPanel] = useState(true);
+    const [showLoginPanel, setShowLoginPanel] = useState(false);
 
     return (
       <div className="relative">
