@@ -13,7 +13,7 @@ export default function CatsGrid({ cats }: CatsGridProps) {
         return (
           <CatProfile
             key={cat.id}
-            imageSrc={`${image?.src}}`}
+            imageSrc={`${image?.src}`}
             name={cat.name}
             tribalName={cat.stamnavn}
             slug={cat.slug}
