@@ -9,33 +9,34 @@ datasource db {
 }
 
 model Cat {
-  id          Int        @id @default(autoincrement())
-  name        String     @db.VarChar(100)
-  stamnavn    String     @db.VarChar(100)
-  pedigreeurl String?    @db.VarChar(255)
-  description String?    @db.VarChar(500)
-  gender      Gender
-  fertile     Boolean
-  father      String     @db.VarChar(100)
-  mother      String     @db.VarChar(100)
-  breeder     String     @db.VarChar(100)
-  owner       String     @db.VarChar(100)
-  slug        String     @db.VarChar(255)
-  nickname    String     @db.VarChar(50)
-  birth       DateTime   @db.Date
-  CatImage    CatImage[]
-  comments    Comment[]
+  id               Int                @id @default(autoincrement())
+  name             String             @db.VarChar(100)
+  stamnavn         String             @db.VarChar(100)
+  pedigreeurl      String?            @db.VarChar(255)
+  description      String?            @db.VarChar(500)
+  gender           Gender
+  fertile          Boolean
+  father           String             @db.VarChar(100)
+  mother           String             @db.VarChar(100)
+  breeder          String             @db.VarChar(100)
+  owner            String             @db.VarChar(100)
+  slug             String             @db.VarChar(255)
+  nickname         String             @db.VarChar(50)
+  birth            DateTime           @db.Date
+  CatImage         CatImage[]
+  CatImagePriority CatImagePriority[]
+  comments         Comment[]
 }
 
 model CatImage {
-  id       Int    @id @default(autoincrement())
-  cat_id   Int
-  src      String @db.VarChar(255)
-  width    Int
-  height   Int
-  blururl  String @db.VarChar(255)
-  priority Int?
-  Cat      Cat    @relation(fields: [cat_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CatImage_ibfk_1")
+  id               Int                @id @default(autoincrement())
+  cat_id           Int
+  src              String             @db.VarChar(255)
+  width            Int
+  height           Int
+  blururl          String             @db.VarChar(255)
+  Cat              Cat                @relation(fields: [cat_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CatImage_ibfk_1")
+  CatImagePriority CatImagePriority[]
 
   @@index([cat_id], map: "cat_id")
 }
@@ -210,6 +211,18 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model CatImagePriority {
+  id        Int      @id @default(autoincrement())
+  cat_id    Int
+  catimg_id Int
+  priority  Int
+  Cat       Cat      @relation(fields: [cat_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CatImagePriority_ibfk_1")
+  CatImage  CatImage @relation(fields: [catimg_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CatImagePriority_ibfk_2")
+
+  @@index([cat_id], map: "cat_id")
+  @@index([catimg_id], map: "catimg_id")
 }
 
 enum Role {
