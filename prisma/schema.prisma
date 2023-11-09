@@ -14,7 +14,7 @@ model Cat {
   stamnavn    String     @db.VarChar(100)
   pedigreeurl String?    @db.VarChar(255)
   description String?    @db.VarChar(500)
-  gender      Gender    
+  gender      Gender
   fertile     Boolean
   father      String     @db.VarChar(100)
   mother      String     @db.VarChar(100)
@@ -28,13 +28,14 @@ model Cat {
 }
 
 model CatImage {
-  id      Int    @id @default(autoincrement())
-  cat_id  Int
-  src     String @db.VarChar(255)
-  width   Int
-  height  Int
-  blururl String @db.VarChar(255)
-  Cat     Cat    @relation(fields: [cat_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CatImage_ibfk_1")
+  id       Int    @id @default(autoincrement())
+  cat_id   Int
+  src      String @db.VarChar(255)
+  width    Int
+  height   Int
+  blururl  String @db.VarChar(255)
+  priority Int?
+  Cat      Cat    @relation(fields: [cat_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "CatImage_ibfk_1")
 
   @@index([cat_id], map: "cat_id")
 }
