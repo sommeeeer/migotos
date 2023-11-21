@@ -15,7 +15,6 @@ import { Button } from "~/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -39,7 +38,6 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/use-toast";
 import { Checkbox } from "~/components/ui/checkbox";
 import { api } from "~/utils/api";
-import { clear } from "console";
 
 type EditCatProps = {
   cat: Cat;
@@ -67,7 +65,7 @@ export default function EditCat({ cat }: EditCatProps) {
     },
   });
   const { mutate, isLoading } = api.cat.updateCat.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         variant: "default",
         title: "Success",
@@ -90,7 +88,6 @@ export default function EditCat({ cat }: EditCatProps) {
   }
 
   function onSubmit(values: z.infer<typeof editCatSchema>) {
-
     if (!form.formState.isDirty) {
       toast({
         variant: "destructive",
@@ -98,14 +95,14 @@ export default function EditCat({ cat }: EditCatProps) {
       });
       return;
     }
-    console.log('values', values)
-    form.reset({
-      ...values
+    mutate({
+      id: cat.id,
+      ...values,
+      birth: addHours(values.birth, 2),
     });
-    // mutate({
-    //   id: cat.id,
-    //   ...values,
-    // });
+    form.reset({
+      ...values,
+    });
   }
 
   return (

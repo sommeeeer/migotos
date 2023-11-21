@@ -125,7 +125,7 @@ function Cat({ cat, mother, father }: Props) {
           </section>
         </section>
       </div>
-      <section className="flex max-w-5xl flex-col px-4 mt-12 gap-4">
+      <section className="mt-12 flex max-w-5xl flex-col gap-4 px-4">
         <AnimatePresence>
           {isLoading && <LoadingSpinner />}
           {comments?.map((comment) => (

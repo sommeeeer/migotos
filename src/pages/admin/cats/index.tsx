@@ -32,17 +32,24 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { FaCat } from "react-icons/fa";
 import { format } from "date-fns";
+import { toast } from "~/components/ui/use-toast";
 
 type CatsProps = {
   cats: Cat[];
 };
 
 export default function Cats({ cats }: CatsProps) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
-  const { mutate: mutateDeleteCat } = api.blogpost.deleteBlogPost.useMutation({
+  const { mutate: mutateDeleteCat } = api.cat.deleteCat.useMutation({
     onSuccess: () => {
-      refreshData();
+      toast({
+        variant: "default",
+        title: "Success",
+        color: "green",
+        description: "Cat updated successfully.",
+      });
+      void router.replace(router.asPath);
     },
     onError: () => {
       console.log("Error while trying to delete comment");
@@ -56,10 +63,6 @@ export default function Cats({ cats }: CatsProps) {
   function deleteCat(id: number) {
     mutateDeleteCat(id);
   }
-
-  const refreshData = () => {
-    void router.replace(router.asPath);
-  };
 
   return (
     <Layout>
