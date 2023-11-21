@@ -6,6 +6,27 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 
 export const catRouter = createTRPCRouter({
+  deleteCat: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ input }) => {
+      const cat = await db.cat.findFirst({
+        where: {
+          id: input,
+        },
+      });
+      if (!cat) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Blogpost not found",
+        });
+      }
+      const deletedCat = await db.cat.delete({
+        where: {
+          id: input,
+        },
+      });
+      return deletedCat;
+    }),
   updateCat: protectedProcedure
     .input(editCatSchema.extend({ id: z.number() }))
     .mutation(async ({ input }) => {
