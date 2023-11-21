@@ -46,7 +46,6 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
 import { checkAdminSession } from "~/server/helpers";
 
-
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
     CatImage: true;
@@ -407,17 +406,6 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
                 )}
                 Upload
               </Button>
-              <div className="mt-4 flex gap-1">
-                <Button type="button" onClick={() => router.back()}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Save
-                </Button>
-              </div>
             </div>
             <div className="mt-4 flex gap-1">
               <Button type="button" onClick={() => router.back()}>
