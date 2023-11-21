@@ -1,6 +1,4 @@
-import { type BlogPost, Role } from "@prisma/client";
-import { useSession } from "next-auth/react";
-
+import { type BlogPost } from "@prisma/client";
 import Layout from "../Layout";
 import {
   Table,
@@ -13,7 +11,10 @@ import {
 } from "~/components/ui/table";
 import { format } from "date-fns";
 import { db } from "~/server/db";
-import { type GetServerSidePropsResult } from "next/types";
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+} from "next/types";
 import Image from "next/image";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import Link from "next/link";
@@ -33,35 +34,27 @@ import {
 } from "~/components/ui/alert-dialog";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import { checkAdminSession } from "~/utils/helpers";
 
 type NewsProps = {
   blogposts: BlogPost[];
 };
 
 export default function News({ blogposts }: NewsProps) {
-  const { data: session } = useSession();
   const router = useRouter();
   const { mutate: mutateDeleteBlogPost } =
     api.blogpost.deleteBlogPost.useMutation({
       onSuccess: () => {
-        refreshData();
+        void router.replace(router.asPath);
       },
       onError: () => {
         console.log("Error while trying to delete comment");
       },
     });
 
-  if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized.</div>;
-  }
-
   function deleteBlog(id: number) {
     mutateDeleteBlogPost(id);
   }
-
-  const refreshData = () => {
-    void router.replace(router.asPath);
-  };
 
   return (
     <Layout>
@@ -156,9 +149,17 @@ export default function News({ blogposts }: NewsProps) {
   );
 }
 
-export async function getServerSideProps(): Promise<
-  GetServerSidePropsResult<NewsProps>
-> {
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<NewsProps>> {
+  const adminSession = await checkAdminSession(ctx);
+
+  if (!adminSession) {
+    return {
+      notFound: true,
+    };
+  }
+
   const blogposts = await db.blogPost.findMany({
     orderBy: {
       post_date: "desc",

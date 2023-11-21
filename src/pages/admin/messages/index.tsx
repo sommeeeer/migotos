@@ -1,7 +1,6 @@
-import { type ContactMessage, Role } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { type ContactMessage } from "@prisma/client";
 import Layout from "../Layout";
-import type { GetServerSidePropsResult } from "next";
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { db } from "~/server/db";
 import { format } from "date-fns";
 import { BiMessageAltDetail } from "react-icons/bi";
@@ -37,6 +36,7 @@ import {
 } from "~/components/ui/alert-dialog";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import { checkAdminSession } from "~/utils/helpers";
 
 type MessagesProps = {
   messages: ContactMessage[];
@@ -44,24 +44,14 @@ type MessagesProps = {
 
 export default function Messages({ messages }: MessagesProps) {
   const router = useRouter();
-  const { data: session } = useSession();
   const { mutate } = api.contact.delete.useMutation({
     onSuccess: () => {
-      refreshData();
+      void router.replace(router.asPath);
     },
     onError: () => {
       console.log("Error while trying to delete comment");
     },
   });
-  // Call this function whenever you want to
-  // refresh props!
-  const refreshData = () => {
-    void router.replace(router.asPath);
-  };
-
-  if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized.</div>;
-  }
 
   function deleteMessage(id: number) {
     mutate(id);
@@ -162,9 +152,17 @@ export default function Messages({ messages }: MessagesProps) {
   );
 }
 
-export async function getServerSideProps(): Promise<
-  GetServerSidePropsResult<MessagesProps>
-> {
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<MessagesProps>> {
+  const adminSession = await checkAdminSession(ctx);
+
+  if (!adminSession) {
+    return {
+      notFound: true,
+    };
+  }
+
   const messages = await db.contactMessage.findMany({
     orderBy: {
       createdAt: "desc",

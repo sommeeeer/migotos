@@ -1,7 +1,6 @@
-import { Prisma, Role, type User } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { type Prisma, Role } from "@prisma/client";
 import Layout from "../Layout";
-import type { GetServerSidePropsResult } from "next";
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { db } from "~/server/db";
 import { format } from "date-fns";
 import { AiFillDelete } from "react-icons/ai";
@@ -34,6 +33,7 @@ import clsx from "clsx";
 import { FaComments } from "react-icons/fa";
 import Link from "next/link";
 import { cn } from "~/lib/utils";
+import { checkAdminSession } from "~/utils/helpers";
 
 type UserWithComment = Prisma.UserGetPayload<{
   include: {
@@ -47,7 +47,6 @@ type UsersProps = {
 
 export default function Users({ users }: UsersProps) {
   const router = useRouter();
-  const { data: session } = useSession();
   const { mutate: mutateDeleteUser } = api.user.delete.useMutation({
     onSuccess: () => {
       refreshData();
@@ -64,14 +63,10 @@ export default function Users({ users }: UsersProps) {
       console.log("Error while trying to give admin to user");
     },
   });
-  
+
   const refreshData = () => {
     void router.replace(router.asPath);
   };
-
-  if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized.</div>;
-  }
 
   function deleteUser(id: string) {
     mutateDeleteUser(id);
@@ -201,9 +196,17 @@ export default function Users({ users }: UsersProps) {
   );
 }
 
-export async function getServerSideProps(): Promise<
-  GetServerSidePropsResult<UsersProps>
-> {
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<UsersProps>> {
+  const adminSession = await checkAdminSession(ctx);
+
+  if (!adminSession) {
+    return {
+      notFound: true,
+    };
+  }
+  
   const users = await db.user.findMany({
     orderBy: {
       role: "desc",

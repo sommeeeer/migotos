@@ -1,5 +1,4 @@
-import { Role, type Cat } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { type Cat } from "@prisma/client";
 
 import Layout from "../../Layout";
 import { format } from "date-fns";
@@ -38,13 +37,13 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/use-toast";
 import { Checkbox } from "~/components/ui/checkbox";
 import { api } from "~/utils/api";
+import { checkAdminSession } from "~/utils/helpers";
 
 type EditCatProps = {
   cat: Cat;
 };
 
 export default function EditCat({ cat }: EditCatProps) {
-  const { data: session } = useSession();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof editCatSchema>>({
@@ -82,10 +81,6 @@ export default function EditCat({ cat }: EditCatProps) {
       });
     },
   });
-
-  if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized.</div>;
-  }
 
   function onSubmit(values: z.infer<typeof editCatSchema>) {
     if (!form.formState.isDirty) {
@@ -339,6 +334,14 @@ export default function EditCat({ cat }: EditCatProps) {
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
 ): Promise<GetServerSidePropsResult<EditCatProps>> {
+  const adminSession = await checkAdminSession(ctx);
+
+  if (!adminSession) {
+    return {
+      notFound: true,
+    };
+  }
+
   if (!ctx.query?.id || typeof ctx.query.id !== "string") {
     return {
       notFound: true,

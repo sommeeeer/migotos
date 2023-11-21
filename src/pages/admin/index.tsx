@@ -3,8 +3,12 @@ import { useSession } from "next-auth/react";
 import Layout from "./Layout";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { db } from "~/server/db";
-import type { GetServerSidePropsResult } from "next/types";
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+} from "next/types";
 import StatsCard from "~/components/StatsCard";
+import { checkAdminSession } from "~/utils/helpers";
 
 export type AdminProps = {
   counts: {
@@ -20,19 +24,6 @@ export type AdminProps = {
 };
 
 export default function Admin({ counts }: AdminProps) {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") {
-    return (
-      <Layout>
-        <LoadingSpinner className="h-12 w-12" />
-      </Layout>
-    );
-  }
-
-  if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized. You cant access this page.</div>;
-  }
   return (
     <Layout>
       <StatsCard counts={counts} />
@@ -40,9 +31,17 @@ export default function Admin({ counts }: AdminProps) {
   );
 }
 
-export async function getServerSideProps(): Promise<
-  GetServerSidePropsResult<AdminProps>
-> {
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<AdminProps>> {
+  const adminSession = await checkAdminSession(ctx);
+
+  if (!adminSession) {
+    return {
+      notFound: true,
+    };
+  }
+
   const [
     usersCount,
     catsCount,

@@ -1,6 +1,4 @@
-import { type BlogPost, Role, type BlogPostTag } from "@prisma/client";
-import { useSession } from "next-auth/react";
-
+import { type BlogPost, type BlogPostTag } from "@prisma/client";
 import Layout from "../../Layout";
 import { format } from "date-fns";
 import { db } from "~/server/db";
@@ -41,7 +39,7 @@ import Image from "next/image";
 import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
-import { uploadS3 } from "~/utils/helpers";
+import { checkAdminSession, uploadS3 } from "~/utils/helpers";
 import { editBlogPostSchema } from "~/lib/validators/blogpost";
 import { type z } from "zod";
 
@@ -55,7 +53,6 @@ export default function EditBlogPost({
   blogpost,
   uploadUrl,
 }: EditBlogPostProps) {
-  const { data: session } = useSession();
   const router = useRouter();
 
   const [isUploading, setIsUploading] = useState(false);
@@ -96,10 +93,6 @@ export default function EditBlogPost({
       });
     },
   });
-
-  if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized.</div>;
-  }
 
   async function handleUpload() {
     if (!file) {
@@ -296,6 +289,14 @@ export default function EditBlogPost({
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
 ): Promise<GetServerSidePropsResult<EditBlogPostProps>> {
+  const adminSession = await checkAdminSession(ctx);
+
+  if (!adminSession) {
+    return {
+      notFound: true,
+    };
+  }
+  
   if (!ctx.query?.id || typeof ctx.query.id !== "string") {
     return {
       notFound: true,

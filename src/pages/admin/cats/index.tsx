@@ -1,5 +1,4 @@
-import { Role, type Cat } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { type Cat } from "@prisma/client";
 
 import Layout from "../Layout";
 import {
@@ -12,7 +11,10 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { db } from "~/server/db";
-import { type GetServerSidePropsResult } from "next/types";
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+} from "next/types";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import Link from "next/link";
 import { buttonVariants } from "~/components/ui/button";
@@ -33,13 +35,13 @@ import { useRouter } from "next/router";
 import { FaCat } from "react-icons/fa";
 import { format } from "date-fns";
 import { toast } from "~/components/ui/use-toast";
+import { checkAdminSession } from "~/utils/helpers";
 
 type CatsProps = {
   cats: Cat[];
 };
 
 export default function Cats({ cats }: CatsProps) {
-  const { data: session } = useSession();
   const router = useRouter();
   const { mutate: mutateDeleteCat } = api.cat.deleteCat.useMutation({
     onSuccess: () => {
@@ -55,10 +57,6 @@ export default function Cats({ cats }: CatsProps) {
       console.log("Error while trying to delete comment");
     },
   });
-
-  if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized.</div>;
-  }
 
   function deleteCat(id: number) {
     mutateDeleteCat(id);
@@ -161,9 +159,16 @@ export default function Cats({ cats }: CatsProps) {
   );
 }
 
-export async function getServerSideProps(): Promise<
-  GetServerSidePropsResult<CatsProps>
-> {
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<CatsProps>> {
+  const adminSession = await checkAdminSession(ctx);
+
+  if (!adminSession) {
+    return {
+      notFound: true,
+    };
+  }
   const cats = await db.cat.findMany({
     orderBy: {
       birth: "desc",

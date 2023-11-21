@@ -1,9 +1,9 @@
-import { Role } from "@prisma/client";
-import { useSession } from "next-auth/react";
-
 import Layout from "../Layout";
 import { format } from "date-fns";
-import { type GetServerSidePropsResult } from "next/types";
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+} from "next/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -38,7 +38,7 @@ import Image from "next/image";
 import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
-import { uploadS3 } from "~/utils/helpers";
+import { checkAdminSession, uploadS3 } from "~/utils/helpers";
 import { MdOutlinePostAdd } from "react-icons/md";
 
 type NewBlogPostProps = {
@@ -58,7 +58,6 @@ const formSchema = z.object({
 });
 
 export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
-  const { data: session } = useSession();
   const router = useRouter();
 
   const [isUploading, setIsUploading] = useState(false);
@@ -94,10 +93,6 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
       });
     },
   });
-
-  if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized.</div>;
-  }
 
   async function handleUpload() {
     if (!file) {
@@ -263,7 +258,11 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
                 Upload
               </Button>
               <div className="mt-4 flex gap-1">
-                <Button type="button" onClick={() => router.back()} disabled={isLoading}>
+                <Button
+                  type="button"
+                  onClick={() => router.back()}
+                  disabled={isLoading}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isLoading}>
@@ -281,9 +280,17 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
   );
 }
 
-export async function getServerSideProps(): Promise<
-  GetServerSidePropsResult<NewBlogPostProps>
-> {
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<NewBlogPostProps>> {
+  const adminSession = await checkAdminSession(ctx);
+
+  if (!adminSession) {
+    return {
+      notFound: true,
+    };
+  }
+
   const command = new PutObjectCommand({
     ACL: "public-read",
     Key: crypto.randomUUID(),

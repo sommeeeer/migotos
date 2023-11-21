@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import Layout from "../Layout";
 import Link from "next/link";
 import { FaComments } from "react-icons/fa";
+import { checkAdminSession } from "~/utils/helpers";
+import { Button } from "~/components/ui/button";
 
 type UserWithComments = Prisma.UserGetPayload<{
   include: {
@@ -26,33 +28,6 @@ type UserProps = {
 
 export default function UserPage({ user }: UserProps) {
   const router = useRouter();
-  const { data: session } = useSession();
-  const { mutate: mutateDeleteUser } = api.user.delete.useMutation({
-    onSuccess: () => {
-      refreshData();
-    },
-    onError: () => {
-      console.log("Error while trying to delete comment");
-    },
-  });
-  const { mutate: mutateToggleAdmin } = api.user.toggleAdmin.useMutation({
-    onSuccess: () => {
-      refreshData();
-    },
-    onError: () => {
-      console.log("Error while trying to give admin to user");
-    },
-  });
-  // Call this function whenever you want to
-  // refresh props!
-  const refreshData = () => {
-    void router.replace(router.asPath);
-  };
-
-  if (!session || session.user.role !== Role.ADMIN) {
-    return <div>Unauthorized.</div>;
-  }
-  console.log(user.comments);
 
   return (
     <Layout>
@@ -60,7 +35,7 @@ export default function UserPage({ user }: UserProps) {
         <h1 className="text-2xl">
           {user.name} - (id: {user.id})
         </h1>
-        <div className="relative flex items-center gap-2 border-b-2 border-b-gray-200 self-start">
+        <div className="relative flex items-center gap-2 self-start border-b-2 border-b-gray-200">
           <p className="mb-2 py-2 text-xl">
             Total comments: {user.comments.length}
           </p>
@@ -95,6 +70,7 @@ export default function UserPage({ user }: UserProps) {
           ))}
         </div>
       </div>
+      <Button onClick={() => router.back()}>Go back</Button>
     </Layout>
   );
 }
@@ -102,6 +78,14 @@ export default function UserPage({ user }: UserProps) {
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
 ): Promise<GetServerSidePropsResult<UserProps>> {
+  const adminSession = await checkAdminSession(ctx);
+
+  if (!adminSession) {
+    return {
+      notFound: true,
+    };
+  }
+
   if (!ctx.query?.userId || typeof ctx.query.userId !== "string") {
     return {
       notFound: true,
