@@ -1,4 +1,4 @@
-import { type Cat } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 import Layout from "../../Layout";
 import { format } from "date-fns";
@@ -37,14 +37,36 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/use-toast";
 import { Checkbox } from "~/components/ui/checkbox";
 import { api } from "~/utils/api";
-import { checkAdminSession } from "~/utils/helpers";
+import { uploadS3 } from "~/utils/helpers";
+import { Label } from "~/components/ui/label";
+import Image from "next/image";
+import { useState } from "react";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { Bucket } from "sst/node/bucket";
+import { checkAdminSession } from "~/server/helpers";
+
+
+type CatWithImage = Prisma.CatGetPayload<{
+  include: {
+    CatImage: true;
+  };
+}>;
 
 type EditCatProps = {
-  cat: Cat;
+  cat: CatWithImage;
+  uploadUrl: string;
 };
 
-export default function EditCat({ cat }: EditCatProps) {
+export default function EditCat({ cat, uploadUrl }: EditCatProps) {
   const router = useRouter();
+
+  const [isUploading, setIsUploading] = useState(false);
+  const [file, setFile] = useState<File | undefined>(undefined);
+  const [imageUrl, setImageUrl] = useState<string | undefined>(
+    cat.CatImage[0]?.src ?? undefined,
+  );
+  const [imageKey, setImageKey] = useState(0);
 
   const form = useForm<z.infer<typeof editCatSchema>>({
     resolver: zodResolver(editCatSchema),
@@ -81,6 +103,37 @@ export default function EditCat({ cat }: EditCatProps) {
       });
     },
   });
+
+  async function handleUpload() {
+    if (!file) {
+      toast({
+        variant: "destructive",
+        title: "No image selected.",
+        description: "Please select an image before uploading.",
+      });
+      return;
+    }
+    try {
+      setIsUploading(true);
+      const image = await uploadS3(file, uploadUrl);
+      setImageUrl(image.url.split("?")[0]);
+      toast({
+        variant: "default",
+        title: "Success",
+        color: "green",
+        description: "Image uploaded successfully.",
+      });
+      setImageKey(imageKey + 1);
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong during upload",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  }
 
   function onSubmit(values: z.infer<typeof editCatSchema>) {
     if (!form.formState.isDirty) {
@@ -211,13 +264,13 @@ export default function EditCat({ cat }: EditCatProps) {
               control={form.control}
               name="gender"
               render={({ field }) => (
-                <FormItem className="space-y-3">
+                <FormItem className="">
                   <FormLabel>Gender</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className="flex gap-2"
+                      className="flex gap-2 rounded border p-4"
                     >
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
@@ -315,6 +368,57 @@ export default function EditCat({ cat }: EditCatProps) {
                 </FormItem>
               )}
             />
+            <div className="flex flex-col items-start gap-4">
+              <Label>Current Image</Label>
+              {imageUrl ? (
+                <Image
+                  key={imageKey}
+                  src={`${imageUrl}?version=${imageKey}}`}
+                  width={300}
+                  height={300}
+                  alt={`${cat.name}'s profile image`}
+                  quality={100}
+                  priority
+                />
+              ) : (
+                <span className="text-lg">NULL</span>
+              )}
+              <Label>URL to Image</Label>
+              <Input value={imageUrl ?? ""} readOnly disabled={isLoading} />
+              <Label>Select New Image</Label>
+              <Input
+                type="file"
+                className="cursor-pointer"
+                disabled={isUploading || isLoading}
+                onChange={(e) => {
+                  if (!e.target.files) return;
+                  setFile(e.target.files[0]);
+                }}
+                accept="image/png, image/jpeg, image/jpg"
+              />
+              <Button
+                disabled={isUploading || isLoading}
+                type="button"
+                variant="secondary"
+                onClick={handleUpload}
+              >
+                {isUploading && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Upload
+              </Button>
+              <div className="mt-4 flex gap-1">
+                <Button type="button" onClick={() => router.back()}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Save
+                </Button>
+              </div>
+            </div>
             <div className="mt-4 flex gap-1">
               <Button type="button" onClick={() => router.back()}>
                 Cancel
@@ -352,16 +456,26 @@ export async function getServerSideProps(
     where: {
       id: +ctx.query.id,
     },
+    include: {
+      CatImage: true,
+    },
   });
   if (!cat) {
     return {
       notFound: true,
     };
   }
+  const command = new PutObjectCommand({
+    ACL: "public-read",
+    Key: crypto.randomUUID(),
+    Bucket: Bucket.public.bucketName,
+  });
+  const uploadUrl = await getSignedUrl(new S3Client({}), command);
 
   return {
     props: {
       cat,
+      uploadUrl,
     },
   };
 }

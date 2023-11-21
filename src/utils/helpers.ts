@@ -1,7 +1,4 @@
-import { Role } from "@prisma/client";
 import { parseISO, format } from "date-fns";
-import { GetServerSidePropsContext } from "next/types";
-import { getServerAuthSession } from "~/server/auth";
 
 export function formatDate(inputDate: string) {
   const date = parseISO(inputDate);
@@ -36,14 +33,4 @@ export async function uploadS3(file: File, uploadUrl: string) {
     },
   });
   return image;
-}
-
-export async function checkAdminSession(ctx: GetServerSidePropsContext) {
-  const session = await getServerAuthSession(ctx);
-
-  if (!session || session.user.role !== Role.ADMIN) {
-    return null;
-  }
-
-  return session;
 }

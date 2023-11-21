@@ -35,7 +35,7 @@ import { useRouter } from "next/router";
 import { FaCat } from "react-icons/fa";
 import { format } from "date-fns";
 import { toast } from "~/components/ui/use-toast";
-import { checkAdminSession } from "~/utils/helpers";
+import { checkAdminSession } from "~/server/helpers";
 
 type CatsProps = {
   cats: Cat[];

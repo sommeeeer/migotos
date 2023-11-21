@@ -1,13 +1,11 @@
-import { type Prisma, Role } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { type Prisma } from "@prisma/client";
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { db } from "~/server/db";
-import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import Layout from "../Layout";
 import Link from "next/link";
 import { FaComments } from "react-icons/fa";
-import { checkAdminSession } from "~/utils/helpers";
+import { checkAdminSession } from "~/server/helpers";
 import { Button } from "~/components/ui/button";
 
 type UserWithComments = Prisma.UserGetPayload<{

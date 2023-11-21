@@ -8,7 +8,7 @@ import type {
   GetServerSidePropsResult,
 } from "next/types";
 import StatsCard from "~/components/StatsCard";
-import { checkAdminSession } from "~/utils/helpers";
+import { checkAdminSession } from "~/server/helpers";
 
 export type AdminProps = {
   counts: {

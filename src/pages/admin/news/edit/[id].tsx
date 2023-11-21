@@ -39,9 +39,10 @@ import Image from "next/image";
 import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
-import { checkAdminSession, uploadS3 } from "~/utils/helpers";
+import { uploadS3 } from "~/utils/helpers";
 import { editBlogPostSchema } from "~/lib/validators/blogpost";
 import { type z } from "zod";
+import { checkAdminSession } from "~/server/helpers";
 
 type EditBlogPostProps = {
   blogpost: BlogPost;
@@ -289,6 +290,7 @@ export default function EditBlogPost({
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
 ): Promise<GetServerSidePropsResult<EditBlogPostProps>> {
+  console.log('hoohohohohoo')
   const adminSession = await checkAdminSession(ctx);
 
   if (!adminSession) {

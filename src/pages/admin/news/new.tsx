@@ -38,8 +38,9 @@ import Image from "next/image";
 import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
-import { checkAdminSession, uploadS3 } from "~/utils/helpers";
+import { uploadS3 } from "~/utils/helpers";
 import { MdOutlinePostAdd } from "react-icons/md";
+import { checkAdminSession } from "~/server/helpers";
 
 type NewBlogPostProps = {
   uploadUrl: string;

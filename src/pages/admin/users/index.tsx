@@ -33,7 +33,7 @@ import clsx from "clsx";
 import { FaComments } from "react-icons/fa";
 import Link from "next/link";
 import { cn } from "~/lib/utils";
-import { checkAdminSession } from "~/utils/helpers";
+import { checkAdminSession } from "~/server/helpers";
 
 type UserWithComment = Prisma.UserGetPayload<{
   include: {
@@ -206,7 +206,7 @@ export async function getServerSideProps(
       notFound: true,
     };
   }
-  
+
   const users = await db.user.findMany({
     orderBy: {
       role: "desc",

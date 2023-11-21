@@ -36,7 +36,7 @@ import {
 } from "~/components/ui/alert-dialog";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import { checkAdminSession } from "~/utils/helpers";
+import { checkAdminSession } from "~/server/helpers";
 
 type MessagesProps = {
   messages: ContactMessage[];
