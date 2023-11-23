@@ -28,7 +28,7 @@ export const catRouter = createTRPCRouter({
       return deletedCat;
     }),
   updateCat: protectedProcedure
-    .input(catSchema.extend({ id: z.number() }))
+    .input(catSchema.extend({ id: z.number(), imageUrl: z.string() }))
     .mutation(async ({ input }) => {
       const cat = await db.cat.findFirst({
         where: {
@@ -59,6 +59,16 @@ export const catRouter = createTRPCRouter({
           gender: input.gender,
           owner: input.owner,
           fertile: input.fertile,
+          CatImage: {
+            create: {
+              src: input.imageUrl,
+              blururl:
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC",
+              height: 300,
+              width: 300,
+              priority: 1,
+            },
+          },
         },
       });
       return updatedCat;
@@ -93,6 +103,7 @@ export const catRouter = createTRPCRouter({
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC",
                 height: 300,
                 width: 300,
+                priority: 1,
               },
             },
           },

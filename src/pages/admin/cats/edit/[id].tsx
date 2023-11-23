@@ -142,10 +142,18 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
       });
       return;
     }
+    if (!imageUrl) {
+      toast({
+        variant: "destructive",
+        description: "No image selected.",
+      });
+      return;
+    }
     mutate({
       id: cat.id,
       ...values,
       birth: addHours(values.birth, 2),
+      imageUrl: imageUrl,
     });
     form.reset({
       ...values,
