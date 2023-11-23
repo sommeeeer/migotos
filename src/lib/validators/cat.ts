@@ -1,7 +1,7 @@
 import { addHours } from "date-fns";
 import { z } from "zod";
 
-export const editCatSchema = z.object({
+export const catSchema = z.object({
   name: z
     .string()
     .min(5, { message: "Name must be atleast 5 characters long." })

@@ -76,8 +76,7 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
   });
 
   const { mutate, isLoading } = api.blogpost.createBlogPost.useMutation({
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
       toast({
         variant: "default",
         title: "Success",

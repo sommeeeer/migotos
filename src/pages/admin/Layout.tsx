@@ -24,7 +24,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen self-stretch">
       <Toaster />
 
-      {/* Left-side menu */}
       <div className="w-1/5 rounded-sm bg-zinc-800 p-4 text-white">
         <h1 className="text-2xl font-bold">{heading}</h1>
         <ul className="mt-4">

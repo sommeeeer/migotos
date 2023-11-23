@@ -1,11 +1,8 @@
-import type { Prisma } from "@prisma/client";
-
-import Layout from "../../Layout";
+import Layout from "../Layout";
 import { format } from "date-fns";
-import { db } from "~/server/db";
-import {
-  type GetServerSidePropsContext,
-  type GetServerSidePropsResult,
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
 } from "next/types";
 import { AiFillEdit } from "react-icons/ai";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,51 +43,38 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
 import { checkAdminSession } from "~/server/helpers";
 
-type CatWithImage = Prisma.CatGetPayload<{
-  include: {
-    CatImage: true;
-  };
-}>;
-
-type EditCatProps = {
-  cat: CatWithImage;
-  uploadUrl: string;
-};
-
-export default function EditCat({ cat, uploadUrl }: EditCatProps) {
+export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
   const router = useRouter();
 
   const [isUploading, setIsUploading] = useState(false);
   const [file, setFile] = useState<File | undefined>(undefined);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(
-    cat.CatImage[0]?.src ?? undefined,
-  );
+  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
   const [imageKey, setImageKey] = useState(0);
 
   const form = useForm<z.infer<typeof catSchema>>({
     resolver: zodResolver(catSchema),
     defaultValues: {
-      name: cat.name,
-      stamnavn: cat.stamnavn,
-      breeder: cat.breeder,
-      description: cat.description ?? "",
-      father: cat.father,
-      mother: cat.mother,
-      gender: cat.gender,
-      owner: cat.owner,
-      pedigreeurl: cat.pedigreeurl ?? "",
-      nickname: cat.nickname,
-      birth: cat.birth,
-      fertile: cat.fertile,
+      name: "",
+      stamnavn: "",
+      breeder: "",
+      description: "",
+      father: "",
+      mother: "",
+      gender: "Female",
+      owner: "",
+      pedigreeurl: "",
+      nickname: "",
+      birth: new Date(),
+      fertile: false,
     },
   });
-  const { mutate, isLoading } = api.cat.updateCat.useMutation({
+  const { mutate, isLoading } = api.cat.createCat.useMutation({
     onSuccess: () => {
       toast({
         variant: "default",
         title: "Success",
         color: "green",
-        description: "Cat updated successfully.",
+        description: "Cat created successfully.",
       });
       void router.replace(router.asPath);
     },
@@ -98,7 +82,8 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Something went wrong while updating. Please try again",
+        description:
+          "Something went wrong while creating cat. Please try again",
       });
     },
   });
@@ -135,29 +120,25 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
   }
 
   function onSubmit(values: z.infer<typeof catSchema>) {
-    if (!form.formState.isDirty) {
+    if (!imageUrl) {
       toast({
         variant: "destructive",
-        description: "No changes detected.",
+        title: "No image selected.",
+        description: "Please select an image before uploading.",
       });
       return;
     }
     mutate({
-      id: cat.id,
       ...values,
       birth: addHours(values.birth, 2),
-    });
-    form.reset({
-      ...values,
+      imageUrl: imageUrl,
     });
   }
 
   return (
     <Layout>
       <div className="flex items-center gap-2">
-        <h1 className="text-2xl">
-          Edit Cat: {cat.name} (ID: {cat.id})
-        </h1>
+        <h1 className="text-2xl">New Cat</h1>
         <AiFillEdit className="mb-4 h-12 w-12" />
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
@@ -375,7 +356,9 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
                   src={`${imageUrl}?version=${imageKey}}`}
                   width={300}
                   height={300}
-                  alt={`${cat.name}'s profile image`}
+                  alt={`${
+                    form.formState.touchedFields.name ?? "new cat"
+                  }'s profile image`}
                   quality={100}
                   priority
                 />
@@ -384,7 +367,7 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
               )}
               <Label>URL to Image</Label>
               <Input value={imageUrl ?? ""} readOnly disabled={isLoading} />
-              <Label>Select New Profile Picture</Label>
+              <Label>Select Profile Picture</Label>
               <Input
                 type="file"
                 className="cursor-pointer"
@@ -425,7 +408,7 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
 
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
-): Promise<GetServerSidePropsResult<EditCatProps>> {
+): Promise<GetServerSidePropsResult<{ uploadUrl: string }>> {
   const adminSession = await checkAdminSession(ctx);
 
   if (!adminSession) {
@@ -434,25 +417,6 @@ export async function getServerSideProps(
     };
   }
 
-  if (!ctx.query?.id || typeof ctx.query.id !== "string") {
-    return {
-      notFound: true,
-    };
-  }
-
-  const cat = await db.cat.findFirst({
-    where: {
-      id: +ctx.query.id,
-    },
-    include: {
-      CatImage: true,
-    },
-  });
-  if (!cat) {
-    return {
-      notFound: true,
-    };
-  }
   const command = new PutObjectCommand({
     ACL: "public-read",
     Key: crypto.randomUUID(),
@@ -462,7 +426,6 @@ export async function getServerSideProps(
 
   return {
     props: {
-      cat,
       uploadUrl,
     },
   };
