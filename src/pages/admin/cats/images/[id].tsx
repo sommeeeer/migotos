@@ -7,6 +7,8 @@ import {
 } from "next/types";
 import { checkAdminSession } from "~/server/helpers";
 import AdminLayout from "../../AdminLayout";
+import Image from "next/image";
+import { Button } from "~/components/ui/button";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -19,7 +21,36 @@ type EditCatImages = {
 };
 
 export default function EditCatImages({ cat }: EditCatImages) {
-  return <AdminLayout>hi</AdminLayout>;
+  console.log(cat);
+  return (
+    <AdminLayout>
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-4 rounded-xl border-2 p-4 text-center">
+          <h1 className="text-xl text-gray-800">Photos for {cat.name}</h1>
+          <Button className="w-fit mx-auto">Add more photos</Button>
+        </div>
+        <section className="flex flex-col items-center gap-2">
+          {cat.CatImage.map((catimage) => (
+            <div
+              className="flex cursor-grab items-center gap-2"
+              key={catimage.id}
+            >
+              <span className="select-none text-xl">
+                {catimage.priority ? catimage.priority - 1 : ""}
+              </span>
+              <Image
+                width={catimage.width}
+                height={catimage.height}
+                className="h-auto w-[200px]"
+                src={catimage.src}
+                alt={`${cat.name}'s photo number ${cat.id}`}
+              />
+            </div>
+          ))}
+        </section>
+      </div>
+    </AdminLayout>
+  );
 }
 
 export async function getServerSideProps(
@@ -44,7 +75,13 @@ export async function getServerSideProps(
       id: +ctx.query.id,
     },
     include: {
-      CatImage: true,
+      CatImage: {
+        where: {
+          priority: {
+            gt: 1,
+          },
+        },
+      },
     },
   });
   if (!cat) {
