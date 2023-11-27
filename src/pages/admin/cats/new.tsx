@@ -76,7 +76,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
         color: "green",
         description: "Cat created successfully.",
       });
-      void router.replace(router.asPath);
+      void router.push("/admin/cats");
     },
     onError: () => {
       toast({

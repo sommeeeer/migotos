@@ -21,7 +21,7 @@ type Props = {
 };
 
 function Cat({ cat, mother, father }: Props) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const {
     isLoading,
     data: comments,
