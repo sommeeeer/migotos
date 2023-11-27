@@ -1,4 +1,4 @@
-import Layout from "../Layout";
+import AdminLayout from "../AdminLayout";
 import { format } from "date-fns";
 import type {
   GetServerSidePropsContext,
@@ -143,7 +143,7 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
   }
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="flex items-center gap-2">
         <h1 className="text-2xl">Create New BlogPost</h1>
         <MdOutlinePostAdd className="mb-4 h-12 w-12" />
@@ -276,7 +276,7 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
           </form>
         </Form>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 

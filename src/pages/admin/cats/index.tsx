@@ -1,6 +1,6 @@
 import { type Cat } from "@prisma/client";
 
-import Layout from "../Layout";
+import AdminLayout from "../AdminLayout";
 import {
   Table,
   TableBody,
@@ -33,6 +33,7 @@ import {
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { FaCat } from "react-icons/fa";
+import { GrGallery } from "react-icons/gr";
 import { format } from "date-fns";
 import { toast } from "~/components/ui/use-toast";
 import { checkAdminSession } from "~/server/helpers";
@@ -63,7 +64,7 @@ export default function Cats({ cats }: CatsProps) {
   }
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="mb-4 flex flex-col items-start gap-4 rounded-lg bg-white p-4 shadow">
         <Link
           className={twMerge(
@@ -148,6 +149,9 @@ export default function Cats({ cats }: CatsProps) {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
+                    <Link href={`/admin/cats/images/${cat.id}`}>
+                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600" />
+                    </Link>
                   </div>
                 </TableCell>
               </TableRow>
@@ -155,7 +159,7 @@ export default function Cats({ cats }: CatsProps) {
           </TableBody>
         </Table>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 

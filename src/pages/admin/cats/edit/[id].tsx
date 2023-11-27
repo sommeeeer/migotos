@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 
-import Layout from "../../Layout";
+import AdminLayout from "../../AdminLayout";
 import { format } from "date-fns";
 import { db } from "~/server/db";
 import {
@@ -161,7 +161,7 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
   }
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="flex items-center gap-2">
         <h1 className="text-2xl">
           Edit Cat: {cat.name} (ID: {cat.id})
@@ -427,7 +427,7 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
           </form>
         </Form>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 

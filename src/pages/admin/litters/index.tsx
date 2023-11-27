@@ -1,8 +1,8 @@
 import { Role } from "@prisma/client";
 import { useSession } from "next-auth/react";
 
-import Layout from "../Layout";
+import AdminLayout from "../AdminLayout";
 
 export default function Litters() {
-  return <Layout>hi</Layout>;
+  return <AdminLayout>hi</AdminLayout>;
 }

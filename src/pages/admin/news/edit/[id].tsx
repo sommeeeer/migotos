@@ -1,5 +1,5 @@
 import { type BlogPost, type BlogPostTag } from "@prisma/client";
-import Layout from "../../Layout";
+import AdminLayout from "../../AdminLayout";
 import { format } from "date-fns";
 import { db } from "~/server/db";
 import {
@@ -153,7 +153,7 @@ export default function EditBlogPost({
   }
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="flex items-center gap-2">
         <h1 className="text-2xl">Edit Blogpost (ID: {blogpost.id})</h1>
         <AiFillEdit className="mb-4 h-12 w-12" />
@@ -283,7 +283,7 @@ export default function EditBlogPost({
           </form>
         </Form>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 

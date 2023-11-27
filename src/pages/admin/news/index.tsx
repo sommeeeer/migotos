@@ -1,5 +1,5 @@
 import { type BlogPost } from "@prisma/client";
-import Layout from "../Layout";
+import AdminLayout from "../AdminLayout";
 import {
   Table,
   TableBody,
@@ -57,7 +57,7 @@ export default function News({ blogposts }: NewsProps) {
   }
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="mb-4 flex flex-col items-start gap-4 rounded-lg bg-white p-4 shadow">
         <Link
           className={twMerge(
@@ -145,7 +145,7 @@ export default function News({ blogposts }: NewsProps) {
           </TableBody>
         </Table>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 

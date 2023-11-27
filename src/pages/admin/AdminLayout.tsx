@@ -8,7 +8,11 @@ import { twMerge } from "tailwind-merge";
 import clsx from "clsx";
 import { Toaster } from "~/components/ui/toaster";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const splittedPath = router.pathname.split("/");
   let heading = "Dashboard";
@@ -16,9 +20,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     heading =
       splittedPath.at(-1)![0]?.toUpperCase() + splittedPath.at(-1)!.slice(1);
   } else {
-    heading = splittedPath.at(2)![0]?.toUpperCase() + splittedPath.at(2)!.slice(1);
+    heading =
+      splittedPath.at(2)![0]?.toUpperCase() + splittedPath.at(2)!.slice(1);
   }
-
 
   return (
     <div className="flex h-screen self-stretch">

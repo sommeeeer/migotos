@@ -1,4 +1,4 @@
-import Layout from "./Layout";
+import AdminLayout from "./AdminLayout";
 import { db } from "~/server/db";
 import type {
   GetServerSidePropsContext,
@@ -22,9 +22,9 @@ export type AdminProps = {
 
 export default function Admin({ counts }: AdminProps) {
   return (
-    <Layout>
+    <AdminLayout>
       <StatsCard counts={counts} />
-    </Layout>
+    </AdminLayout>
   );
 }
 

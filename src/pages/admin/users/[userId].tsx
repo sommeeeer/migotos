@@ -2,7 +2,7 @@ import { type Prisma } from "@prisma/client";
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { db } from "~/server/db";
 import { useRouter } from "next/router";
-import Layout from "../Layout";
+import AdminLayout from "../AdminLayout";
 import Link from "next/link";
 import { FaComments } from "react-icons/fa";
 import { checkAdminSession } from "~/server/helpers";
@@ -28,7 +28,7 @@ export default function UserPage({ user }: UserProps) {
   const router = useRouter();
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="mb-4 flex flex-col gap-4 rounded-lg bg-white p-8 shadow">
         <h1 className="text-2xl">
           {user.name} - (id: {user.id})
@@ -69,7 +69,7 @@ export default function UserPage({ user }: UserProps) {
         </div>
       </div>
       <Button onClick={() => router.back()}>Go back</Button>
-    </Layout>
+    </AdminLayout>
   );
 }
 

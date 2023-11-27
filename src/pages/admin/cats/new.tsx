@@ -1,4 +1,4 @@
-import Layout from "../Layout";
+import AdminLayout from "../AdminLayout";
 import { format } from "date-fns";
 import type {
   GetServerSidePropsContext,
@@ -136,7 +136,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
   }
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="flex items-center gap-2">
         <h1 className="text-2xl">New Cat</h1>
         <AiFillEdit className="mb-4 h-12 w-12" />
@@ -402,7 +402,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
           </form>
         </Form>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 

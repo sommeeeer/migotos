@@ -1,5 +1,5 @@
 import { type ContactMessage } from "@prisma/client";
-import Layout from "../Layout";
+import AdminLayout from "../AdminLayout";
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { db } from "~/server/db";
 import { format } from "date-fns";
@@ -58,7 +58,7 @@ export default function Messages({ messages }: MessagesProps) {
   }
 
   return (
-    <Layout>
+    <AdminLayout>
       <div className="mb-4 rounded-lg bg-white p-4 shadow">
         <Table className="max-w-7xl">
           <TableCaption>A list of all messages.</TableCaption>
@@ -148,7 +148,7 @@ export default function Messages({ messages }: MessagesProps) {
           </TableBody>
         </Table>
       </div>
-    </Layout>
+    </AdminLayout>
   );
 }
 
