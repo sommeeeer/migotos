@@ -283,7 +283,6 @@ function SortableItem({
   height,
   src,
   id,
-  priority,
 }: {
   width: number;
   height: number;
