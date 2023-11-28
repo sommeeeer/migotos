@@ -159,7 +159,9 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
           <div className="flex justify-center gap-2">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button className="w-fit">Save new order</Button>
+                <Button disabled={items.length === 0} className="w-fit">
+                  Save new order
+                </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
