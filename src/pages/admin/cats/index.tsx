@@ -122,6 +122,9 @@ export default function Cats({ cats }: CatsProps) {
                     <Link href={`/admin/cats/edit/${cat.id}`}>
                       <AiFillEdit className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600" />
                     </Link>
+                    <Link href={`/admin/cats/images/${cat.id}`}>
+                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600" />
+                    </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="hover:-slate-300">
@@ -149,9 +152,6 @@ export default function Cats({ cats }: CatsProps) {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                    <Link href={`/admin/cats/images/${cat.id}`}>
-                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600" />
-                    </Link>
                   </div>
                 </TableCell>
               </TableRow>
