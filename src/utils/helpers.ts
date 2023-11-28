@@ -24,13 +24,17 @@ export function isEmptyObject(obj: object) {
 }
 
 export async function uploadS3(file: File, uploadUrl: string) {
-  const image = await fetch(uploadUrl, {
-    body: file,
-    method: "PUT",
-    headers: {
-      "Content-Type": file.type,
-      "Content-Disposition": `attachment; filename="${file.name}"`,
-    },
-  });
-  return image;
+  try {
+    const image = await fetch(uploadUrl, {
+      body: file,
+      method: "PUT",
+      headers: {
+        "Content-Type": file.type,
+        "Content-Disposition": `attachment; filename="${file.name}"`,
+      },
+    });
+    return image;
+  } catch (error) {
+    throw new Error("Error uploading image");
+  }
 }
