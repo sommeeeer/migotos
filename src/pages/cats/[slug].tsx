@@ -174,7 +174,11 @@ export async function getStaticProps({
       slug,
     },
     include: {
-      CatImage: true,
+      CatImage: {
+        orderBy: {
+          priority: "asc",
+        },
+      },
     },
   });
   if (!cat) {
