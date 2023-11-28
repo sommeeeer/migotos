@@ -133,7 +133,7 @@ export const catRouter = createTRPCRouter({
                 cat_id: input.cat_id,
               },
               data: {
-                priority: image.priority,
+                priority: image.priority + 1,
               },
             });
             return updatedCatImage;
