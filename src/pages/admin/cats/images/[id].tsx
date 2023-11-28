@@ -55,6 +55,7 @@ import {
 import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
 import { useRouter } from "next/router";
+import { bytesToMB } from "~/utils/helpers";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -68,6 +69,8 @@ type EditCatImagesProps = {
 
 export default function EditCatImages({ cat }: EditCatImagesProps) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
+  const [size, setSize] = useState<number | undefined>();
   const [items, setItems] = useState(cat.CatImage);
   const router = useRouter();
   const sensors = useSensors(
@@ -121,7 +124,13 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
           imagesArray.push(URL.createObjectURL(file));
         }
       }
+      setFilesToUpload(files);
       setSelectedImages(imagesArray);
+      let size = 0;
+      for (const file of files) {
+        size += file.size;
+      }
+      setSize(size);
     }
   }
 
@@ -136,6 +145,10 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
       cat_id: cat.id,
       order: newOrder,
     });
+  }
+
+  function handleUpload() {
+    console.log(filesToUpload);
   }
 
   return (
@@ -169,7 +182,13 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
             </AlertDialog>
 
             <Dialog>
-              <DialogTrigger onClick={() => setSelectedImages([])} asChild>
+              <DialogTrigger
+                onClick={() => {
+                  setSelectedImages([]);
+                  setSize(undefined);
+                }}
+                asChild
+              >
                 <Button className="w-fit">Add more photos</Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
@@ -192,19 +211,22 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                       onChange={handleImageChange}
                     />
                     <div className="grid grid-cols-5 items-end gap-2">
-                      <ul>
-                        {selectedImages.map((image, index) => (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            key={index}
-                            src={image}
-                            alt={`Selected ${index}`}
-                            width={120}
-                            height={80}
-                          />
-                        ))}
-                      </ul>
+                      {selectedImages.map((image, index) => (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`Selected ${index}`}
+                          width={150}
+                          height={150}
+                        />
+                      ))}
                     </div>
+                    {size && (
+                      <span className="text-sm text-muted-foreground">
+                        Total size: {bytesToMB(size)} MB
+                      </span>
+                    )}
                   </div>
                 </div>
                 <DialogFooter className="sm:justify-start">
@@ -213,7 +235,11 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                       Close
                     </Button>
                   </DialogClose>
-                  <Button type="submit" variant="secondary">
+                  <Button
+                    onClick={handleUpload}
+                    type="submit"
+                    variant="secondary"
+                  >
                     <Upload size={16} className="mr-2" />
                     Upload
                   </Button>

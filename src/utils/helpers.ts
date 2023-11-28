@@ -38,3 +38,7 @@ export async function uploadS3(file: File, uploadUrl: string) {
     throw new Error("Error uploading image");
   }
 }
+
+export function bytesToMB(bytes: number) {
+  return (bytes / (1024 * 1024)).toFixed(2);
+}
