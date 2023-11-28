@@ -22,8 +22,27 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Upload } from "lucide-react";
-import { ChangeEvent, useState } from "react";
+import { GripVertical, Upload } from "lucide-react";
+import { type ChangeEvent, useState, useId } from "react";
+import {
+  DndContext,
+  useSensors,
+  useSensor,
+  PointerSensor,
+  KeyboardSensor,
+  closestCenter,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  horizontalListSortingStrategy,
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -37,7 +56,28 @@ type EditCatImages = {
 
 export default function EditCatImages({ cat }: EditCatImages) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  console.log(selectedImages);
+  const [items, setItems] = useState(cat.CatImage);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const id = useId();
+
+  function handleDragEnd(event: DragEndEvent) {
+    console.log("we here, " + event.active?.id + " " + event.over?.id);
+    const { active, over } = event;
+    if (active?.id !== over?.id) {
+      setItems((prev) => {
+        const activeIndex = prev.findIndex((item) => item.id === active?.id);
+        const overIndex = prev.findIndex((item) => item.id === over?.id);
+        console.log(activeIndex, overIndex);
+        return arrayMove(prev, activeIndex, overIndex);
+      });
+    }
+  }
 
   const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -80,16 +120,18 @@ export default function EditCatImages({ cat }: EditCatImages) {
                     onChange={handleImageChange}
                   />
                   <div className="grid grid-cols-5 items-end gap-2">
-                    {selectedImages.map((image, index) => (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        key={index}
-                        src={image}
-                        alt={`Selected ${index}`}
-                        width={120}
-                        height={80}
-                      />
-                    ))}
+                    <ul>
+                      {selectedImages.map((image, index) => (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`Selected ${index}`}
+                          width={120}
+                          height={80}
+                        />
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -107,27 +149,79 @@ export default function EditCatImages({ cat }: EditCatImages) {
             </DialogContent>
           </Dialog>
         </div>
-        <section className="flex flex-col items-center gap-2">
-          {cat.CatImage.map((catimage) => (
-            <div
-              className="flex cursor-grab items-center gap-2"
-              key={catimage.id}
-            >
-              <span className="select-none text-xl">
-                {catimage.priority ? catimage.priority - 1 : ""}
-              </span>
-              <Image
-                width={catimage.width}
-                height={catimage.height}
-                className="h-auto w-[200px]"
-                src={catimage.src}
-                alt={`${cat.name}'s photo number ${cat.id}`}
-              />
-            </div>
-          ))}
-        </section>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+          id={id}
+        >
+          <SortableContext items={items} strategy={rectSortingStrategy}>
+            <section className="flex justify-center">
+              <ul className="grid grid-cols-6">
+                {items.map((catimage) => (
+                  <SortableItem key={catimage.id} {...catimage} />
+                ))}
+              </ul>
+            </section>
+          </SortableContext>
+        </DndContext>
       </div>
     </AdminLayout>
+  );
+}
+
+function SortableItem({
+  width,
+  height,
+  src,
+  id,
+  priority,
+}: {
+  width: number;
+  height: number;
+  src: string;
+  id: number;
+  priority: number;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+  } = useSortable({
+    id: id,
+  });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+  return (
+    <li
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      className="flex w-[250px] h-[250px] gap-4 border border-slate-700 p-2"
+    >
+      <div className="w-full">
+        <Image
+          width={width}
+          height={height}
+          className="h-[200px] w-[200px]"
+          src={src}
+          alt={`photo number ${id}`}
+        />
+      </div>
+      <div
+        {...listeners}
+        ref={setActivatorNodeRef}
+        className="flex cursor-grab items-center gap-1 rounded p-1 hover:bg-gray-100"
+      >
+        <span>{priority - 1}</span>
+        <GripVertical className="h-4 w-4" />
+      </div>
+    </li>
   );
 }
 
