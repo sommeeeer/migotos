@@ -116,4 +116,35 @@ export const catRouter = createTRPCRouter({
         });
       }
     }),
+  updateCatImagesOrder: protectedProcedure
+    .input(
+      z.object({
+        cat_id: z.number(),
+        order: z.array(z.object({ id: z.number(), priority: z.number() })),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      try {
+        const updatedCatImages = await Promise.all(
+          input.order.map(async (image) => {
+            const updatedCatImage = await db.catImage.update({
+              where: {
+                id: image.id,
+                cat_id: input.cat_id,
+              },
+              data: {
+                priority: image.priority,
+              },
+            });
+            return updatedCatImage;
+          }),
+        );
+        return updatedCatImages;
+      } catch (err) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
 });
