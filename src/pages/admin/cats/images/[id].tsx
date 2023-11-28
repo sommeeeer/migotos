@@ -22,7 +22,7 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { GripVertical, Upload } from "lucide-react";
+import { GripVertical, ImagePlus, Save, Upload } from "lucide-react";
 import { type ChangeEvent, useState, useId } from "react";
 import {
   DndContext,
@@ -148,7 +148,10 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   }
 
   function handleUpload() {
-    console.log(filesToUpload);
+    if (!filesToUpload) return;
+    for (const f of filesToUpload) {
+      console.log(f);
+    }
   }
 
   return (
@@ -160,6 +163,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button disabled={items.length === 0} className="w-fit">
+                  <Save className="mr-2 h-5 w-5" />
                   Save new order
                 </Button>
               </AlertDialogTrigger>
@@ -188,10 +192,13 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                 onClick={() => {
                   setSelectedImages([]);
                   setSize(undefined);
+                  setFilesToUpload(null);
                 }}
                 asChild
               >
-                <Button className="w-fit">Add more photos</Button>
+                <Button className="w-fit">
+                  <ImagePlus className="mr-2 h-5 w-5" /> Add more photos
+                </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
@@ -258,7 +265,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
         >
           <SortableContext items={items} strategy={rectSortingStrategy}>
             <section className="flex justify-center">
-              <ul className="grid grid-cols-6 gap-1">
+              <ul className="grid grid-cols-5 gap-1 gap-x-2">
                 {items.map((catimage) => (
                   <SortableItem key={catimage.id} {...catimage} />
                 ))}
@@ -319,7 +326,6 @@ function SortableItem({
         ref={setActivatorNodeRef}
         className="flex cursor-grab items-center gap-1 rounded p-1 hover:bg-gray-100"
       >
-        <span>{priority - 1}</span>
         <GripVertical className="h-8 w-8" />
       </div>
     </li>
