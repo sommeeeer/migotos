@@ -33,7 +33,7 @@ export async function uploadS3(file: File, uploadUrl: string) {
         "Content-Disposition": `attachment; filename="${file.name}"`,
       },
     });
-    return image;
+    return image.url.split("?")[0];
   } catch (error) {
     throw new Error("Error uploading image");
   }

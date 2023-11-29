@@ -119,8 +119,8 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
     }
     try {
       setIsUploading(true);
-      const image = await uploadS3(file, uploadUrl);
-      setImageUrl(image.url.split("?")[0]);
+      const imageURL = await uploadS3(file, uploadUrl);
+      setImageUrl(imageURL);
       toast({
         variant: "default",
         title: "Success",
