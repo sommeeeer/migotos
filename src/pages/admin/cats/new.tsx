@@ -162,7 +162,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
               name="stamnavn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Stamnavn</FormLabel>
+                  <FormLabel>Fargekode</FormLabel>
                   <FormControl>
                     <Input disabled={isLoading} {...field} />
                   </FormControl>
@@ -340,7 +340,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
               name="pedigreeurl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Pedigree URL</FormLabel>
+                  <FormLabel>Pedigree URL (can be empty)</FormLabel>
                   <FormControl>
                     <Input type="text" disabled={isLoading} {...field} />
                   </FormControl>
