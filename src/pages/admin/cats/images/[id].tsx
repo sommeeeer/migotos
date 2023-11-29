@@ -22,15 +22,7 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import {
-  Delete,
-  GripVertical,
-  ImagePlus,
-  MoreHorizontal,
-  RotateCcw,
-  Save,
-  Upload,
-} from "lucide-react";
+import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from "lucide-react";
 import { type ChangeEvent, useState, useId } from "react";
 import {
   DndContext,
@@ -65,14 +57,6 @@ import { toast } from "~/components/ui/use-toast";
 import { bytesToMB, uploadS3 } from "~/utils/helpers";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { cn } from "~/lib/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
 import { AiFillDelete } from "react-icons/ai";
 
 type CatWithImage = Prisma.CatGetPayload<{
@@ -389,7 +373,11 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
               <section className="flex justify-center">
                 <ul className="grid grid-cols-5 gap-1 gap-x-2">
                   {items.map((catimage) => (
-                    <SortableItem key={catimage.id} {...catimage} />
+                    <SortableItem
+                      key={catimage.id}
+                      refetchImages={refetch}
+                      {...catimage}
+                    />
                   ))}
                 </ul>
               </section>
@@ -406,12 +394,13 @@ function SortableItem({
   height,
   src,
   id,
+  refetchImages,
 }: {
   width: number;
   height: number;
   src: string;
   id: number;
-  priority: number;
+  refetchImages: () => void;
 }) {
   const {
     attributes,
@@ -427,12 +416,32 @@ function SortableItem({
     transform: CSS.Transform.toString(transform),
     transition,
   };
+  const { mutate: mutateDeleteImage } = api.cat.deleteCatImage.useMutation({
+    onSuccess: () => {
+      toast({
+        variant: "default",
+        title: "Success",
+        color: "green",
+        description: "Image deleted successfully.",
+      });
+      refetchImages();
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          "Something went wrong while deleting image. Please try again",
+      });
+    },
+  });
+
   return (
     <li
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="flex h-[150px] w-[220px] gap-4 border border-slate-700 p-2"
+      className="flex h-[150px] w-[220px] gap-4 border-2 border-slate-500 p-2 rounded"
     >
       <div className="overflow-hidden">
         <Image
@@ -463,7 +472,11 @@ function SortableItem({
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 className="bg-red-500 hover:bg-red-600"
-                onClick={() => console.log(id)}
+                onClick={() =>
+                  mutateDeleteImage({
+                    id: id,
+                  })
+                }
               >
                 Delete
               </AlertDialogAction>

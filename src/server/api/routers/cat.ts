@@ -213,4 +213,21 @@ export const catRouter = createTRPCRouter({
         });
       }
     }),
+  deleteCatImage: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      try {
+        const deletedCatImage = await db.catImage.delete({
+          where: {
+            id: input.id,
+          },
+        });
+        return deletedCatImage;
+      } catch (err) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
 });
