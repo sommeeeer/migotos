@@ -19,7 +19,13 @@ export const contactRouter = createTRPCRouter({
         message: input.message,
       },
     });
-    return msg;
+    if (!msg) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to create message",
+      });
+    }
+    return { success: true };
   }),
   delete: protectedProcedure.input(z.number()).mutation(async ({ input }) => {
     const msg = await db.contactMessage.findFirst({ where: { id: input } });
