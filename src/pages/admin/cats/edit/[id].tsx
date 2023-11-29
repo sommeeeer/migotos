@@ -60,9 +60,10 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [file, setFile] = useState<File | undefined>(undefined);
   const [imageUrl, setImageUrl] = useState<string | undefined>(
-    cat.CatImage[0]?.src ?? undefined,
+    cat.CatImage.find((img) => img.priority === 1)?.src ?? undefined,
   );
   const [imageKey, setImageKey] = useState(0);
+  const [newImage, setNewImage] = useState(false);
 
   const form = useForm<z.infer<typeof catSchema>>({
     resolver: zodResolver(catSchema),
@@ -127,6 +128,7 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
         color: "green",
         description: "Image uploaded successfully.",
       });
+      setNewImage(true);
       setImageKey(imageKey + 1);
     } catch {
       toast({
@@ -140,7 +142,7 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
   }
 
   function onSubmit(values: z.infer<typeof catSchema>) {
-    if (!form.formState.isDirty) {
+    if (!form.formState.isDirty && !newImage) {
       toast({
         variant: "destructive",
         description: "No changes detected.",
