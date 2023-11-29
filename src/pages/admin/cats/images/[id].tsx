@@ -22,7 +22,15 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from "lucide-react";
+import {
+  Delete,
+  GripVertical,
+  ImagePlus,
+  MoreHorizontal,
+  RotateCcw,
+  Save,
+  Upload,
+} from "lucide-react";
 import { type ChangeEvent, useState, useId } from "react";
 import {
   DndContext,
@@ -57,6 +65,15 @@ import { toast } from "~/components/ui/use-toast";
 import { bytesToMB, uploadS3 } from "~/utils/helpers";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { cn } from "~/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { AiFillDelete } from "react-icons/ai";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -73,6 +90,9 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
   const [size, setSize] = useState<number | undefined>();
   const [items, setItems] = useState<CatImage[]>();
+  const [open, setOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -114,6 +134,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
           description:
             "Something went wrong while updating image order. Please try again",
         });
+        void refetch();
       },
     });
   const { mutate: mutateAddCatImages } = api.cat.addCatImages.useMutation({
@@ -134,6 +155,11 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
         description:
           "Something went wrong while adding images to the database. Please try again",
       });
+      void refetch();
+    },
+    onSettled: () => {
+      setOpen(false);
+      setIsUploading(false);
     },
   });
 
@@ -184,6 +210,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   }
 
   async function handleUpload() {
+    setIsUploading(true);
     if (!filesToUpload) return;
     try {
       const imgs = [];
@@ -219,12 +246,16 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
     }
   }
 
-
   return (
     <AdminLayout>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-4 rounded-xl border-2 p-4 text-center">
           <h1 className="text-xl text-gray-800">Photos for {cat.name}</h1>
+          {items && (
+            <h3 className="text-sm text-gray-700">
+              Total: {`${items.length} images`}
+            </h3>
+          )}
           <div className="flex justify-center gap-2">
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -256,7 +287,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
               </AlertDialogContent>
             </AlertDialog>
 
-            <Dialog>
+            <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger
                 onClick={() => {
                   setSelectedImages([]);
@@ -308,8 +339,12 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                   </div>
                 </div>
                 <DialogFooter className="sm:justify-start">
-                  <DialogClose asChild>
-                    <Button type="button" variant="secondary">
+                  <DialogClose asChild disabled={isUploading}>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      disabled={isUploading}
+                    >
                       Close
                     </Button>
                   </DialogClose>
@@ -317,8 +352,10 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                     onClick={handleUpload}
                     type="submit"
                     variant="secondary"
+                    disabled={isUploading}
                   >
-                    <Upload size={16} className="mr-2" />
+                    {isUploading && <LoadingSpinner className="mr-2 h-4 w-4" />}
+                    {!isUploading && <Upload size={16} className="mr-2" />}
                     Upload
                   </Button>
                 </DialogFooter>
@@ -407,12 +444,39 @@ function SortableItem({
           draggable
         />
       </div>
-      <div
-        {...listeners}
-        ref={setActivatorNodeRef}
-        className="flex cursor-grab items-center gap-1 rounded p-1 hover:bg-gray-100"
-      >
-        <GripVertical className="h-8 w-8" />
+      <div className="flex flex-col items-center justify-between pt-2">
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button className="hover:-slate-300">
+              <AiFillDelete className="h-6 w-6 transition-colors duration-200 hover:text-zinc-600" />
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete this
+                photo and remove the data from the server.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-red-500 hover:bg-red-600"
+                onClick={() => console.log(id)}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        <div
+          {...listeners}
+          ref={setActivatorNodeRef}
+          className="flex cursor-grab items-center gap-1 rounded p-1 hover:bg-gray-100"
+        >
+          <GripVertical className="h-8 w-8" />
+        </div>
       </div>
     </li>
   );
