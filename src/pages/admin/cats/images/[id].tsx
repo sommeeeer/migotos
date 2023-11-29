@@ -1,4 +1,4 @@
-import type { Cat, Prisma } from "@prisma/client";
+import type { Cat, CatImage, Prisma } from "@prisma/client";
 
 import { db } from "~/server/db";
 import {
@@ -56,6 +56,8 @@ import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
 import { useRouter } from "next/router";
 import { bytesToMB, uploadS3 } from "~/utils/helpers";
+import LoadingSpinner from "~/components/ui/LoadingSpinner";
+import { cn } from "~/lib/utils";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -71,7 +73,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
   const [size, setSize] = useState<number | undefined>();
-  const [items, setItems] = useState(cat.CatImage);
+  const [items, setItems] = useState<CatImage[]>();
   const router = useRouter();
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -80,6 +82,18 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
     }),
   );
 
+  const { isLoading, isFetching, isError, refetch } =
+    api.cat.getCatImages.useQuery(
+      {
+        cat_id: cat.id,
+      },
+      {
+        onSuccess: (data) => {
+          setItems(data);
+        },
+        initialData: cat.CatImage,
+      },
+    );
   const id = useId();
 
   const { mutate: mutateUpdateOrder } =
@@ -91,7 +105,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
           color: "green",
           description: "Cat images order updated successfully.",
         });
-        void router.replace(router.asPath);
+        void refetch();
       },
       onError: () => {
         toast({
@@ -107,6 +121,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
     const { active, over } = event;
     if (active?.id !== over?.id) {
       setItems((prev) => {
+        if (!prev) return prev;
         const activeIndex = prev.findIndex((item) => item.id === active?.id);
         const overIndex = prev.findIndex((item) => item.id === over?.id);
         return arrayMove(prev, activeIndex, overIndex);
@@ -135,6 +150,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   }
 
   function handleSaveOrder() {
+    if (!items) return;
     const newOrder = items.map((item, index) => {
       return {
         id: item.id,
@@ -172,7 +188,10 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
           <div className="flex justify-center gap-2">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button disabled={items.length === 0} className="w-fit">
+                <Button
+                  disabled={items && items.length === 0}
+                  className="w-fit"
+                >
                   <Save className="mr-2 h-5 w-5" />
                   Save new order
                 </Button>
@@ -265,27 +284,38 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-            <Button onClick={() => router.reload()}>
-              <RotateCcw className="h-5 w-5" />
+            <Button onClick={() => refetch()}>
+              <RotateCcw
+                className={cn("h-5 w-5", isFetching && "animate-spin")}
+              />
             </Button>
           </div>
         </div>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          id={id}
-        >
-          <SortableContext items={items} strategy={rectSortingStrategy}>
-            <section className="flex justify-center">
-              <ul className="grid grid-cols-5 gap-1 gap-x-2">
-                {items.map((catimage) => (
-                  <SortableItem key={catimage.id} {...catimage} />
-                ))}
-              </ul>
-            </section>
-          </SortableContext>
-        </DndContext>
+        {isLoading && <LoadingSpinner className="mx-auto h-16 w-16" />}
+        {isError && (
+          <p className="text-center text-xl text-red-600">
+            Something wrong happend during fetching of the images. Try again
+            later
+          </p>
+        )}
+        {items && (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            id={id}
+          >
+            <SortableContext items={items} strategy={rectSortingStrategy}>
+              <section className="flex justify-center">
+                <ul className="grid grid-cols-5 gap-1 gap-x-2">
+                  {items.map((catimage) => (
+                    <SortableItem key={catimage.id} {...catimage} />
+                  ))}
+                </ul>
+              </section>
+            </SortableContext>
+          </DndContext>
+        )}
       </div>
     </AdminLayout>
   );
