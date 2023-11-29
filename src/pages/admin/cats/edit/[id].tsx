@@ -399,7 +399,7 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
               )}
               <Label>URL to Image</Label>
               <Input value={imageUrl ?? ""} readOnly disabled={isLoading} />
-              <Label>Select New Profile Picture</Label>
+              <Label>Select New Profile Picture (300x300)</Label>
               <Input
                 type="file"
                 className="cursor-pointer"
