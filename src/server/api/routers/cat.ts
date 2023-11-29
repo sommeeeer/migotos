@@ -157,6 +157,9 @@ export const catRouter = createTRPCRouter({
         const catImages = await db.catImage.findMany({
           where: {
             cat_id: input.cat_id,
+            priority: {
+              gt: 1,
+            },
           },
           orderBy: {
             priority: "asc",
