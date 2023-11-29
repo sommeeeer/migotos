@@ -58,6 +58,7 @@ import { bytesToMB, uploadS3 } from "~/utils/helpers";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { cn } from "~/lib/utils";
 import { AiFillDelete } from "react-icons/ai";
+import { AnimatePresence, motion } from "framer-motion";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -270,7 +271,6 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger
                 onClick={() => {
@@ -372,13 +372,15 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
             <SortableContext items={items} strategy={rectSortingStrategy}>
               <section className="flex justify-center">
                 <ul className="grid grid-cols-5 gap-1 gap-x-2">
-                  {items.map((catimage) => (
-                    <SortableItem
-                      key={catimage.id}
-                      refetchImages={refetch}
-                      {...catimage}
-                    />
-                  ))}
+                  <AnimatePresence>
+                    {items.map((catimage) => (
+                      <SortableItem
+                        key={catimage.id}
+                        refetchImages={refetch}
+                        {...catimage}
+                      />
+                    ))}
+                  </AnimatePresence>
                 </ul>
               </section>
             </SortableContext>
@@ -437,11 +439,14 @@ function SortableItem({
   });
 
   return (
-    <li
+    <motion.li
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className="flex h-[150px] w-[220px] gap-4 border-2 border-slate-500 p-2 rounded"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3 } }}
+      exit={{ opacity: 0, transition: { duration: 0.3 } }}
+      className="flex h-[150px] w-[220px] gap-4 rounded border-2 border-slate-500 p-2"
     >
       <div className="overflow-hidden">
         <Image
@@ -491,7 +496,7 @@ function SortableItem({
           <GripVertical className="h-8 w-8" />
         </div>
       </div>
-    </li>
+    </motion.li>
   );
 }
 
