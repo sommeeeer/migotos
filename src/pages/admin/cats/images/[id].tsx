@@ -101,7 +101,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
 
   const id = useId();
 
-  const { mutate: mutateUpdateOrder } =
+  const { mutate: mutateUpdateOrder, isLoading: isLoadingOrder } =
     api.cat.updateCatImagesOrder.useMutation({
       onSuccess: () => {
         toast({
@@ -245,10 +245,13 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
-                  disabled={items && items.length === 0}
+                  disabled={(items && items.length === 0) || isLoadingOrder}
                   className="w-fit"
                 >
-                  <Save className="mr-2 h-5 w-5" />
+                  {isLoadingOrder && (
+                    <LoadingSpinner className="mr-2 h-4 w-4" />
+                  )}
+                  {!isLoadingOrder && <Save className="mr-2 h-5 w-5" />}
                   Save new order
                 </Button>
               </AlertDialogTrigger>
