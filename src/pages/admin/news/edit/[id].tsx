@@ -30,10 +30,6 @@ import { Calendar } from "~/components/ui/calendar";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { addHours } from "date-fns";
 import { cn } from "~/lib/utils";
-import crypto from "crypto";
-import { Bucket } from "sst/node/bucket";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { useState } from "react";
 import Image from "next/image";
 import { Label } from "~/components/ui/label";
@@ -42,11 +38,11 @@ import { api } from "~/utils/api";
 import { uploadS3 } from "~/utils/helpers";
 import { editBlogPostSchema } from "~/lib/validators/blogpost";
 import { type z } from "zod";
-import { checkAdminSession } from "~/server/helpers";
+import { checkAdminSession, getSignedURL } from "~/server/helpers";
 
 type EditBlogPostProps = {
   blogpost: BlogPost;
-  uploadUrl: string;
+  uploadUrl: string | null;
   tags: BlogPostTag[];
 };
 
@@ -101,6 +97,14 @@ export default function EditBlogPost({
         variant: "destructive",
         title: "No image selected.",
         description: "Please select an image before uploading.",
+      });
+      return;
+    }
+    if (!uploadUrl) {
+      toast({
+        variant: "destructive",
+        title: "No upload URL available from Amazon S3.",
+        description: "Please try again later.",
       });
       return;
     }
@@ -290,7 +294,7 @@ export default function EditBlogPost({
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
 ): Promise<GetServerSidePropsResult<EditBlogPostProps>> {
-  console.log('hoohohohohoo')
+  console.log("hoohohohohoo");
   const adminSession = await checkAdminSession(ctx);
 
   if (!adminSession) {
@@ -298,7 +302,7 @@ export async function getServerSideProps(
       notFound: true,
     };
   }
-  
+
   if (!ctx.query?.id || typeof ctx.query.id !== "string") {
     return {
       notFound: true,
@@ -321,12 +325,7 @@ export async function getServerSideProps(
       value: "desc",
     },
   });
-  const command = new PutObjectCommand({
-    ACL: "public-read",
-    Key: crypto.randomUUID(),
-    Bucket: Bucket.public.bucketName,
-  });
-  const uploadUrl = await getSignedUrl(new S3Client({}), command);
+  const uploadUrl = await getSignedURL();
 
   return {
     props: {

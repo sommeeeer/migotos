@@ -29,10 +29,6 @@ import { Calendar } from "~/components/ui/calendar";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { addHours } from "date-fns";
 import { cn } from "~/lib/utils";
-import crypto from "crypto";
-import { Bucket } from "sst/node/bucket";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { useState } from "react";
 import Image from "next/image";
 import { Label } from "~/components/ui/label";
@@ -40,10 +36,10 @@ import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
 import { uploadS3 } from "~/utils/helpers";
 import { MdOutlinePostAdd } from "react-icons/md";
-import { checkAdminSession } from "~/server/helpers";
+import { checkAdminSession, getSignedURL } from "~/server/helpers";
 
 type NewBlogPostProps = {
-  uploadUrl: string;
+  uploadUrl: string | null;
 };
 
 const formSchema = z.object({
@@ -100,6 +96,14 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
         variant: "destructive",
         title: "No image selected.",
         description: "Please select an image before uploading.",
+      });
+      return;
+    }
+    if (!uploadUrl) {
+      toast({
+        variant: "destructive",
+        title: "No upload URL available from Amazon S3.",
+        description: "Please try again later.",
       });
       return;
     }
@@ -291,12 +295,7 @@ export async function getServerSideProps(
     };
   }
 
-  const command = new PutObjectCommand({
-    ACL: "public-read",
-    Key: crypto.randomUUID(),
-    Bucket: Bucket.public.bucketName,
-  });
-  const uploadUrl = await getSignedUrl(new S3Client({}), command);
+  const uploadUrl = await getSignedURL();
 
   return {
     props: {
