@@ -94,6 +94,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
         initialData: cat.CatImage,
       },
     );
+
   const id = useId();
 
   const { mutate: mutateUpdateOrder } =
@@ -165,6 +166,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
 
   function handleUpload() {
     if (!filesToUpload) return;
+
     try {
       for (const [index, file] of Object.entries(filesToUpload)) {
         console.log(index, file);
@@ -284,7 +286,10 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-            <Button onClick={() => refetch()}>
+            <Button
+              className={cn(isFetching && "bg-gray-700")}
+              onClick={() => refetch()}
+            >
               <RotateCcw
                 className={cn("h-5 w-5", isFetching && "animate-spin")}
               />

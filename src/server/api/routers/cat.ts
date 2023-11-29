@@ -150,28 +150,6 @@ export const catRouter = createTRPCRouter({
         });
       }
     }),
-  getSignedUrls: protectedProcedure
-    .input(z.number())
-    .query(async ({ input }) => {
-      const urls = [];
-      try {
-        for (let i = 0; i < input; i++) {
-          const command = new PutObjectCommand({
-            ACL: "public-read",
-            Key: crypto.randomUUID(),
-            Bucket: Bucket.public.bucketName,
-          });
-          const uploadUrl = await getSignedUrl(new S3Client({}), command);
-          urls.push(uploadUrl);
-        }
-        return urls;
-      } catch (err) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
-        });
-      }
-    }),
   getCatImages: protectedProcedure
     .input(z.object({ cat_id: z.number() }))
     .query(async ({ input }) => {
