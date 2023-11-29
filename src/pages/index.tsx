@@ -1,4 +1,5 @@
 import type { GetStaticPropsResult } from "next/types";
+import Footer from "~/components/Footer";
 import LitterProfile from "~/components/LitterProfile";
 import NewsCard from "~/components/ui/NewsCard";
 import { db } from "~/server/db";
@@ -44,6 +45,8 @@ export default function Home({ blogPosts, litters }: Props) {
           />
         ))}
       </section>
+
+      <Footer />
     </div>
   );
 }

@@ -31,6 +31,12 @@ const config = {
           "lillemagga-newsite-site-publicbucket5c3dbab0-1xax511ruu4gv.s3.eu-north-1.amazonaws.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname:
+          "prod-newsite-site-publicbucket5c3dbab0-1h72g5nutr427.s3.eu-north-1.amazonaws.com",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {
