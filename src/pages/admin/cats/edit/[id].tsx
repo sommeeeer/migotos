@@ -41,10 +41,7 @@ import { uploadS3 } from "~/utils/helpers";
 import { Label } from "~/components/ui/label";
 import Image from "next/image";
 import { useState } from "react";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { Bucket } from "sst/node/bucket";
-import { checkAdminSession } from "~/server/helpers";
+import { checkAdminSession, getSignedURL } from "~/server/helpers";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -54,7 +51,7 @@ type CatWithImage = Prisma.CatGetPayload<{
 
 type EditCatProps = {
   cat: CatWithImage;
-  uploadUrl: string;
+  uploadUrl: string | null;
 };
 
 export default function EditCat({ cat, uploadUrl }: EditCatProps) {
@@ -109,6 +106,14 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
         variant: "destructive",
         title: "No image selected.",
         description: "Please select an image before uploading.",
+      });
+      return;
+    }
+    if (!uploadUrl) {
+      toast({
+        variant: "destructive",
+        title: "No upload URL available from Amazon S3.",
+        description: "Please try again later.",
       });
       return;
     }
@@ -362,7 +367,7 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
                 </FormItem>
               )}
             />
-            <FormField 
+            <FormField
               control={form.control}
               name="pedigreeurl"
               render={({ field }) => (
@@ -461,12 +466,7 @@ export async function getServerSideProps(
       notFound: true,
     };
   }
-  const command = new PutObjectCommand({
-    ACL: "public-read",
-    Key: crypto.randomUUID(),
-    Bucket: Bucket.public.bucketName,
-  });
-  const uploadUrl = await getSignedUrl(new S3Client({}), command);
+  const uploadUrl = await getSignedURL();
 
   return {
     props: {

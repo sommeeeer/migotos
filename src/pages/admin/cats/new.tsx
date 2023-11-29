@@ -38,12 +38,9 @@ import { uploadS3 } from "~/utils/helpers";
 import { Label } from "~/components/ui/label";
 import Image from "next/image";
 import { useState } from "react";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { Bucket } from "sst/node/bucket";
-import { checkAdminSession } from "~/server/helpers";
+import { checkAdminSession, getSignedURL } from "~/server/helpers";
 
-export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
+export default function NewCat({ uploadUrl }: { uploadUrl: string | null }) {
   const router = useRouter();
 
   const [isUploading, setIsUploading] = useState(false);
@@ -94,6 +91,14 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
         variant: "destructive",
         title: "No image selected.",
         description: "Please select an image before uploading.",
+      });
+      return;
+    }
+    if (!uploadUrl) {
+      toast({
+        variant: "destructive",
+        title: "No upload URL available from Amazon S3.",
+        description: "Please try again later.",
       });
       return;
     }
@@ -408,7 +413,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
 
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
-): Promise<GetServerSidePropsResult<{ uploadUrl: string }>> {
+): Promise<GetServerSidePropsResult<{ uploadUrl: string | null }>> {
   const adminSession = await checkAdminSession(ctx);
 
   if (!adminSession) {
@@ -417,12 +422,7 @@ export async function getServerSideProps(
     };
   }
 
-  const command = new PutObjectCommand({
-    ACL: "public-read",
-    Key: crypto.randomUUID(),
-    Bucket: Bucket.public.bucketName,
-  });
-  const uploadUrl = await getSignedUrl(new S3Client({}), command);
+  const uploadUrl = await getSignedURL();
 
   return {
     props: {
