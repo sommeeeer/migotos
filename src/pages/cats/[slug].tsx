@@ -70,9 +70,10 @@ function Cat({ cat, mother, father }: Props) {
             width={profileImg.width}
             height={profileImg.height}
             className="mb-2 rounded-full"
-            placeholder="blur"
             quality={100}
-            blurDataURL={profileImg.blururl}
+            {...(profileImg.blururl
+              ? { placeholder: "blur", blurDataURL: profileImg.blururl }
+              : {})}
           />
           {cat.description && (
             <p className="mb-6 max-w-prose text-[15px] leading-8 text-zinc-500">
@@ -117,8 +118,9 @@ function Cat({ cat, mother, father }: Props) {
                   alt={`${cat.name} picture`}
                   width={img.width}
                   height={img.height}
-                  placeholder="blur"
-                  blurDataURL={img.blururl}
+                  {...(img.blururl
+                    ? { placeholder: "blur", blurDataURL: img.blururl }
+                    : {})}
                 />
               );
             })}

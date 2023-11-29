@@ -54,7 +54,6 @@ import {
 } from "~/components/ui/alert-dialog";
 import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
-import { useRouter } from "next/router";
 import { bytesToMB, uploadS3 } from "~/utils/helpers";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { cn } from "~/lib/utils";
@@ -74,7 +73,6 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
   const [size, setSize] = useState<number | undefined>();
   const [items, setItems] = useState<CatImage[]>();
-  const router = useRouter();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -92,6 +90,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
           setItems(data);
         },
         initialData: cat.CatImage,
+        refetchOnWindowFocus: false,
       },
     );
 
@@ -117,6 +116,26 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
         });
       },
     });
+  const { mutate: mutateAddCatImages } = api.cat.addCatImages.useMutation({
+    onSuccess: () => {
+      toast({
+        variant: "default",
+        title: "Success",
+        color: "green",
+        description:
+          "Cat images succesfully uploaded and added to the database.",
+      });
+      void refetch();
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          "Something went wrong while adding images to the database. Please try again",
+      });
+    },
+  });
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -164,16 +183,34 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
     });
   }
 
-  function handleUpload() {
+  async function handleUpload() {
     if (!filesToUpload) return;
-
     try {
-      for (const [index, file] of Object.entries(filesToUpload)) {
-        console.log(index, file);
-        // console.log(`Upload ${index} which is ${file.name}`);
-        // const image = await uploadS3(file, urls[index]);
+      const imgs = [];
+      const res = await fetch(
+        `/api/getSignedURLS?amount=${filesToUpload.length}`,
+      );
+      if (!res.ok) {
+        throw new Error("Something went wrong while getting signed URLs");
       }
+      const { urls } = (await res.json()) as { urls: string[] };
+      for (let i = 0; i < filesToUpload.length; i++) {
+        const file = filesToUpload[i];
+        const url = urls[i];
+        if (!url || !file)
+          throw new Error("Something went wrong while uploading images.");
+        const imageURL = await uploadS3(file, url);
+        if (!imageURL) {
+          throw new Error("Something went wrong while uploading images.");
+        }
+        imgs.push(imageURL);
+      }
+      mutateAddCatImages({
+        cat_id: cat.id,
+        imageUrls: imgs,
+      });
     } catch (err) {
+      console.error(err);
       toast({
         variant: "destructive",
         title: "Error",
@@ -181,6 +218,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
       });
     }
   }
+
 
   return (
     <AdminLayout>
