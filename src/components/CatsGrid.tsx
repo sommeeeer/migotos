@@ -17,7 +17,7 @@ export default function CatsGrid({ cats }: CatsGridProps) {
             name={cat.name}
             tribalName={cat.stamnavn}
             slug={cat.slug}
-            blurData={image?.blururl}
+            blurData={image?.blururl ?? null}
           />
         );
       })}
