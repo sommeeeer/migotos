@@ -1,6 +1,9 @@
 import { type GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "~/server/auth";
 import { Role } from "@prisma/client";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { Bucket } from "sst/node/bucket";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export async function checkAdminSession(ctx: GetServerSidePropsContext) {
   const session = await getServerAuthSession(ctx);
@@ -10,4 +13,37 @@ export async function checkAdminSession(ctx: GetServerSidePropsContext) {
   }
 
   return session;
+}
+
+export async function getSignedURL() {
+  try {
+    const command = new PutObjectCommand({
+      ACL: "public-read",
+      Key: crypto.randomUUID(),
+      Bucket: Bucket.public.bucketName,
+    });
+    const uploadUrl = await getSignedUrl(new S3Client({}), command);
+    return uploadUrl;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+export async function getSignedURLS(amount: number) {
+  const urls = [];
+  try {
+    for (let i = 0; i < amount; i++) {
+      const command = new PutObjectCommand({
+        ACL: "public-read",
+        Key: crypto.randomUUID(),
+        Bucket: Bucket.public.bucketName,
+      });
+      const uploadUrl = await getSignedUrl(new S3Client({}), command);
+      urls.push(uploadUrl);
+    }
+    return urls;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
 }
