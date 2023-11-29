@@ -381,7 +381,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string | null }) {
                   if (!e.target.files) return;
                   setFile(e.target.files[0]);
                 }}
-                accept="image/png, image/jpeg, image/jpg"
+                accept="image/png, image/jpeg, image/jpg, image/webp"
               />
               <Button
                 disabled={isUploading || isLoading}
