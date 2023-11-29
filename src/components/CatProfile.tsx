@@ -8,7 +8,7 @@ interface CatProfileProps {
   tribalName: string;
   slug?: string;
   classNames?: string;
-  blurData: string | undefined;
+  blurData: string | null;
 }
 
 export default function CatProfile({
@@ -27,6 +27,36 @@ export default function CatProfile({
   if (!slug) {
     return (
       <div className={classes}>
+        {blurData ? (
+          <Image
+            src={imageSrc ?? ""}
+            alt={name}
+            width={200}
+            height={200}
+            className="rounded-full shadow-md"
+            quality={100}
+            placeholder="blur"
+            blurDataURL={blurData}
+          />
+        ) : (
+          <Image
+            src={imageSrc ?? ""}
+            alt={name}
+            width={200}
+            height={200}
+            className="rounded-full shadow-md"
+            quality={100}
+          />
+        )}
+        <h3 className="font-playfair text-2xl">{name}</h3>
+        <p className="text-base text-zinc-500">{tribalName}</p>
+      </div>
+    );
+  }
+
+  return (
+    <Link href={`/cats/${slug}`} className={classes}>
+      {blurData ? (
         <Image
           src={imageSrc ?? ""}
           alt={name}
@@ -37,24 +67,16 @@ export default function CatProfile({
           placeholder="blur"
           blurDataURL={blurData}
         />
-        <h3 className="font-playfair text-2xl">{name}</h3>
-        <p className="text-base text-zinc-500">{tribalName}</p>
-      </div>
-    );
-  }
-
-  return (
-    <Link href={`/cats/${slug}`} className={classes}>
-      <Image
-        src={imageSrc ?? ""}
-        alt={name}
-        width={200}
-        height={200}
-        className="rounded-full shadow-md"
-        quality={100}
-        placeholder="blur"
-        blurDataURL={blurData}
-      />
+      ) : (
+        <Image
+          src={imageSrc ?? ""}
+          alt={name}
+          width={200}
+          height={200}
+          className="rounded-full shadow-md"
+          quality={100}
+        />
+      )}
       <h3 className="font-playfair text-2xl">{name}</h3>
       <p className="text-base text-zinc-500">{tribalName}</p>
     </Link>
