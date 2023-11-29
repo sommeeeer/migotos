@@ -1,4 +1,7 @@
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { TRPCError } from "@trpc/server";
+import { Bucket } from "sst/node/bucket";
 import { z } from "zod";
 import { catSchema } from "~/lib/validators/cat";
 
@@ -140,6 +143,28 @@ export const catRouter = createTRPCRouter({
           }),
         );
         return updatedCatImages;
+      } catch (err) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
+  getSignedUrls: protectedProcedure
+    .input(z.number())
+    .query(async ({ input }) => {
+      const urls = [];
+      try {
+        for (let i = 0; i < input; i++) {
+          const command = new PutObjectCommand({
+            ACL: "public-read",
+            Key: crypto.randomUUID(),
+            Bucket: Bucket.public.bucketName,
+          });
+          const uploadUrl = await getSignedUrl(new S3Client({}), command);
+          urls.push(uploadUrl);
+        }
+        return urls;
       } catch (err) {
         throw new TRPCError({
           code: "BAD_REQUEST",

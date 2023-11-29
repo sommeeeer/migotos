@@ -22,7 +22,7 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { GripVertical, ImagePlus, Save, Upload } from "lucide-react";
+import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from "lucide-react";
 import { type ChangeEvent, useState, useId } from "react";
 import {
   DndContext,
@@ -55,7 +55,7 @@ import {
 import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
 import { useRouter } from "next/router";
-import { bytesToMB } from "~/utils/helpers";
+import { bytesToMB, uploadS3 } from "~/utils/helpers";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -149,8 +149,18 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
 
   function handleUpload() {
     if (!filesToUpload) return;
-    for (const f of filesToUpload) {
-      console.log(f);
+    try {
+      for (const [index, file] of Object.entries(filesToUpload)) {
+        console.log(index, file);
+        // console.log(`Upload ${index} which is ${file.name}`);
+        // const image = await uploadS3(file, urls[index]);
+      }
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong while uploading images.",
+      });
     }
   }
 
@@ -255,6 +265,9 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+            <Button onClick={() => router.reload()}>
+              <RotateCcw className="h-5 w-5" />
+            </Button>
           </div>
         </div>
         <DndContext
@@ -318,6 +331,7 @@ function SortableItem({
           className="h-auto w-[200px] "
           src={src}
           alt={`photo number ${id}`}
+          draggable
         />
       </div>
       <div
