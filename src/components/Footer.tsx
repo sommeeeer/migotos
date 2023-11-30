@@ -17,7 +17,7 @@ export default function Footer() {
   return (
     <footer className="flex h-32 w-full max-w-3xl flex-col justify-center border-t-2 border-t-zinc-100 px-4">
       <div className="mt-12 flex flex-col items-center justify-between gap-4 text-center">
-        <p className="text-sm">
+        <p className="text-sm font-poppins text-gray-700">
           Copyright © Migotos {new Date().getFullYear()}
         </p>
         {showButton && (
