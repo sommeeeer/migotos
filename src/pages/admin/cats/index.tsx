@@ -80,7 +80,6 @@ export default function Cats({ cats }: CatsProps) {
           <TableCaption>A list of all cats.</TableCaption>
           <TableHeader className="bold bg-gray-50 uppercase text-gray-700">
             <TableRow>
-              <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Nickname</TableHead>
               <TableHead>Stamnavn</TableHead>
@@ -95,7 +94,6 @@ export default function Cats({ cats }: CatsProps) {
           <TableBody>
             {cats.map((cat) => (
               <TableRow key={cat.id} className="text-base">
-                <TableCell>{cat.id}</TableCell>
                 <TableCell>{cat.name}</TableCell>
                 <TableCell>{cat.nickname}</TableCell>
                 <TableCell>{cat.stamnavn}</TableCell>
@@ -113,7 +111,7 @@ export default function Cats({ cats }: CatsProps) {
                     <p>NONE</p>
                   )}
                 </TableCell>
-                <TableCell>{format(cat.birth, "dd/MM/yyyy")}</TableCell>
+                <TableCell>{format(cat.birth, "dd.MM.yyyy")}</TableCell>
                 <TableCell>{cat.gender}</TableCell>
                 <TableCell>{cat.fertile ? "Yes" : "No"}</TableCell>
                 <TableCell>{cat.breeder}</TableCell>

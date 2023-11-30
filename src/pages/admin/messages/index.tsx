@@ -82,7 +82,7 @@ export default function Messages({ messages }: MessagesProps) {
                 </TableCell>
                 <TableCell>{message.email}</TableCell>
                 <TableCell>
-                  {format(message.createdAt, "dd/MM/yyyy HH:mm:ss")}
+                  {format(message.createdAt, "dd.MM.yyyy HH:mm:ss")}
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
@@ -98,7 +98,7 @@ export default function Messages({ messages }: MessagesProps) {
                           <div className="mb-10 flex justify-between text-gray-600">
                             <span className="flex items-center gap-1">
                               <BiTime />
-                              {format(message.createdAt, "dd/MM/yyyy HH:mm:ss")}
+                              {format(message.createdAt, "dd.MM.yyyy HH:mm:ss")}
                             </span>
                             <a href={"mailto:eva@migotos.com"}>
                               <span className="flex items-center gap-1">

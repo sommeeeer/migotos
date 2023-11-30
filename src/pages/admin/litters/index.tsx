@@ -60,25 +60,26 @@ export default function Litters({ litters }: LittersProps) {
           <TableCaption>A list of all litters.</TableCaption>
           <TableHeader className="bold bg-gray-50 uppercase text-gray-700">
             <TableRow>
-              <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Born</TableHead>
               <TableHead>Mother Name</TableHead>
               <TableHead>Father Name</TableHead>
               <TableHead>PedigreeURL</TableHead>
-              <TableHead>Slug</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {litters.map((litter) => (
               <TableRow key={litter.id} className="text-base">
-                <TableCell>{litter.id}</TableCell>
                 <TableCell>{litter.name}</TableCell>
-                <TableCell>{format(litter.born, "dd/MM/yyyy")}</TableCell>
-                <TableCell>{litter.mother_name}</TableCell>
-                <TableCell>{litter.father_name}</TableCell>
+                <TableCell>{format(litter.born, "dd.MM.yyyy")}</TableCell>
                 <TableCell className="max-w-[10rem]">
+                  {litter.mother_name}
+                </TableCell>
+                <TableCell className="max-w-[15rem]">
+                  {litter.father_name}
+                </TableCell>
+                <TableCell className="max-w-[15rem]">
                   {litter.pedigreeurl ? (
                     <a
                       className="font-medium text-blue-600 hover:underline dark:text-blue-500"
@@ -92,7 +93,6 @@ export default function Litters({ litters }: LittersProps) {
                     <p>NONE</p>
                   )}
                 </TableCell>
-                <TableCell>{litter.slug?.toUpperCase()}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Link href={`/admin/litters/edit/${litter.id}`}>
