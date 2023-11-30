@@ -39,8 +39,14 @@ export const contactRouter = createTRPCRouter({
     return msg;
   }),
   deleteAll: protectedProcedure.mutation(async () => {
-    const msgs = await db.contactMessage.deleteMany({});
-    console.log(msgs);
-    return msgs;
+    try {
+      const count = await db.contactMessage.deleteMany({});
+      return count;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to delete messages",
+      });
+    }
   }),
 });
