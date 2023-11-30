@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { api } from "~/utils/api";
 import type { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { BiCheck, BiError } from "react-icons/bi";
 import { BsFacebook, BsInstagram } from "react-icons/bs";
@@ -37,6 +37,15 @@ export default function Contact() {
       setStatus("error");
     },
   });
+
+  useEffect(() => {
+    if (status !== "") {
+      const timeout = setTimeout(() => {
+        setStatus("");
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [status]);
 
   const onSubmit: SubmitHandler<z.infer<typeof contactSchema>> = (data) =>
     mutate(data);
@@ -100,7 +109,7 @@ export default function Contact() {
           >
             {isLoading ? (
               <>
-                <LoadingSpinner className="mr-3"/>
+                <LoadingSpinner className="mr-3" />
                 Loading...
               </>
             ) : (
