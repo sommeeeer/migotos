@@ -74,7 +74,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
   const [size, setSize] = useState<number | undefined>();
-  const [items, setItems] = useState<CatImage[]>();
+  const [items, setItems] = useState<CatImage[]>(cat.CatImage);
   const [open, setOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -95,7 +95,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
           setItems(data);
         },
         initialData: cat.CatImage,
-        refetchOnWindowFocus: false,
+        refetchOnMount: false,
       },
     );
 

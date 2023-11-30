@@ -49,4 +49,19 @@ export const contactRouter = createTRPCRouter({
       });
     }
   }),
+  getAll: protectedProcedure.query(async () => {
+    try {
+      const msgs = await db.contactMessage.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      return msgs;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to get messages",
+      });
+    }
+  }),
 });

@@ -35,20 +35,36 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { api } from "~/utils/api";
-import { useRouter } from "next/router";
 import { checkAdminSession } from "~/server/helpers";
 import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/use-toast";
+import { useState } from "react";
+import { cn } from "~/lib/utils";
+import { RotateCcw } from "lucide-react";
 
 type MessagesProps = {
-  messages: ContactMessage[];
+  initialMessages: ContactMessage[];
 };
 
-export default function Messages({ messages }: MessagesProps) {
-  const router = useRouter();
+export default function Messages({ initialMessages }: MessagesProps) {
+  const [messages, setMessages] = useState<ContactMessage[]>(initialMessages);
+
+  const { refetch, isFetching } = api.contact.getAll.useQuery(undefined, {
+    initialData: messages,
+    refetchOnMount: false,
+    onSuccess: (data) => {
+      setMessages(data);
+    },
+  });
   const { mutate: mutateDeleteOne } = api.contact.delete.useMutation({
     onSuccess: () => {
-      void router.replace(router.asPath);
+      toast({
+        variant: "default",
+        title: "Success",
+        color: "green",
+        description: "Message deleted successfully.",
+      });
+      void refetch();
     },
     onError: () => {
       toast({
@@ -60,7 +76,13 @@ export default function Messages({ messages }: MessagesProps) {
   });
   const { mutate: mutateDeleteAll } = api.contact.deleteAll.useMutation({
     onSuccess: () => {
-      void router.replace(router.asPath);
+      toast({
+        variant: "default",
+        title: "Success",
+        color: "green",
+        description: "Messages deleted successfully.",
+      });
+      void refetch();
     },
     onError: () => {
       toast({
@@ -82,7 +104,40 @@ export default function Messages({ messages }: MessagesProps) {
   return (
     <AdminLayout>
       <div className="flex flex-col items-center gap-4 rounded-xl border-2 p-4 text-center">
-        <Button onClick={deleteAll}>Delete all</Button>
+        <div className="flex gap-4">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button disabled={messages.length === 0}>Delete all</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete all
+                  the messages and remove the data from the server.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-red-500 hover:bg-red-600"
+                  onClick={deleteAll}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <Button
+            className={cn(isFetching && "bg-gray-700")}
+            onClick={() => refetch()}
+            disabled={isFetching}
+          >
+            <RotateCcw
+              className={cn("h-5 w-5", isFetching && "animate-spin")}
+            />
+          </Button>
+        </div>
       </div>
       <div className="mb-4 rounded-lg bg-white p-4 shadow">
         <Table className="max-w-7xl">
@@ -188,7 +243,7 @@ export async function getServerSideProps(
     };
   }
 
-  const messages = await db.contactMessage.findMany({
+  const initialMessages = await db.contactMessage.findMany({
     orderBy: {
       createdAt: "desc",
     },
@@ -196,7 +251,7 @@ export async function getServerSideProps(
 
   return {
     props: {
-      messages,
+      initialMessages,
     },
   };
 }
