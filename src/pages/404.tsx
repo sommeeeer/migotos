@@ -10,7 +10,7 @@ export default function Custom404() {
         <h1 className="bold text-8xl text-gray-800">404</h1>
         <h3 className="bold text-6xl text-gray-800">Not Found</h3>
       </div>
-      <Button variant="outline" onClick={() => router.back()}>
+      <Button className="mt-4" variant="outline" onClick={() => router.back()}>
         <ArrowBigLeftIcon className="mr-2" />
         Go back
       </Button>
