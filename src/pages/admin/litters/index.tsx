@@ -41,7 +41,6 @@ type LittersProps = {
 };
 
 export default function Litters({ litters }: LittersProps) {
-  const router = useRouter();
 
   return (
     <AdminLayout>

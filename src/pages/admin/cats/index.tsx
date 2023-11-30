@@ -55,7 +55,11 @@ export default function Cats({ cats }: CatsProps) {
       void router.replace(router.asPath);
     },
     onError: () => {
-      console.log("Error while trying to delete comment");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong while trying to update cat.",
+      });
     },
   });
 

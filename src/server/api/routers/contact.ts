@@ -38,4 +38,9 @@ export const contactRouter = createTRPCRouter({
     await db.contactMessage.delete({ where: { id: input } });
     return msg;
   }),
+  deleteAll: protectedProcedure.mutation(async () => {
+    const msgs = await db.contactMessage.deleteMany({});
+    console.log(msgs);
+    return msgs;
+  }),
 });

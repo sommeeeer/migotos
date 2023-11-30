@@ -37,6 +37,8 @@ import {
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { checkAdminSession } from "~/server/helpers";
+import { Button } from "~/components/ui/button";
+import { toast } from "~/components/ui/use-toast";
 
 type MessagesProps = {
   messages: ContactMessage[];
@@ -44,21 +46,44 @@ type MessagesProps = {
 
 export default function Messages({ messages }: MessagesProps) {
   const router = useRouter();
-  const { mutate } = api.contact.delete.useMutation({
+  const { mutate: mutateDeleteOne } = api.contact.delete.useMutation({
     onSuccess: () => {
       void router.replace(router.asPath);
     },
     onError: () => {
-      console.log("Error while trying to delete comment");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Error while trying to delete message.",
+      });
+    },
+  });
+  const { mutate: mutateDeleteAll } = api.contact.deleteAll.useMutation({
+    onSuccess: () => {
+      void router.replace(router.asPath);
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong while deleting all messages.",
+      });
     },
   });
 
   function deleteMessage(id: number) {
-    mutate(id);
+    mutateDeleteOne(id);
+  }
+
+  function deleteAll() {
+    mutateDeleteAll();
   }
 
   return (
     <AdminLayout>
+      <div className="flex flex-col items-center gap-4 rounded-xl border-2 p-4 text-center">
+        <Button onClick={deleteAll}>Delete all</Button>
+      </div>
       <div className="mb-4 rounded-lg bg-white p-4 shadow">
         <Table className="max-w-7xl">
           <TableCaption>A list of all messages.</TableCaption>
