@@ -294,7 +294,6 @@ export default function EditBlogPost({
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
 ): Promise<GetServerSidePropsResult<EditBlogPostProps>> {
-  console.log("hoohohohohoo");
   const adminSession = await checkAdminSession(ctx);
 
   if (!adminSession) {

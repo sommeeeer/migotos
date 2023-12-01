@@ -6,6 +6,7 @@ import { api } from "~/utils/api";
 import LoadingSpinner from "./ui/LoadingSpinner";
 import { motion } from "framer-motion";
 import { Role } from "@prisma/client";
+import { toast } from "./ui/use-toast";
 
 interface CommentProps {
   name: string;
@@ -33,7 +34,12 @@ export default function Comment({
       refetchPosts();
     },
     onError: () => {
-      console.log("Error while trying to delete comment");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          "Something went wrong while deleting comment. Try again later",
+      });
     },
   });
 

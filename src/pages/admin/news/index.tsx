@@ -35,6 +35,7 @@ import {
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { checkAdminSession } from "~/server/helpers";
+import { toast } from "~/components/ui/use-toast";
 
 type NewsProps = {
   blogposts: BlogPost[];
@@ -48,7 +49,11 @@ export default function News({ blogposts }: NewsProps) {
         void router.replace(router.asPath);
       },
       onError: () => {
-        console.log("Error while trying to delete comment");
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Something went wrong while deleting comment.",
+        });
       },
     });
 

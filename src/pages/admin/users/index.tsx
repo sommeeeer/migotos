@@ -34,6 +34,7 @@ import { FaComments } from "react-icons/fa";
 import Link from "next/link";
 import { cn } from "~/lib/utils";
 import { checkAdminSession } from "~/server/helpers";
+import { toast } from "~/components/ui/use-toast";
 
 type UserWithComment = Prisma.UserGetPayload<{
   include: {
@@ -52,7 +53,12 @@ export default function Users({ users }: UsersProps) {
       refreshData();
     },
     onError: () => {
-      console.log("Error while trying to delete comment");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          "Something went wrong while deleting user. Please try again.",
+      });
     },
   });
   const { mutate: mutateToggleAdmin } = api.user.toggleAdmin.useMutation({
@@ -60,7 +66,11 @@ export default function Users({ users }: UsersProps) {
       refreshData();
     },
     onError: () => {
-      console.log("Error while trying to give admin to user");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Error while trying to give admin to user",
+      });
     },
   });
 

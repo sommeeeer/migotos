@@ -9,6 +9,7 @@ import Image from "next/image";
 import { api } from "~/utils/api";
 import LoadingSpinner from "./ui/LoadingSpinner";
 import type { CommentType } from "~/utils/types";
+import { toast } from "./ui/use-toast";
 
 interface CommentFormProps {
   session: Session;
@@ -38,7 +39,12 @@ export default function CommentForm({
       refetchPosts();
     },
     onError: (error) => {
-      console.log(error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          "Something went wrong while adding new comment. Please try again.",
+      });
     },
   });
 

@@ -5,7 +5,6 @@ export default function Footer() {
   const [showButton, setShowButton] = useState(false);
   useEffect(() => {
     function handleScrollButtonVisibility() {
-      console.log(window.scrollY);
       window.scrollY > 300 ? setShowButton(true) : setShowButton(false);
     }
     window.addEventListener("scroll", handleScrollButtonVisibility);
