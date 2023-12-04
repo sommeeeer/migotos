@@ -143,7 +143,7 @@ function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
               <button className="group" onClick={() => signIn("google")}>
                 <FcGoogle className="h-16 w-16 group-hover:scale-105" />
               </button>
-              <button className="group" onClick={() => signIn("google")}>
+              <button className="group" onClick={() => signIn("facebook")}>
                 <FaFacebook
                   color={colors.blue[700]}
                   className="h-14 w-14 group-hover:scale-105"
