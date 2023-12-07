@@ -86,7 +86,6 @@ export const blogpostRouter = createTRPCRouter({
         });
         await ctx.res.revalidate("/news/");
         await ctx.res.revalidate("/");
-        await ctx.res.revalidate(`/news/${input.id}}`);
         return updatedBlogPost;
       } catch (err) {
         throw new TRPCError({
