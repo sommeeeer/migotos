@@ -12,7 +12,7 @@ export const catSchema = z.object({
       message: "Description must be longer than 5 characthers long.",
     })
     .max(500, {
-      message: "Description must be less than 255 characters long.",
+      message: "Description must be less than 500 characters long.",
     })
     .optional()
     .or(z.literal("")),
