@@ -5,12 +5,13 @@ import Link from "next/link";
 import { type NextRouter, useRouter } from "next/router";
 import LoadingSpinner from "./ui/LoadingSpinner";
 import { Role } from "@prisma/client";
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useState, useRef } from "react";
 import { FcGoogle } from "react-icons/fc";
 
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { FaFacebook } from "react-icons/fa";
 import colors from "tailwindcss/colors";
+import { useOnClickOutside } from "~/hooks/use-on-click-outside";
 
 interface NavbarProps {
   isOpen: boolean;
@@ -109,6 +110,8 @@ function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
 
   function LoginLogoutButton() {
     const [showLoginPanel, setShowLoginPanel] = useState(false);
+    const divRef = useRef<HTMLDivElement | null>(null);
+    useOnClickOutside(divRef, () => setShowLoginPanel(false));
 
     return (
       <div className="relative">
@@ -132,14 +135,15 @@ function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
             className="absolute -left-2/3 flex h-36 w-36 flex-col items-start rounded-xl bg-gray-200 p-4 transition-all duration-300 ease-out"
+            ref={divRef}
           >
             <button
               onClick={() => setShowLoginPanel(false)}
               className="absolute right-0 top-0 p-1 hover:scale-110"
             >
-              <AiOutlineCloseCircle className="h-6 w-6"/>
+              <AiOutlineCloseCircle className="h-6 w-6" />
             </button>
-            <div className="flex gap-2 self-center justify-self-center h-full">
+            <div className="flex h-full gap-2 self-center justify-self-center">
               <button className="group" onClick={() => signIn("google")}>
                 <FcGoogle className="h-16 w-16 group-hover:scale-105" />
               </button>
