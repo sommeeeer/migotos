@@ -241,5 +241,5 @@ export async function getStaticPaths() {
     params: { slug: cat.slug },
   }));
 
-  return { paths, fallback: false };
+  return { paths, fallback: "blocking" };
 }

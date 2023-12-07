@@ -95,5 +95,5 @@ export async function getStaticPaths() {
     params: { tag: tag.value.toLowerCase() },
   }));
 
-  return { paths, fallback: false };
+  return { paths, fallback: "blocking" };
 }
