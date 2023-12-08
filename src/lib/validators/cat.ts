@@ -49,4 +49,7 @@ export const catSchema = z.object({
     .min(5, { message: "Breeder must be atleast 5 characters long." })
     .max(100, { message: "Breeder must be less than 100 characters long." }),
   fertile: z.optional(z.boolean()),
+  image_url: z
+    .string({ required_error: "Please upload an image." })
+    .url({ message: "Image URL must be a valid URL." }),
 });
