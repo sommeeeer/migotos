@@ -86,7 +86,7 @@ export default function Cats({ cats }: CatsProps) {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Nickname</TableHead>
-              <TableHead>Stamnavn</TableHead>
+              <TableHead>Fargekode</TableHead>
               <TableHead>PedigreeURL</TableHead>
               <TableHead>Birth</TableHead>
               <TableHead>Gender</TableHead>
