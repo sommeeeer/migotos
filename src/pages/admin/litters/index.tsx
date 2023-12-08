@@ -30,7 +30,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import { useRouter } from "next/router";
 import { GrGallery } from "react-icons/gr";
 import { format } from "date-fns";
 import { checkAdminSession } from "~/server/helpers";
