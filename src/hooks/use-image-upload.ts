@@ -6,6 +6,7 @@ export function useImageUpload(uploadUrl: string) {
   const [file, setFile] = useState<File | undefined>(undefined);
   const [isUploading, setIsUploading] = useState(false);
   const [imageURL, setImageURL] = useState<string | undefined>(undefined);
+  const [imageKey, setImageKey] = useState(0);
 
   async function handleUpload() {
     if (!file) {
@@ -35,6 +36,7 @@ export function useImageUpload(uploadUrl: string) {
       });
       if (!imageURL) throw new Error("No image URL returned from S3");
       setImageURL(imageURL);
+      setImageKey(imageKey + 1);
     } catch {
       toast({
         variant: "destructive",
@@ -45,5 +47,5 @@ export function useImageUpload(uploadUrl: string) {
       setIsUploading(false);
     }
   }
-  return { handleUpload, isUploading, setFile, imageURL };
+  return { handleUpload, isUploading, setFile, imageURL, imageKey };
 }

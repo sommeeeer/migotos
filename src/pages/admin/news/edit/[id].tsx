@@ -68,7 +68,9 @@ export default function EditBlogPost({
     },
   });
 
-  const { handleUpload, isUploading, setFile, imageURL } =
+  const { isDirty } = form.formState;
+
+  const { handleUpload, isUploading, setFile, imageURL, imageKey } =
     useImageUpload(uploadUrl);
 
   const { mutate, isLoading } = api.blogpost.updateBlogPost.useMutation({
@@ -85,7 +87,7 @@ export default function EditBlogPost({
         color: "green",
         description: "Blogpost updated successfully.",
       });
-      void router.replace(router.asPath);
+      void router.push("/admin/news");
     },
     onError: () => {
       toast({
@@ -97,7 +99,7 @@ export default function EditBlogPost({
   });
 
   function onSubmit(values: z.infer<typeof blogPostSchema>) {
-    if (!form.formState.isDirty) {
+    if (!isDirty) {
       toast({
         variant: "destructive",
         description: "No changes detected.",
@@ -211,7 +213,9 @@ export default function EditBlogPost({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Image
-                        src={form.getValues("image_url")!}
+                        src={`${form.getValues(
+                          "image_url",
+                        )}?version=${imageKey}`}
                         width={300}
                         height={300}
                         alt={`${blogpost.title} image`}
@@ -225,7 +229,18 @@ export default function EditBlogPost({
                   </Tooltip>
                 </TooltipProvider>
               ) : (
-                <span className="text-lg">Not available</span>
+                <>
+                  {form.formState.errors.image_url && (
+                    <p className="text-red-500">
+                      {form.formState.errors.image_url.message}
+                    </p>
+                  )}
+                  {!form.formState.errors.image_url?.message && (
+                    <span className="text-gray-600">
+                      No image uploaded yet.
+                    </span>
+                  )}
+                </>
               )}
               <Label>Select New Image</Label>
               <Input

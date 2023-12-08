@@ -61,7 +61,7 @@ export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
     },
   });
 
-  const { handleUpload, isUploading, setFile, imageURL } =
+  const { handleUpload, isUploading, setFile, imageURL, imageKey } =
     useImageUpload(uploadUrl);
 
   const { mutate, isLoading } = api.blogpost.createBlogPost.useMutation({
@@ -85,13 +85,6 @@ export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
 
   function onSubmit(values: z.infer<typeof blogPostSchema>) {
     const { title, body, post_date, image_url } = values;
-    if (!title || !body || !post_date || !image_url) {
-      toast({
-        variant: "destructive",
-        description: "Please fill out all fields and upload an image.",
-      });
-      return;
-    }
     mutate({
       title,
       body,
@@ -189,7 +182,9 @@ export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Image
-                        src={form.getValues("image_url")!}
+                        src={`${form.getValues(
+                          "image_url",
+                        )}?version=${imageKey}}`}
                         width={300}
                         height={300}
                         alt={`${form.getValues("title")}'s image`}
@@ -209,10 +204,9 @@ export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
                       {form.formState.errors.image_url.message}
                     </p>
                   )}
-                  <span className="text-lg">
-                    {!form.formState.errors.image_url?.message ??
-                      "No image uploaded yet."}
-                  </span>
+                  {!form.formState.errors.image_url?.message && (
+                    <span className="text-gray-600">No image uploaded yet.</span>
+                  )}
                 </>
               )}
               <Label>Select New Image</Label>
