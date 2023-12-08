@@ -144,7 +144,6 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
     },
     onSettled: () => {
       setOpen(false);
-      setIsUploading(false);
     },
   });
 
@@ -228,6 +227,8 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
         title: "Error",
         description: "Something went wrong while uploading images.",
       });
+    } finally {
+      setIsUploading(false);
     }
   }
 
