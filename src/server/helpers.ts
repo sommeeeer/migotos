@@ -25,8 +25,7 @@ export async function getSignedURL() {
     const uploadUrl = await getSignedUrl(new S3Client({}), command);
     return uploadUrl;
   } catch (err) {
-    console.log(err);
-    return null;
+    throw new Error("Error getting signed URL");
   }
 }
 export async function getSignedURLS(amount: number) {
@@ -43,7 +42,6 @@ export async function getSignedURLS(amount: number) {
     }
     return urls;
   } catch (err) {
-    console.log(err);
-    return null;
+    throw new Error("Error getting signed URLS");
   }
 }

@@ -28,12 +28,10 @@ import { Calendar } from "~/components/ui/calendar";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { addHours } from "date-fns";
 import { cn } from "~/lib/utils";
-import { useState } from "react";
 import Image from "next/image";
 import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
-import { uploadS3 } from "~/utils/helpers";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { checkAdminSession, getSignedURL } from "~/server/helpers";
 import { blogPostSchema } from "~/lib/validators/blogpost";
@@ -43,16 +41,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useImageUpload } from "~/hooks/use-image-upload";
+import { useEffect } from "react";
 
 type NewBlogPostProps = {
-  uploadUrl: string | null;
+  uploadUrl: string;
 };
 
 export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
   const router = useRouter();
-
-  const [isUploading, setIsUploading] = useState(false);
-  const [file, setFile] = useState<File | undefined>(undefined);
 
   const form = useForm<z.infer<typeof blogPostSchema>>({
     resolver: zodResolver(blogPostSchema),
@@ -63,6 +60,9 @@ export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
       image_url: undefined,
     },
   });
+
+  const { handleUpload, isUploading, setFile, imageURL } =
+    useImageUpload(uploadUrl);
 
   const { mutate, isLoading } = api.blogpost.createBlogPost.useMutation({
     onSuccess: () => {
@@ -83,51 +83,6 @@ export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
     },
   });
 
-
-  async function handleUpload() {
-    if (!file) {
-      toast({
-        variant: "destructive",
-        title: "No image selected.",
-        description: "Please select an image before uploading.",
-      });
-      return;
-    }
-    if (!uploadUrl) {
-      toast({
-        variant: "destructive",
-        title: "No upload URL available from Amazon S3.",
-        description: "Please try again later.",
-      });
-      return;
-    }
-    try {
-      setIsUploading(true);
-      const imageURL = await uploadS3(file, uploadUrl);
-      console.log(imageURL);
-      toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Image uploaded successfully.",
-      });
-      if (!imageURL) throw new Error("No image URL returned from S3");
-      form.setValue("image_url", imageURL, { shouldDirty: true });
-    } catch {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong during upload",
-      });
-      form.setError("image_url", {
-        type: "manual",
-        message: "Something went wrong during upload",
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  }
-
   function onSubmit(values: z.infer<typeof blogPostSchema>) {
     const { title, body, post_date, image_url } = values;
     if (!title || !body || !post_date || !image_url) {
@@ -144,6 +99,11 @@ export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
       post_date: addHours(post_date, 2),
     });
   }
+
+  useEffect(() => {
+    if (!imageURL) return;
+    form.setValue("image_url", imageURL, { shouldDirty: true });
+  }, [imageURL, form]);
 
   return (
     <AdminLayout>
@@ -311,11 +271,17 @@ export async function getServerSideProps(
     };
   }
 
-  const uploadUrl = await getSignedURL();
-
-  return {
-    props: {
-      uploadUrl,
-    },
-  };
+  try {
+    const uploadUrl = await getSignedURL();
+    return {
+      props: {
+        uploadUrl,
+      },
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      notFound: true,
+    };
+  }
 }
