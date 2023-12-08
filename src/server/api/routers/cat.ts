@@ -28,14 +28,21 @@ export const catRouter = createTRPCRouter({
       return deletedCat;
     }),
   updateCat: protectedProcedure
-    .input(catSchema.extend({ id: z.number(), imageUrl: z.string() }))
+    .input(catSchema.extend({ id: z.number() }))
     .mutation(async ({ input }) => {
       const cat = await db.cat.findFirst({
         where: {
           id: input.id,
         },
+        include: {
+          CatImage: {
+            where: {
+              priority: 1,
+            },
+          },
+        },
       });
-      if (!cat) {
+      if (!cat || !cat.CatImage[0]) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Cat not found",
@@ -60,8 +67,51 @@ export const catRouter = createTRPCRouter({
           owner: input.owner,
           fertile: input.fertile,
           CatImage: {
+            update: {
+              where: {
+                id: cat.CatImage[0].id,
+              },
+              data: {
+                src: input.image_url,
+                blururl:
+                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC",
+                height: 300,
+                width: 300,
+                priority: 1,
+              },
+            },
+          },
+        },
+        include: {
+          CatImage: {
+            where: {
+              priority: 1,
+            },
+          },
+        },
+      });
+      return updatedCat;
+    }),
+  createCat: protectedProcedure.input(catSchema).mutation(async ({ input }) => {
+    try {
+      const newCat = await db.cat.create({
+        data: {
+          birth: input.birth,
+          breeder: input.breeder,
+          description: input.description,
+          father: input.father,
+          mother: input.mother,
+          name: input.name,
+          nickname: input.nickname,
+          pedigreeurl: input.pedigreeurl,
+          stamnavn: input.stamnavn,
+          fertile: input.fertile ?? false,
+          gender: input.gender,
+          owner: input.owner,
+          slug: `${input.nickname.replaceAll(" ", "-").toLowerCase()}-page`,
+          CatImage: {
             create: {
-              src: input.imageUrl,
+              src: input.image_url,
               blururl:
                 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC",
               height: 300,
@@ -71,51 +121,14 @@ export const catRouter = createTRPCRouter({
           },
         },
       });
-      return updatedCat;
-    }),
-  createCat: protectedProcedure
-    .input(
-      catSchema.extend({
-        imageUrl: z.string(),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      try {
-        const newCat = await db.cat.create({
-          data: {
-            birth: input.birth,
-            breeder: input.breeder,
-            description: input.description,
-            father: input.father,
-            mother: input.mother,
-            name: input.name,
-            nickname: input.nickname,
-            pedigreeurl: input.pedigreeurl,
-            stamnavn: input.stamnavn,
-            fertile: input.fertile ?? false,
-            gender: input.gender,
-            owner: input.owner,
-            slug: `${input.nickname.replaceAll(" ", "-").toLowerCase()}-page`,
-            CatImage: {
-              create: {
-                src: input.imageUrl,
-                blururl:
-                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC",
-                height: 300,
-                width: 300,
-                priority: 1,
-              },
-            },
-          },
-        });
-        return newCat;
-      } catch (err) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
-        });
-      }
-    }),
+      return newCat;
+    } catch (err) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid request",
+      });
+    }
+  }),
   updateCatImagesOrder: protectedProcedure
     .input(
       z.object({

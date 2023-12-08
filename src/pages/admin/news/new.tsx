@@ -205,7 +205,9 @@ export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
                     </p>
                   )}
                   {!form.formState.errors.image_url?.message && (
-                    <span className="text-gray-600">No image uploaded yet.</span>
+                    <span className="text-gray-600">
+                      No image uploaded yet.
+                    </span>
                   )}
                 </>
               )}
@@ -265,17 +267,11 @@ export async function getServerSideProps(
     };
   }
 
-  try {
-    const uploadUrl = await getSignedURL();
-    return {
-      props: {
-        uploadUrl,
-      },
-    };
-  } catch (err) {
-    console.error(err);
-    return {
-      notFound: true,
-    };
-  }
+  const uploadUrl = await getSignedURL();
+
+  return {
+    props: {
+      uploadUrl,
+    },
+  };
 }

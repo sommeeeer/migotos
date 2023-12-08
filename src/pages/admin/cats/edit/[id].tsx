@@ -37,11 +37,17 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/use-toast";
 import { Checkbox } from "~/components/ui/checkbox";
 import { api } from "~/utils/api";
-import { uploadS3 } from "~/utils/helpers";
 import { Label } from "~/components/ui/label";
 import Image from "next/image";
-import { useState } from "react";
 import { checkAdminSession, getSignedURL } from "~/server/helpers";
+import { useImageUpload } from "~/hooks/use-image-upload";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import { useEffect } from "react";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -51,19 +57,11 @@ type CatWithImage = Prisma.CatGetPayload<{
 
 type EditCatProps = {
   cat: CatWithImage;
-  uploadUrl: string | null;
+  uploadUrl: string;
 };
 
 export default function EditCat({ cat, uploadUrl }: EditCatProps) {
   const router = useRouter();
-
-  const [isUploading, setIsUploading] = useState(false);
-  const [file, setFile] = useState<File | undefined>(undefined);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(
-    cat.CatImage.find((img) => img.priority === 1)?.src ?? undefined,
-  );
-  const [imageKey, setImageKey] = useState(0);
-  const [newImage, setNewImage] = useState(false);
 
   const form = useForm<z.infer<typeof catSchema>>({
     resolver: zodResolver(catSchema),
@@ -80,8 +78,14 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
       nickname: cat.nickname,
       birth: cat.birth,
       fertile: cat.fertile,
+      image_url: cat.CatImage[0]?.src ?? "",
     },
   });
+
+  const { isDirty } = form.formState;
+
+  const { handleUpload, isUploading, setFile, imageURL, imageKey } =
+    useImageUpload(uploadUrl);
   const { mutate, isLoading } = api.cat.updateCat.useMutation({
     onSuccess: () => {
       toast({
@@ -90,7 +94,7 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
         color: "green",
         description: "Cat updated successfully.",
       });
-      void router.replace(router.asPath);
+      void router.push("/admin/cats");
     },
     onError: () => {
       toast({
@@ -101,58 +105,11 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
     },
   });
 
-  async function handleUpload() {
-    if (!file) {
-      toast({
-        variant: "destructive",
-        title: "No image selected.",
-        description: "Please select an image before uploading.",
-      });
-      return;
-    }
-    if (!uploadUrl) {
-      toast({
-        variant: "destructive",
-        title: "No upload URL available from Amazon S3.",
-        description: "Please try again later.",
-      });
-      return;
-    }
-    try {
-      setIsUploading(true);
-      const imageURL = await uploadS3(file, uploadUrl);
-      setImageUrl(imageURL);
-      toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Image uploaded successfully.",
-      });
-      setNewImage(true);
-      setImageKey(imageKey + 1);
-    } catch {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong during upload",
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  }
-
   function onSubmit(values: z.infer<typeof catSchema>) {
-    if (!form.formState.isDirty && !newImage) {
+    if (!isDirty) {
       toast({
         variant: "destructive",
         description: "No changes detected.",
-      });
-      return;
-    }
-    if (!imageUrl) {
-      toast({
-        variant: "destructive",
-        description: "No image selected.",
       });
       return;
     }
@@ -160,12 +117,13 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
       id: cat.id,
       ...values,
       birth: addHours(values.birth, 2),
-      imageUrl: imageUrl,
-    });
-    form.reset({
-      ...values,
     });
   }
+
+  useEffect(() => {
+    if (!imageURL) return;
+    form.setValue("image_url", imageURL, { shouldDirty: true });
+  }, [imageURL, form]);
 
   return (
     <AdminLayout>
@@ -383,23 +341,42 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
               )}
             />
             <div className="flex flex-col items-start gap-4">
-              <Label>Current Profile Picture</Label>
-              {imageUrl ? (
-                <Image
-                  key={imageKey}
-                  src={`${imageUrl}?version=${imageKey}}`}
-                  width={300}
-                  height={300}
-                  alt={`${cat.name}'s profile image`}
-                  quality={100}
-                  priority
-                />
+              <Label>Current Profile Image</Label>
+              {form.getValues("image_url") ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Image
+                        src={`${form.getValues(
+                          "image_url",
+                        )}?version=${imageKey}}`}
+                        width={300}
+                        height={300}
+                        alt={`${form.getValues("name")}'s image`}
+                        quality={100}
+                        priority
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{form.getValues("image_url")}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : (
-                <span className="text-lg">NULL</span>
+                <>
+                  {form.formState.errors.image_url && (
+                    <p className="text-red-500">
+                      {form.formState.errors.image_url.message}
+                    </p>
+                  )}
+                  {!form.formState.errors.image_url?.message && (
+                    <span className="text-gray-600">
+                      No image uploaded yet.
+                    </span>
+                  )}
+                </>
               )}
-              <Label>URL to Image</Label>
-              <Input value={imageUrl ?? ""} readOnly disabled={isLoading} />
-              <Label>Select New Profile Picture (300x300)</Label>
+              <Label>Select New Profile Image (300x300)</Label>
               <Input
                 type="file"
                 className="cursor-pointer"
@@ -468,6 +445,7 @@ export async function getServerSideProps(
       notFound: true,
     };
   }
+  
   const uploadUrl = await getSignedURL();
 
   return {

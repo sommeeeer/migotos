@@ -34,19 +34,20 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/use-toast";
 import { Checkbox } from "~/components/ui/checkbox";
 import { api } from "~/utils/api";
-import { uploadS3 } from "~/utils/helpers";
 import { Label } from "~/components/ui/label";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect } from "react";
 import { checkAdminSession, getSignedURL } from "~/server/helpers";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import { useImageUpload } from "~/hooks/use-image-upload";
 
-export default function NewCat({ uploadUrl }: { uploadUrl: string | null }) {
+export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
   const router = useRouter();
-
-  const [isUploading, setIsUploading] = useState(false);
-  const [file, setFile] = useState<File | undefined>(undefined);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-  const [imageKey, setImageKey] = useState(0);
 
   const form = useForm<z.infer<typeof catSchema>>({
     resolver: zodResolver(catSchema),
@@ -63,8 +64,11 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string | null }) {
       nickname: "",
       birth: new Date(),
       fertile: false,
+      image_url: undefined,
     },
   });
+  const { handleUpload, isUploading, setFile, imageURL, imageKey } =
+    useImageUpload(uploadUrl);
   const { mutate, isLoading } = api.cat.createCat.useMutation({
     onSuccess: () => {
       toast({
@@ -85,60 +89,17 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string | null }) {
     },
   });
 
-  async function handleUpload() {
-    if (!file) {
-      toast({
-        variant: "destructive",
-        title: "No image selected.",
-        description: "Please select an image before uploading.",
-      });
-      return;
-    }
-    if (!uploadUrl) {
-      toast({
-        variant: "destructive",
-        title: "No upload URL available from Amazon S3.",
-        description: "Please try again later.",
-      });
-      return;
-    }
-    try {
-      setIsUploading(true);
-      const imageURL = await uploadS3(file, uploadUrl);
-      setImageUrl(imageURL);
-      toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Image uploaded successfully.",
-      });
-      setImageKey(imageKey + 1);
-    } catch {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong during upload",
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  }
-
   function onSubmit(values: z.infer<typeof catSchema>) {
-    if (!imageUrl) {
-      toast({
-        variant: "destructive",
-        title: "No image selected.",
-        description: "Please select an image before uploading.",
-      });
-      return;
-    }
     mutate({
       ...values,
       birth: addHours(values.birth, 2),
-      imageUrl: imageUrl,
     });
   }
+
+  useEffect(() => {
+    if (!imageURL) return;
+    form.setValue("image_url", imageURL, { shouldDirty: true });
+  }, [imageURL, form]);
 
   return (
     <AdminLayout>
@@ -354,25 +315,42 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string | null }) {
               )}
             />
             <div className="flex flex-col items-start gap-4">
-              <Label>Current Profile Picture</Label>
-              {imageUrl ? (
-                <Image
-                  key={imageKey}
-                  src={`${imageUrl}?version=${imageKey}}`}
-                  width={300}
-                  height={300}
-                  alt={`${
-                    form.formState.touchedFields.name ?? "new cat"
-                  }'s profile image`}
-                  quality={100}
-                  priority
-                />
+              <Label>Current Profile Image</Label>
+              {form.getValues("image_url") ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Image
+                        src={`${form.getValues(
+                          "image_url",
+                        )}?version=${imageKey}}`}
+                        width={300}
+                        height={300}
+                        alt={`${form.getValues("name")}'s image`}
+                        quality={100}
+                        priority
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{form.getValues("image_url")}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : (
-                <span className="text-lg">NULL</span>
+                <>
+                  {form.formState.errors.image_url && (
+                    <p className="text-red-500">
+                      {form.formState.errors.image_url.message}
+                    </p>
+                  )}
+                  {!form.formState.errors.image_url?.message && (
+                    <span className="text-gray-600">
+                      No image uploaded yet.
+                    </span>
+                  )}
+                </>
               )}
-              <Label>URL to Image</Label>
-              <Input value={imageUrl ?? ""} readOnly disabled={isLoading} />
-              <Label>Select Profile Picture (300x300)</Label>
+              <Label>Select New Profile Image (300x300)</Label>
               <Input
                 type="file"
                 className="cursor-pointer"
@@ -381,7 +359,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string | null }) {
                   if (!e.target.files) return;
                   setFile(e.target.files[0]);
                 }}
-                accept="image/png, image/jpeg, image/jpg, image/webp"
+                accept="image/png, image/jpeg, image/jpg"
               />
               <Button
                 disabled={isUploading || isLoading}
@@ -394,15 +372,21 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string | null }) {
                 )}
                 Upload
               </Button>
-            </div>
-            <div className="mt-4 flex gap-1">
-              <Button type="button" onClick={() => router.back()}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save
-              </Button>
+              <div className="mt-4 flex gap-1">
+                <Button
+                  type="button"
+                  onClick={() => router.back()}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  Save
+                </Button>
+              </div>
             </div>
           </form>
         </Form>
@@ -413,7 +397,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string | null }) {
 
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
-): Promise<GetServerSidePropsResult<{ uploadUrl: string | null }>> {
+): Promise<GetServerSidePropsResult<{ uploadUrl: string }>> {
   const adminSession = await checkAdminSession(ctx);
 
   if (!adminSession) {
