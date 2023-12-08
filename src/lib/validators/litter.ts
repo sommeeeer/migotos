@@ -39,4 +39,13 @@ export const litterSchema = z.object({
   born: z.date().max(addHours(new Date(), 4), {
     message: "Date cannot be in the future.",
   }),
+  mother_img: z
+    .string({ required_error: "Please upload an image." })
+    .url({ message: "Image URL must be a valid URL." }),
+  father_img: z
+    .string({ required_error: "Please upload an image." })
+    .url({ message: "Image URL must be a valid URL." }),
+  post_image: z
+    .string({ required_error: "Please upload an image." })
+    .url({ message: "Image URL must be a valid URL." }),
 });
