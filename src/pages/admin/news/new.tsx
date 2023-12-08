@@ -6,8 +6,7 @@ import type {
 } from "next/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import z from "zod";
-
+import type z from "zod";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -37,37 +36,31 @@ import { api } from "~/utils/api";
 import { uploadS3 } from "~/utils/helpers";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { checkAdminSession, getSignedURL } from "~/server/helpers";
+import { blogPostSchema } from "~/lib/validators/blogpost";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 
 type NewBlogPostProps = {
   uploadUrl: string | null;
 };
 
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(5, { message: "Title must be atleast 5 characters long." })
-    .max(255, { message: "Title must be less than 255 characters long." }),
-  body: z
-    .string()
-    .min(5, { message: "Body must be atleast 5 characters long." })
-    .max(2000, { message: "Body must be less than 2000 characters long." }),
-  post_date: z.date(),
-});
-
-export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
+export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
   const router = useRouter();
 
   const [isUploading, setIsUploading] = useState(false);
   const [file, setFile] = useState<File | undefined>(undefined);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
-  const [imageKey, setImageKey] = useState(0); // Initialize with an initial key
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof blogPostSchema>>({
+    resolver: zodResolver(blogPostSchema),
     defaultValues: {
       body: "",
       post_date: new Date(),
       title: "",
+      image_url: undefined,
     },
   });
 
@@ -90,6 +83,7 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
     },
   });
 
+
   async function handleUpload() {
     if (!file) {
       toast({
@@ -110,28 +104,33 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
     try {
       setIsUploading(true);
       const imageURL = await uploadS3(file, uploadUrl);
-      setImageUrl(imageURL);
+      console.log(imageURL);
       toast({
         variant: "default",
         title: "Success",
         color: "green",
         description: "Image uploaded successfully.",
       });
-      setImageKey(imageKey + 1);
+      if (!imageURL) throw new Error("No image URL returned from S3");
+      form.setValue("image_url", imageURL, { shouldDirty: true });
     } catch {
       toast({
         variant: "destructive",
         title: "Error",
         description: "Something went wrong during upload",
       });
+      form.setError("image_url", {
+        type: "manual",
+        message: "Something went wrong during upload",
+      });
     } finally {
       setIsUploading(false);
     }
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const { title, body, post_date } = values;
-    if (!title || !body || !post_date || !imageUrl) {
+  function onSubmit(values: z.infer<typeof blogPostSchema>) {
+    const { title, body, post_date, image_url } = values;
+    if (!title || !body || !post_date || !image_url) {
       toast({
         variant: "destructive",
         description: "Please fill out all fields and upload an image.",
@@ -141,8 +140,8 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
     mutate({
       title,
       body,
+      image_url,
       post_date: addHours(post_date, 2),
-      image_url: imageUrl ?? null,
     });
   }
 
@@ -225,20 +224,37 @@ export default function EditBlogPost({ uploadUrl }: NewBlogPostProps) {
             />
             <div className="flex flex-col items-start gap-4">
               <Label>Current Image</Label>
-              {imageUrl ? (
-                <Image
-                  key={imageKey}
-                  src={`${imageUrl}?version=${imageKey}}`}
-                  width={300}
-                  height={300}
-                  alt={`blogpost image`}
-                  quality={100}
-                />
+              {form.getValues("image_url") ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Image
+                        src={form.getValues("image_url")!}
+                        width={300}
+                        height={300}
+                        alt={`${form.getValues("title")}'s image`}
+                        quality={100}
+                        priority
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{form.getValues("image_url")}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : (
-                <span className="text-lg">NULL</span>
+                <>
+                  {form.formState.errors.image_url && (
+                    <p className="text-red-500">
+                      {form.formState.errors.image_url.message}
+                    </p>
+                  )}
+                  <span className="text-lg">
+                    {!form.formState.errors.image_url?.message ??
+                      "No image uploaded yet."}
+                  </span>
+                </>
               )}
-              <Label>URL to Image</Label>
-              <Input value={imageUrl ?? ""} readOnly />
               <Label>Select New Image</Label>
               <Input
                 type="file"

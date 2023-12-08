@@ -36,9 +36,15 @@ import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
 import { uploadS3 } from "~/utils/helpers";
-import { editBlogPostSchema } from "~/lib/validators/blogpost";
+import { blogPostSchema } from "~/lib/validators/blogpost";
 import { type z } from "zod";
 import { checkAdminSession, getSignedURL } from "~/server/helpers";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 
 type EditBlogPostProps = {
   blogpost: BlogPost;
@@ -54,25 +60,24 @@ export default function EditBlogPost({
 
   const [isUploading, setIsUploading] = useState(false);
   const [file, setFile] = useState<File | undefined>(undefined);
-  const [imageUrl, setImageUrl] = useState<string | undefined>(
-    blogpost.image_url ?? undefined,
-  );
-  const [imageKey, setImageKey] = useState(0);
 
-  const form = useForm<z.infer<typeof editBlogPostSchema>>({
-    resolver: zodResolver(editBlogPostSchema),
+  const form = useForm<z.infer<typeof blogPostSchema>>({
+    resolver: zodResolver(blogPostSchema),
     defaultValues: {
       title: blogpost.title,
       body: blogpost.body,
       post_date: blogpost.post_date,
+      image_url: blogpost.image_url!,
     },
   });
+
   const { mutate, isLoading } = api.blogpost.updateBlogPost.useMutation({
     onSuccess: (data) => {
       form.reset({
         title: data.title,
         body: data.body,
         post_date: data.post_date,
+        image_url: data.image_url!,
       });
       toast({
         variant: "default",
@@ -111,14 +116,14 @@ export default function EditBlogPost({
     try {
       setIsUploading(true);
       const imageURL = await uploadS3(file, uploadUrl);
-      setImageUrl(imageURL);
       toast({
         variant: "default",
         title: "Success",
         color: "green",
         description: "Image uploaded successfully.",
       });
-      setImageKey(imageKey + 1);
+      if (!imageURL) throw new Error("No image URL returned from S3");
+      form.setValue("image_url", imageURL, { shouldDirty: true });
     } catch {
       toast({
         variant: "destructive",
@@ -130,7 +135,7 @@ export default function EditBlogPost({
     }
   }
 
-  function onSubmit(values: z.infer<typeof editBlogPostSchema>) {
+  function onSubmit(values: z.infer<typeof blogPostSchema>) {
     if (!form.formState.isDirty) {
       toast({
         variant: "destructive",
@@ -138,8 +143,8 @@ export default function EditBlogPost({
       });
       return;
     }
-    const { title, body, post_date } = values;
-    if (!title || !body || !post_date) {
+    const { title, body, post_date, image_url } = values;
+    if (!title || !body || !post_date || !image_url) {
       toast({
         variant: "destructive",
         description: "Please fill out all fields.",
@@ -151,8 +156,8 @@ export default function EditBlogPost({
       id: blogpost.id,
       title,
       body,
+      image_url,
       post_date: addHours(post_date, 2),
-      image_url: imageUrl ?? null,
     });
   }
 
@@ -235,21 +240,27 @@ export default function EditBlogPost({
             />
             <div className="flex flex-col items-start gap-4">
               <Label>Current Image</Label>
-              {imageUrl ? (
-                <Image
-                  key={imageKey}
-                  src={`${imageUrl}?version=${imageKey}}`}
-                  width={300}
-                  height={300}
-                  alt={`${blogpost.title} image`}
-                  quality={100}
-                  priority
-                />
+              {form.getValues("image_url") ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Image
+                        src={form.getValues("image_url")!}
+                        width={300}
+                        height={300}
+                        alt={`${blogpost.title} image`}
+                        quality={100}
+                        priority
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{form.getValues("image_url")}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : (
-                <span className="text-lg">NULL</span>
+                <span className="text-lg">Not available</span>
               )}
-              <Label>URL to Image</Label>
-              <Input value={imageUrl ?? ""} readOnly disabled={isLoading} />
               <Label>Select New Image</Label>
               <Input
                 type="file"
