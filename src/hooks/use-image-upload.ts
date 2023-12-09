@@ -28,13 +28,13 @@ export function useImageUpload(uploadUrl: string) {
     try {
       setIsUploading(true);
       const imageURL = await uploadS3(file, uploadUrl);
+      if (!imageURL) throw new Error("No image URL returned from S3");
       toast({
         variant: "default",
         title: "Success",
         color: "green",
         description: "Image uploaded successfully.",
       });
-      if (!imageURL) throw new Error("No image URL returned from S3");
       setImageURL(imageURL);
       setImageKey(imageKey + 1);
     } catch {
