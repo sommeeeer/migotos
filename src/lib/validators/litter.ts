@@ -1,31 +1,49 @@
 import { addHours } from "date-fns";
 import { z } from "zod";
 
+export const kittenSchema = z.object({
+  name: z
+    .string()
+    .min(2, { message: "Name must be atleast 2 characters long." })
+    .max(50, { message: "Name must be less than 50 characters long." }),
+  stamnavn: z
+    .string()
+    .min(2, { message: "Fargekode must be atleast 2 characters long" })
+    .max(100, { message: "Fargekode must be less than 100 characters long" }),
+  gender: z.union([z.literal("female"), z.literal("man")]),
+  info: z
+    .string()
+    .min(2, { message: "Info must be atleast 2 characters long" })
+    .max(255, { message: "Info must be less than 255 characters long" })
+    .optional()
+    .or(z.literal("")),
+});
+
 export const litterSchema = z.object({
   name: z
     .string()
-    .min(5, { message: "Name must be atleast 5 characters long." })
-    .max(100, { message: "Name must be less than 100 characters long." }),
+    .min(1, { message: "Name must be atleast 1 characters long." })
+    .max(50, { message: "Name must be less than 50 characters long." }),
   pedigreeurl: z.preprocess(
     (arg) => (arg === "" ? undefined : arg),
     z.string().url({ message: "Pedigree URL must be a valid URL." }).optional(),
   ),
   mother_name: z
     .string()
-    .min(5, { message: "Mother must be atleast 5 characters long." })
+    .min(2, { message: "Mother must be atleast 2 characters long." })
     .max(100, { message: "Mother must be less than 100 characters long." }),
   father_name: z
     .string()
-    .min(5, { message: "Father must be atleast 5 characters long." })
+    .min(2, { message: "Father must be atleast 2 characters long." })
     .max(100, { message: "Father must be less than 100 characters long." }),
   mother_stamnavn: z
     .string()
-    .min(5, { message: "Stamnavn must be atleast 5 characters long." })
-    .max(100, { message: "Stamnavn must be less than 100 characters long." }),
+    .min(2, { message: "Fargekode must be atleast 2 characters long." })
+    .max(100, { message: "Fargekode must be less than 100 characters long." }),
   father_stamnavn: z
     .string()
-    .min(5, { message: "Stamnavn must be atleast 5 characters long." })
-    .max(100, { message: "Stamnavn must be less than 100 characters long." }),
+    .min(2, { message: "Fargekode must be atleast 2 characters long." })
+    .max(100, { message: "Fargekode must be less than 100 characters long." }),
   description: z
     .string()
     .min(5, {
@@ -48,4 +66,7 @@ export const litterSchema = z.object({
   post_image: z
     .string({ required_error: "Please upload an image." })
     .url({ message: "Image URL must be a valid URL." }),
+  kittens: z
+    .array(kittenSchema)
+    .min(1, { message: "Must have atleast 1 kitten." }),
 });
