@@ -34,12 +34,38 @@ import { GrGallery } from "react-icons/gr";
 import { format } from "date-fns";
 import { checkAdminSession } from "~/server/helpers";
 import { BiSolidCat } from "react-icons/bi";
+import { api } from "~/utils/api";
+import { toast } from "~/components/ui/use-toast";
+import { useRouter } from "next/router";
 
 type LittersProps = {
   litters: Litter[];
 };
 
 export default function Litters({ litters }: LittersProps) {
+  const router = useRouter();
+  const { mutate: mutateDeleteLitter } = api.litter.deleteLitter.useMutation({
+    onSuccess: () => {
+      toast({
+        variant: "default",
+        title: "Success",
+        color: "green",
+        description: "Litter deleted successfully.",
+      });
+      void router.replace(router.asPath);
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong while trying to update cat.",
+      });
+    },
+  });
+
+  function deleteLitter(id: number) {
+    mutateDeleteLitter(id);
+  }
 
   return (
     <AdminLayout>
@@ -120,7 +146,7 @@ export default function Litters({ litters }: LittersProps) {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-red-500 hover:bg-red-600"
-                            onClick={() => console.log(litter.id)}
+                            onClick={() => deleteLitter(litter.id)}
                           >
                             Delete
                           </AlertDialogAction>
