@@ -194,8 +194,8 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   }
 
   async function handleUpload() {
-    setIsUploading(true);
     if (!filesToUpload) return;
+    setIsUploading(true);
     try {
       const imgs = [];
       const res = await fetch(
