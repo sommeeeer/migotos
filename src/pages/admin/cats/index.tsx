@@ -50,7 +50,7 @@ export default function Cats({ cats }: CatsProps) {
         variant: "default",
         title: "Success",
         color: "green",
-        description: "Cat updated successfully.",
+        description: "Cat deleted successfully.",
       });
       void router.replace(router.asPath);
     },
