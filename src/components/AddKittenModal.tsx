@@ -17,7 +17,7 @@ import { Controller, useForm, useFormContext } from "react-hook-form";
 import { kittenSchema, type litterSchema } from "~/lib/validators/litter";
 import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "./ui/use-toast";
+import { Plus } from "lucide-react";
 
 interface AddKittenModalProps {
   isKittenDialogOpen: boolean;
@@ -33,7 +33,6 @@ export default function AddKittenModal({
     handleSubmit,
     control,
     reset,
-    setFocus,
     setError,
     formState: { errors },
   } = useForm<z.infer<typeof kittenSchema>>({
@@ -82,6 +81,7 @@ export default function AddKittenModal({
     <Dialog open={isKittenDialogOpen} onOpenChange={closeModal}>
       <DialogTrigger asChild>
         <Button type="button" className="self-start" variant={"secondary"}>
+          <Plus className="mr-1" size={16} />
           Add kitten
         </Button>
       </DialogTrigger>
@@ -105,7 +105,7 @@ export default function AddKittenModal({
               <p className="text-sm text-red-500">{errors.name.message}</p>
             )}
           </div>
-          <Label htmlFor="stamnavn">Fargekode (can be empty)</Label>
+          <Label htmlFor="stamnavn">Fargekode</Label>
           <div className="flex flex-col gap-1">
             <Input
               type="stamnavn"
@@ -117,13 +117,13 @@ export default function AddKittenModal({
               <p className="text-sm text-red-500">{errors.stamnavn.message}</p>
             )}
           </div>
-          <Label htmlFor="info">Info</Label>
+          <Label htmlFor="info">Info (can be empty)</Label>
           <div className="flex flex-col gap-1">
             <Input
               type="info"
               id="info"
               placeholder="Info"
-              {...register("info", { required: "Info is required" })}
+              {...register("info")}
             />
             {errors.info && (
               <p className="text-sm text-red-500">{errors.info.message}</p>
