@@ -17,7 +17,7 @@ export const catRouter = createTRPCRouter({
       if (!cat) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Blogpost not found",
+          message: "Cat not found",
         });
       }
       const deletedCat = await db.cat.delete({
