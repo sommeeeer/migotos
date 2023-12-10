@@ -45,6 +45,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { useImageUpload } from "~/hooks/use-image-upload";
+import { FaCat } from "react-icons/fa";
 
 export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
   const router = useRouter();
@@ -105,7 +106,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
     <AdminLayout>
       <div className="flex items-center gap-2">
         <h1 className="text-2xl">New Cat</h1>
-        <AiFillEdit className="mb-4 h-12 w-12" />
+        <FaCat className="mb-4 h-8 w-8" />
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
         <Form {...form}>
