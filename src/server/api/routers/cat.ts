@@ -4,6 +4,7 @@ import { catSchema } from "~/lib/validators/cat";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
+import { BLURURL } from "~/server/helpers";
 
 export const catRouter = createTRPCRouter({
   getStamnavnFromCatName: protectedProcedure
@@ -91,8 +92,7 @@ export const catRouter = createTRPCRouter({
               },
               data: {
                 src: input.image_url,
-                blururl:
-                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC",
+                blururl: BLURURL,
                 height: 300,
                 width: 300,
                 priority: 1,
@@ -110,6 +110,7 @@ export const catRouter = createTRPCRouter({
       });
       await ctx.res.revalidate("/cats/");
       await ctx.res.revalidate("/");
+      await ctx.res.revalidate(`/cats/${updatedCat.slug}`);
       return updatedCat;
     }),
   createCat: protectedProcedure
@@ -134,8 +135,7 @@ export const catRouter = createTRPCRouter({
             CatImage: {
               create: {
                 src: input.image_url,
-                blururl:
-                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC",
+                blururl: BLURURL,
                 height: 300,
                 width: 300,
                 priority: 1,

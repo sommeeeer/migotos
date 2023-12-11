@@ -286,7 +286,6 @@ export default function NewCat({
                   <FormLabel>Father</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      id={"father"}
                       isLoading={isLoading}
                       onChange={(e) => onChange(e?.value)}
                       onBlur={onBlur}
@@ -311,7 +310,6 @@ export default function NewCat({
                   <FormLabel>Mother</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      id={"mother"}
                       isLoading={isLoading}
                       onChange={(e) => onChange(e?.value)}
                       onBlur={onBlur}

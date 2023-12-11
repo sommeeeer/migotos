@@ -5,6 +5,9 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+export const BLURURL =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC";
+
 export async function checkAdminSession(ctx: GetServerSidePropsContext) {
   const session = await getServerAuthSession(ctx);
 

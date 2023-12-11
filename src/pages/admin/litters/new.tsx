@@ -108,15 +108,23 @@ export default function NewLitter({
         setLoadingParent(null);
         if (variables.parent === "mother") {
           if (!data.stamnavn) {
-            litterForm.setValue("mother_stamnavn", "");
+            litterForm.setValue("mother_stamnavn", "", {
+              shouldValidate: true,
+            });
           } else {
-            litterForm.setValue("mother_stamnavn", data.stamnavn);
+            litterForm.setValue("mother_stamnavn", data.stamnavn, {
+              shouldValidate: true,
+            });
           }
         } else if (variables.parent === "father") {
           if (!data.stamnavn) {
-            litterForm.setValue("father_stamnavn", "");
+            litterForm.setValue("father_stamnavn", "", {
+              shouldValidate: true,
+            });
           } else {
-            litterForm.setValue("father_stamnavn", data.stamnavn);
+            litterForm.setValue("father_stamnavn", data.stamnavn, {
+              shouldValidate: true,
+            });
           }
         }
       },
@@ -241,7 +249,6 @@ export default function NewLitter({
                   <FormLabel>Mother Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      id={"mother_name"} //TO FIX NEXT.JS HYDRATION BUG
                       isLoading={
                         isLoading ||
                         (isLoadingGetStamnavn && loadingParent === "mother")
@@ -295,7 +302,6 @@ export default function NewLitter({
                   <FormLabel>Father Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      id={"father_name"} //TO FIX NEXT.JS HYDRATION BUG
                       isLoading={
                         isLoading ||
                         (isLoadingGetStamnavn && loadingParent === "mother")

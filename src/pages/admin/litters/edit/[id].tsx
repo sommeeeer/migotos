@@ -72,8 +72,6 @@ export default function EditLitter({
   const [isUploading, setIsUploading] = useState(false);
   const [loadingParent, setLoadingParent] = useState<string | null>(null);
 
-  console.log(litter);
-
   const litterForm = useForm<z.infer<typeof litterSchema>>({
     resolver: zodResolver(litterSchema),
     defaultValues: {
@@ -88,20 +86,26 @@ export default function EditLitter({
       father_img: litter.father_img,
       mother_img: litter.mother_img,
       post_image: litter.post_image ?? undefined,
-      kittens: [],
+      kittens: litter.Kitten.map((kitten) => ({
+        name: kitten.name,
+        gender: kitten.gender === "man" ? "man" : "female",
+        info: kitten.info ?? "",
+        stamnavn: kitten.stamnavn ?? "",
+      })),
     },
   });
+  const { isDirty } = litterForm.formState;
   const kittens = litterForm.watch("kittens");
   const router = useRouter();
 
-  const { mutate: mutateCreateLitter, isLoading } =
-    api.litter.createLitter.useMutation({
+  const { mutate: mutateUpdateLitter, isLoading } =
+    api.litter.updateLitter.useMutation({
       onSuccess: () => {
         toast({
           variant: "default",
           title: "Success",
           color: "green",
-          description: "Litter added successfully.",
+          description: "Litter updated successfully.",
         });
         void router.push("/admin/litters");
       },
@@ -119,15 +123,23 @@ export default function EditLitter({
         setLoadingParent(null);
         if (variables.parent === "mother") {
           if (!data.stamnavn) {
-            litterForm.setValue("mother_stamnavn", "");
+            litterForm.setValue("mother_stamnavn", "", {
+              shouldValidate: true,
+            });
           } else {
-            litterForm.setValue("mother_stamnavn", data.stamnavn);
+            litterForm.setValue("mother_stamnavn", data.stamnavn, {
+              shouldValidate: true,
+            });
           }
         } else if (variables.parent === "father") {
           if (!data.stamnavn) {
-            litterForm.setValue("father_stamnavn", "");
+            litterForm.setValue("father_stamnavn", "", {
+              shouldValidate: true,
+            });
           } else {
-            litterForm.setValue("father_stamnavn", data.stamnavn);
+            litterForm.setValue("father_stamnavn", data.stamnavn, {
+              shouldValidate: true,
+            });
           }
         }
       },
@@ -175,9 +187,9 @@ export default function EditLitter({
       if (imgs.length !== 3) {
         throw new Error("Something went wrong while uploading images.");
       }
-      litterForm.setValue("mother_img", imgs[0]!);
-      litterForm.setValue("father_img", imgs[1]!);
-      litterForm.setValue("post_image", imgs[2]!);
+      litterForm.setValue("mother_img", imgs[0]!, { shouldDirty: true });
+      litterForm.setValue("father_img", imgs[1]!, { shouldDirty: true });
+      litterForm.setValue("post_image", imgs[2]!, { shouldDirty: true });
     } catch (err) {
       console.error(err);
       toast({
@@ -190,7 +202,15 @@ export default function EditLitter({
     }
   }
   function onSubmitLitter(values: z.infer<typeof litterSchema>) {
-    mutateCreateLitter({
+    if (!isDirty) {
+      toast({
+        variant: "destructive",
+        description: "No changes detected.",
+      });
+      return;
+    }
+    mutateUpdateLitter({
+      id: litter.id,
       ...values,
       born: addHours(values.born, 2),
     });
@@ -252,7 +272,6 @@ export default function EditLitter({
                   <FormLabel>Mother Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      id={"mother_name"}
                       isLoading={
                         isLoading ||
                         (isLoadingGetStamnavn && loadingParent === "mother")
@@ -307,7 +326,6 @@ export default function EditLitter({
                   <FormLabel>Father Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      id={"father_name"}
                       isLoading={
                         isLoading ||
                         (isLoadingGetStamnavn && loadingParent === "mother")
