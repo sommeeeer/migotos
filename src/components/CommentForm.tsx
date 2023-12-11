@@ -39,6 +39,7 @@ export default function CommentForm({
       refetchPosts();
     },
     onError: (error) => {
+      console.error(error);
       toast({
         variant: "destructive",
         title: "Error",
