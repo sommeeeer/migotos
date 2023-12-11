@@ -102,7 +102,7 @@ model Tag {
   id        Int    @id @default(autoincrement())
   value     String @db.VarChar(255)
   litter_id Int
-  Litter    Litter @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Tag_ibfk_1")
+  Litter    Litter @relation(fields: [litter_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Tag_ibfk_1")
 
   @@index([litter_id], map: "litter_id")
 }
