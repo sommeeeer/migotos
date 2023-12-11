@@ -122,7 +122,10 @@ export default function NewCat({
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="max-w-2xl space-y-6"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -283,6 +286,7 @@ export default function NewCat({
                   <FormLabel>Father</FormLabel>
                   <FormControl>
                     <CreateableSelect
+                      id={"father"}
                       isLoading={isLoading}
                       onChange={(e) => onChange(e?.value)}
                       onBlur={onBlur}
@@ -307,6 +311,7 @@ export default function NewCat({
                   <FormLabel>Mother</FormLabel>
                   <FormControl>
                     <CreateableSelect
+                      id={"mother"}
                       isLoading={isLoading}
                       onChange={(e) => onChange(e?.value)}
                       onBlur={onBlur}

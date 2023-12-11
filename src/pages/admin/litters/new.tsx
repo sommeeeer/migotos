@@ -241,6 +241,7 @@ export default function NewLitter({
                   <FormLabel>Mother Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
+                      id={"mother_name"} //TO FIX NEXT.JS HYDRATION BUG
                       isLoading={
                         isLoading ||
                         (isLoadingGetStamnavn && loadingParent === "mother")
@@ -294,6 +295,7 @@ export default function NewLitter({
                   <FormLabel>Father Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
+                      id={"father_name"} //TO FIX NEXT.JS HYDRATION BUG
                       isLoading={
                         isLoading ||
                         (isLoadingGetStamnavn && loadingParent === "mother")
