@@ -48,6 +48,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { useEffect } from "react";
+import CreateableSelect from "react-select/creatable";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -58,9 +59,16 @@ type CatWithImage = Prisma.CatGetPayload<{
 type EditCatProps = {
   cat: CatWithImage;
   uploadUrl: string;
+  motherNames: { name: string }[];
+  fatherNames: { name: string }[];
 };
 
-export default function EditCat({ cat, uploadUrl }: EditCatProps) {
+export default function EditCat({
+  cat,
+  uploadUrl,
+  motherNames,
+  fatherNames,
+}: EditCatProps) {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof catSchema>>({
@@ -96,7 +104,8 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
       });
       void router.push("/admin/cats");
     },
-    onError: () => {
+    onError: (error) => {
+      console.error(error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -135,7 +144,10 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="max-w-2xl space-y-6"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -291,11 +303,22 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
             <FormField
               control={form.control}
               name="father"
-              render={({ field }) => (
+              render={({ field: { onChange, onBlur, name, ref } }) => (
                 <FormItem>
                   <FormLabel>Father</FormLabel>
                   <FormControl>
-                    <Input disabled={isLoading} {...field} />
+                    <CreateableSelect
+                      isLoading={isLoading}
+                      onChange={(e) => onChange(e?.value)}
+                      onBlur={onBlur}
+                      name={name}
+                      ref={ref}
+                      isClearable
+                      options={fatherNames.map((name) => ({
+                        value: name.name,
+                        label: name.name,
+                      }))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -304,11 +327,22 @@ export default function EditCat({ cat, uploadUrl }: EditCatProps) {
             <FormField
               control={form.control}
               name="mother"
-              render={({ field }) => (
+              render={({ field: { onChange, onBlur, name, ref } }) => (
                 <FormItem>
                   <FormLabel>Mother</FormLabel>
                   <FormControl>
-                    <Input disabled={isLoading} {...field} />
+                    <CreateableSelect
+                      isLoading={isLoading}
+                      onChange={(e) => onChange(e?.value)}
+                      onBlur={onBlur}
+                      name={name}
+                      ref={ref}
+                      isClearable
+                      options={motherNames.map((name) => ({
+                        value: name.name,
+                        label: name.name,
+                      }))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -445,13 +479,39 @@ export async function getServerSideProps(
       notFound: true,
     };
   }
-  
+
+  const motherNames = await db.cat.findMany({
+    select: {
+      name: true,
+    },
+    where: {
+      gender: "Female",
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  const fatherNames = await db.cat.findMany({
+    select: {
+      name: true,
+    },
+    where: {
+      gender: "Male",
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
   const uploadUrl = await getSignedURL();
 
   return {
     props: {
       cat,
       uploadUrl,
+      motherNames,
+      fatherNames,
     },
   };
 }

@@ -57,6 +57,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.47.0",
     "react-icons": "^4.11.0",
+    "react-select": "^5.8.0",
     "react-textarea-autosize": "^8.5.3",
     "superjson": "^1.13.3",
     "tailwind-merge": "^1.14.0",

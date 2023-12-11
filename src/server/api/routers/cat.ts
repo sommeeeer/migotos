@@ -6,6 +6,22 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 
 export const catRouter = createTRPCRouter({
+  getStamnavnFromCatName: protectedProcedure
+    .input(z.object({ name: z.string(), parent: z.string() }))
+    .mutation(async ({ input }) => {
+      const cat = await db.cat.findFirst({
+        select: {
+          stamnavn: true,
+        },
+        where: {
+          name: input.name,
+        },
+      });
+      if (!cat) {
+        return { stamnavn: null, parent: input.parent };
+      }
+      return { stamnavn: cat?.stamnavn, parent: input.parent };
+    }),
   deleteCat: protectedProcedure
     .input(z.number())
     .mutation(async ({ input, ctx }) => {

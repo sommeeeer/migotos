@@ -1,5 +1,6 @@
 import AdminLayout from "../AdminLayout";
 import {
+  type GetServerSidePropsResult,
   type GetServerSidePropsContext,
 } from "next/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +31,7 @@ import {
 import { Calendar } from "~/components/ui/calendar";
 import { addHours, format } from "date-fns";
 import { BiSolidCat } from "react-icons/bi";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import AddKittenModal from "~/components/AddKittenModal";
 import { IoMdFemale, IoMdMale } from "react-icons/io";
 import {
@@ -43,13 +44,24 @@ import { Label } from "~/components/ui/label";
 import { uploadS3 } from "~/utils/helpers";
 import { api } from "~/utils/api";
 import ShowCurrentImages from "~/components/ShowCurrentImages";
+import CreateableSelect from "react-select/creatable";
+import { db } from "~/server/db";
 
-export default function NewLitter() {
+interface NewLitterProps {
+  motherNames: { name: string }[];
+  fatherNames: { name: string }[];
+}
+
+export default function NewLitter({
+  motherNames,
+  fatherNames,
+}: NewLitterProps) {
   const [isKittenDialogOpen, setIsKittenDialogOpen] = useState(false);
   const [motherImage, setMotherImage] = useState<File | undefined>(undefined);
   const [fatherImage, setFatherImage] = useState<File | undefined>(undefined);
   const [postImage, setPostImage] = useState<File | undefined>(undefined);
   const [isUploading, setIsUploading] = useState(false);
+  const [loadingParent, setLoadingParent] = useState<string | null>(null);
 
   const litterForm = useForm<z.infer<typeof litterSchema>>({
     resolver: zodResolver(litterSchema),
@@ -68,29 +80,54 @@ export default function NewLitter() {
       kittens: [],
     },
   });
-  const isDirty = litterForm.formState.isDirty;
   const kittens = litterForm.watch("kittens");
-
   const router = useRouter();
 
-  const { mutate, isLoading } = api.litter.createLitter.useMutation({
-    onSuccess: () => {
-      toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Litter added successfully.",
-      });
-      void router.push("/admin/litters");
-    },
-    onError: () => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while updating. Please try again",
-      });
-    },
-  });
+  const { mutate: mutateCreateLitter, isLoading } =
+    api.litter.createLitter.useMutation({
+      onSuccess: () => {
+        toast({
+          variant: "default",
+          title: "Success",
+          color: "green",
+          description: "Litter added successfully.",
+        });
+        void router.push("/admin/litters");
+      },
+      onError: () => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Something went wrong while updating. Please try again",
+        });
+      },
+    });
+  const { mutate: mutateStamNavn, isLoading: isLoadingGetStamnavn } =
+    api.cat.getStamnavnFromCatName.useMutation({
+      onSuccess: (data, variables) => {
+        setLoadingParent(null);
+        if (variables.parent === "mother") {
+          if (!data.stamnavn) {
+            litterForm.setValue("mother_stamnavn", "");
+          } else {
+            litterForm.setValue("mother_stamnavn", data.stamnavn);
+          }
+        } else if (variables.parent === "father") {
+          if (!data.stamnavn) {
+            litterForm.setValue("father_stamnavn", "");
+          } else {
+            litterForm.setValue("father_stamnavn", data.stamnavn);
+          }
+        }
+      },
+      onMutate(variables) {
+        setLoadingParent(variables.parent);
+      },
+      onError(error) {
+        setLoadingParent(null);
+        console.error(error);
+      },
+    });
 
   async function handleUpload() {
     const filesToUpload = [motherImage, fatherImage, postImage];
@@ -142,15 +179,7 @@ export default function NewLitter() {
     }
   }
   function onSubmitLitter(values: z.infer<typeof litterSchema>) {
-    console.log(values);
-    if (!isDirty) {
-      toast({
-        variant: "destructive",
-        description: "No changes detected.",
-      });
-      return;
-    }
-    mutate({
+    mutateCreateLitter({
       ...values,
       born: addHours(values.born, 2),
     });
@@ -166,15 +195,6 @@ export default function NewLitter() {
     );
   }
 
-  const prevFilesRef = useRef<(File | undefined)[]>([
-    undefined,
-    undefined,
-    undefined,
-  ]);
-  useEffect(() => {
-    prevFilesRef.current = [motherImage, fatherImage, postImage];
-  }, [motherImage, fatherImage, postImage]);
-
   return (
     <AdminLayout>
       <div className="flex items-center gap-2">
@@ -185,7 +205,7 @@ export default function NewLitter() {
         <Form {...litterForm}>
           <form
             onSubmit={litterForm.handleSubmit(onSubmitLitter)}
-            className="space-y-6"
+            className="max-w-2xl space-y-6"
           >
             <FormField
               control={litterForm.control}
@@ -216,24 +236,27 @@ export default function NewLitter() {
             <FormField
               control={litterForm.control}
               name="mother_name"
-              render={({ field }) => (
+              render={({ field: { onChange, onBlur, name, ref } }) => (
                 <FormItem>
                   <FormLabel>Mother Name</FormLabel>
                   <FormControl>
-                    <Input disabled={isLoading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={litterForm.control}
-              name="father_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Father Name</FormLabel>
-                  <FormControl>
-                    <Input disabled={isLoading} {...field} />
+                    <CreateableSelect
+                      isLoading={isLoading}
+                      onChange={(e) => {
+                        onChange(e?.value);
+                        if (!e?.value)
+                          return litterForm.setValue("mother_stamnavn", "");
+                        mutateStamNavn({ name: e?.value, parent: "mother" });
+                      }}
+                      onBlur={onBlur}
+                      name={name}
+                      ref={ref}
+                      isClearable
+                      options={motherNames.map((name) => ({
+                        value: name.name,
+                        label: name.name,
+                      }))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -244,9 +267,46 @@ export default function NewLitter() {
               name="mother_stamnavn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mother&apos;s Fargekode</FormLabel>
+                  <FormLabel className="flex">
+                    Mother&apos;s Fargekode
+                    {isLoadingGetStamnavn && loadingParent === "mother" && (
+                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                    )}
+                  </FormLabel>
                   <FormControl>
-                    <Input disabled={isLoading} {...field} />
+                    <Input
+                      disabled={isLoading || isLoadingGetStamnavn}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={litterForm.control}
+              name="father_name"
+              render={({ field: { onChange, onBlur, name, ref } }) => (
+                <FormItem>
+                  <FormLabel>Father Name</FormLabel>
+                  <FormControl>
+                    <CreateableSelect
+                      isLoading={isLoading}
+                      onChange={(e) => {
+                        onChange(e?.value);
+                        if (!e?.value)
+                          return litterForm.setValue("father_stamnavn", "");
+                        mutateStamNavn({ name: e?.value, parent: "father" });
+                      }}
+                      onBlur={onBlur}
+                      name={name}
+                      ref={ref}
+                      isClearable
+                      options={fatherNames.map((name) => ({
+                        value: name.name,
+                        label: name.name,
+                      }))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -257,9 +317,17 @@ export default function NewLitter() {
               name="father_stamnavn"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Father&apos;s Fargekode</FormLabel>
+                  <FormLabel className="flex">
+                    Father&apos;s Fargekode
+                    {isLoadingGetStamnavn && loadingParent === "father" && (
+                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                    )}
+                  </FormLabel>
                   <FormControl>
-                    <Input disabled={isLoading} {...field} />
+                    <Input
+                      disabled={isLoading || isLoadingGetStamnavn}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -442,7 +510,9 @@ export default function NewLitter() {
   );
 }
 
-export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+export async function getServerSideProps(
+  ctx: GetServerSidePropsContext,
+): Promise<GetServerSidePropsResult<NewLitterProps>> {
   const adminSession = await checkAdminSession(ctx);
 
   if (!adminSession) {
@@ -450,8 +520,34 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
       notFound: true,
     };
   }
+  const motherNames = await db.cat.findMany({
+    select: {
+      name: true,
+    },
+    where: {
+      gender: "Female",
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  const fatherNames = await db.cat.findMany({
+    select: {
+      name: true,
+    },
+    where: {
+      gender: "Male",
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
 
   return {
-    props: {},
+    props: {
+      motherNames,
+      fatherNames,
+    },
   };
 }

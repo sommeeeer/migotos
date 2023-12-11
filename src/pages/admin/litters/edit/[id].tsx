@@ -103,7 +103,7 @@ export default function EditLitter({ litter }: EditLitterProps) {
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
             <FormField
               control={form.control}
               name="name"

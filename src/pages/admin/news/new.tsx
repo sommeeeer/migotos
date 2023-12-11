@@ -106,7 +106,10 @@ export default function NewBlogPost({ uploadUrl }: NewBlogPostProps) {
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="max-w-2xl space-y-6"
+          >
             <FormField
               control={form.control}
               name="title"

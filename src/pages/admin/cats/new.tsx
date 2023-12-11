@@ -4,7 +4,6 @@ import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
 } from "next/types";
-import { AiFillEdit } from "react-icons/ai";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
@@ -46,10 +45,22 @@ import {
 } from "~/components/ui/tooltip";
 import { useImageUpload } from "~/hooks/use-image-upload";
 import { FaCat } from "react-icons/fa";
+import CreateableSelect from "react-select/creatable";
 
-export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
+import { db } from "~/server/db";
+
+interface NewCatProps {
+  uploadUrl: string;
+  motherNames: { name: string }[];
+  fatherNames: { name: string }[];
+}
+
+export default function NewCat({
+  uploadUrl,
+  motherNames,
+  fatherNames,
+}: NewCatProps) {
   const router = useRouter();
-
   const form = useForm<z.infer<typeof catSchema>>({
     resolver: zodResolver(catSchema),
     defaultValues: {
@@ -80,7 +91,8 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
       });
       void router.push("/admin/cats");
     },
-    onError: () => {
+    onError: (error) => {
+      console.error(error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -110,7 +122,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
             <FormField
               control={form.control}
               name="name"
@@ -266,11 +278,22 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
             <FormField
               control={form.control}
               name="father"
-              render={({ field }) => (
+              render={({ field: { onChange, onBlur, name, ref } }) => (
                 <FormItem>
                   <FormLabel>Father</FormLabel>
                   <FormControl>
-                    <Input disabled={isLoading} {...field} />
+                    <CreateableSelect
+                      isLoading={isLoading}
+                      onChange={(e) => onChange(e?.value)}
+                      onBlur={onBlur}
+                      name={name}
+                      ref={ref}
+                      isClearable
+                      options={fatherNames.map((name) => ({
+                        value: name.name,
+                        label: name.name,
+                      }))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -279,11 +302,22 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
             <FormField
               control={form.control}
               name="mother"
-              render={({ field }) => (
+              render={({ field: { onChange, onBlur, name, ref } }) => (
                 <FormItem>
                   <FormLabel>Mother</FormLabel>
                   <FormControl>
-                    <Input disabled={isLoading} {...field} />
+                    <CreateableSelect
+                      isLoading={isLoading}
+                      onChange={(e) => onChange(e?.value)}
+                      onBlur={onBlur}
+                      name={name}
+                      ref={ref}
+                      isClearable
+                      options={motherNames.map((name) => ({
+                        value: name.name,
+                        label: name.name,
+                      }))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -398,7 +432,7 @@ export default function NewCat({ uploadUrl }: { uploadUrl: string }) {
 
 export async function getServerSideProps(
   ctx: GetServerSidePropsContext,
-): Promise<GetServerSidePropsResult<{ uploadUrl: string }>> {
+): Promise<GetServerSidePropsResult<NewCatProps>> {
   const adminSession = await checkAdminSession(ctx);
 
   if (!adminSession) {
@@ -407,11 +441,37 @@ export async function getServerSideProps(
     };
   }
 
+  const motherNames = await db.cat.findMany({
+    select: {
+      name: true,
+    },
+    where: {
+      gender: "Female",
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  const fatherNames = await db.cat.findMany({
+    select: {
+      name: true,
+    },
+    where: {
+      gender: "Male",
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
   const uploadUrl = await getSignedURL();
 
   return {
     props: {
       uploadUrl,
+      motherNames,
+      fatherNames,
     },
   };
 }
