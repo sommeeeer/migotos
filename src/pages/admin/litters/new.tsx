@@ -241,7 +241,10 @@ export default function NewLitter({
                   <FormLabel>Mother Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      isLoading={isLoading}
+                      isLoading={
+                        isLoading ||
+                        (isLoadingGetStamnavn && loadingParent === "mother")
+                      }
                       onChange={(e) => {
                         onChange(e?.value);
                         if (!e?.value)
@@ -291,7 +294,10 @@ export default function NewLitter({
                   <FormLabel>Father Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      isLoading={isLoading}
+                      isLoading={
+                        isLoading ||
+                        (isLoadingGetStamnavn && loadingParent === "mother")
+                      }
                       onChange={(e) => {
                         onChange(e?.value);
                         if (!e?.value)
