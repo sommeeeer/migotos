@@ -121,7 +121,7 @@ export default function AdminLayout({
         </ul>
       </div>
 
-      <div className="w-4/5 rounded bg-gray-100 p-4">
+      <div className="w-4/5 rounded bg-gray-50 p-4">
         <div className="bg-gray-100">{children}</div>
       </div>
     </div>
