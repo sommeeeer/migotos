@@ -76,7 +76,7 @@ model Litter {
   mother_stamnavn    String              @db.VarChar(255)
   father_stamnavn    String              @db.VarChar(255)
   description        String?             @db.VarChar(2000)
-  slug               String             @db.VarChar(255)
+  slug               String              @db.VarChar(255)
   post_image         String?             @db.VarChar(255)
   born               DateTime            @db.Date
   mother_img_blururl String              @db.VarChar(255)
