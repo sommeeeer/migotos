@@ -113,15 +113,12 @@ export default function EditLitter({
         console.error(error);
         if (error.data?.code === "CONFLICT") {
           window.scrollTo(0, 0);
-          litterForm.setError(
-            "name",
-            {
-              message: "Litter with this name already exists."
-            },
-            {
-              shouldFocus: true,
-            },
-          );
+          litterForm.setError("name", {
+            message: "Litter with this name already exists.",
+          });
+          setTimeout(() => {
+            litterForm.setFocus("name");
+          }, 1);
           return toast({
             variant: "destructive",
             title: "Error",
