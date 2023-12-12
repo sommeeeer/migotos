@@ -130,40 +130,47 @@ export const litterRouter = createTRPCRouter({
   addWeek: protectedProcedure
     .input(z.object({ litter_id: z.number(), name: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      try {
-        const litter = await db.litter.findFirst({
-          where: {
-            id: input.litter_id,
-          },
-        });
-        if (!litter) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Litter not found",
-          });
-        }
-        let ending = "-weeks";
-        if (input.name === "0" || input.name === "1") {
-          ending = "-week";
-        }
-        const week = await db.litterPictureWeek.create({
-          data: {
-            name: `${input.name}${ending}`,
-            Litter: {
-              connect: {
-                id: input.litter_id,
-              },
-            },
-          },
-        });
-        await ctx.res.revalidate(`/kittens/${litter.slug}`);
-        return week;
-      } catch (err) {
+      const litter = await db.litter.findFirst({
+        where: {
+          id: input.litter_id,
+        },
+        include: {
+          LitterPictureWeek: true,
+        },
+      });
+      if (!litter) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: "NOT_FOUND",
+          message: "Litter not found",
         });
       }
+      let ending = "-weeks";
+      if (input.name === "0" || input.name === "1") {
+        ending = "-week";
+      }
+
+      if (
+        litter.LitterPictureWeek.some(
+          (week) => week.name === `${input.name}${ending}`,
+        )
+      ) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Week already exists",
+        });
+      }
+      const week = await db.litterPictureWeek.create({
+        data: {
+          name: `${input.name}${ending}`,
+          Litter: {
+            connect: {
+              id: input.litter_id,
+            },
+          },
+        },
+      });
+      await ctx.res.revalidate(`/kittens/${litter.slug}`);
+      return week;
     }),
   getLitterImagesByWeek: protectedProcedure
     .input(z.object({ litter_id: z.number(), week_id: z.number() }))

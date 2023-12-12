@@ -28,6 +28,7 @@ import {
   Delete,
   ImagePlus,
   RotateCcw,
+  Save,
   Upload,
 } from "lucide-react";
 import {
@@ -55,6 +56,18 @@ import {
 import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
 import { cn } from "~/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
+import { type TRPCClientError } from "@trpc/client";
 
 type LitterWithImages = Prisma.LitterGetPayload<{
   include: {
@@ -130,7 +143,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
 
   const { mutate: mutateAddWeek, isLoading: isLoadingAddWeek } =
     api.litter.addWeek.useMutation({
-      onSuccess: () => {
+      onSuccess: (week) => {
         toast({
           variant: "default",
           title: "Success",
@@ -140,7 +153,15 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         setIsAddWeeksOpen(false);
         void refetchGetLitter();
       },
-      onError: () => {
+      onError: (error) => {
+        if (error.shape?.data.code === "CONFLICT") {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Week already exists.",
+          });
+          return;
+        }
         toast({
           variant: "destructive",
           title: "Error",
@@ -176,6 +197,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
   const isWeeks = currentLitter.LitterPictureWeek.length > 0;
 
   function handleAddWeek() {
+    setIsAddWeeksOpen(false);
     if (!weekNumber) {
       toast({
         variant: "destructive",
@@ -294,7 +316,13 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
             <Dialog open={isAddWeeksOpen} onOpenChange={setIsAddWeeksOpen}>
               <DialogTrigger asChild>
                 <Button className="w-fit" disabled={isLoadingAddWeek}>
-                  <CalendarPlus className="mr-2 h-5 w-5" /> Add week
+                  {isLoadingAddWeek && (
+                    <LoadingSpinner className="mr-2 h-4 w-4" />
+                  )}
+                  {!isLoadingAddWeek && (
+                    <CalendarPlus className="mr-2 h-5 w-5" />
+                  )}
+                  Add week
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
@@ -357,7 +385,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
             </Button>
           </div>
           {isWeeks ? (
-            <Tabs defaultValue={currentLitter.LitterPictureWeek[0]?.name}>
+            <Tabs defaultValue={currentLitter.LitterPictureWeek.at(-1)?.name}>
               <TabsList className="mx-auto flex w-fit border">
                 {currentLitter.LitterPictureWeek.map((week) => (
                   <TabsTrigger
@@ -377,18 +405,40 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                   value={week.name}
                   className="relative"
                 >
-                  <Button
-                    className="absolute right-4 top-4"
-                    onClick={() =>
-                      mutateDeleteWeek({
-                        week_id: week.id,
-                        litter_id: week.litter_id,
-                      })
-                    }
-                  >
-                    <Delete className="mr-2 h-5 w-5" />
-                    Delete week
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className="absolute right-4 top-4">
+                        <Delete className="mr-2 h-5 w-5" />
+                        Delete week
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete this week and remove all the photos associated
+                          with it.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-red-500 hover:bg-red-600"
+                          onClick={() =>
+                            mutateDeleteWeek({
+                              litter_id: week.litter_id,
+                              week_id: week.id,
+                            })
+                          }
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                   <Card>
                     <CardHeader>
                       <CardTitle>{week.name.replace("-", " ")}</CardTitle>
