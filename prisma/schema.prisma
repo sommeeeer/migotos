@@ -91,7 +91,6 @@ model LitterPictureWeek {
   id                 Int                  @id @default(autoincrement())
   litter_id          Int
   name               String               @db.VarChar(255)
-  link               String               @db.VarChar(255)
   KittenPictureImage KittenPictureImage[]
   Litter             Litter               @relation(fields: [litter_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "LitterPictureWeek_ibfk_1")
 
