@@ -386,6 +386,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
             <Button
               className={cn(isFetchingGetLitter && "bg-gray-700")}
               onClick={() => refetchGetLitter()}
+              disabled={isFetchingGetLitter}
             >
               <RotateCcw
                 className={cn("h-5 w-5", isFetchingGetLitter && "animate-spin")}
@@ -415,8 +416,16 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                 >
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button className="absolute right-4 top-4">
-                        <Delete className="mr-2 h-5 w-5" />
+                      <Button
+                        className="absolute right-4 top-4"
+                        disabled={isLoadingDeleteWeek}
+                      >
+                        {isLoadingDeleteWeek && (
+                          <LoadingSpinner className="mr-2 h-4 w-4" />
+                        )}
+                        {!isLoadingDeleteWeek && (
+                          <Delete className="mr-2 h-5 w-5" />
+                        )}
                         Delete week
                       </Button>
                     </AlertDialogTrigger>
