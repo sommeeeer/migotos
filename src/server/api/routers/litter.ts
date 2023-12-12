@@ -285,4 +285,75 @@ export const litterRouter = createTRPCRouter({
         });
       }
     }),
+  addLitterImages: protectedProcedure
+    .input(
+      z.object({
+        litter_picture_week: z.number(),
+        title: z.string(),
+        imageUrls: z.array(z.string()),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const litterPictureWeek = await db.litterPictureWeek.findFirst({
+          where: {
+            id: input.litter_picture_week,
+          },
+        });
+
+        if (!litterPictureWeek) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Week not found",
+          });
+        }
+        const litter = await db.litter.findFirst({
+          where: {
+            id: litterPictureWeek?.litter_id,
+          },
+        });
+
+        const kitten = await db.kitten.findFirst({
+          where: {
+
+            litter_id: litterPictureWeek?.litter_id,
+            name: {
+              contains: input.title,
+            },
+          },
+        });
+
+        if (!kitten) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Kitten not found",
+          });
+        }
+
+        const kittenImages = await Promise.all(
+          input.imageUrls.map(async (image) => {
+            const kittenPictureImage = await db.kittenPictureImage.create({
+              data: {
+                src: image,
+                height: 300,
+                width: 300,
+                litter_picture_week: input.litter_picture_week,
+                blururl: BLURURL,
+                title: `(N)Migoto's ${input.title}, ${kitten?.stamnavn}`,
+              },
+            });
+            return kittenPictureImage;
+          }),
+        );
+        await ctx.res.revalidate(
+          `/kittens/${litter?.slug}/${litterPictureWeek.name}`,
+        );
+        return kittenImages;
+      } catch (err) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
 });
