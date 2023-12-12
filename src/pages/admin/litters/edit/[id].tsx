@@ -112,6 +112,16 @@ export default function EditLitter({
       onError: (error) => {
         console.error(error);
         if (error.data?.code === "CONFLICT") {
+          window.scrollTo(0, 0);
+          litterForm.setError(
+            "name",
+            {
+              message: "Litter with this name already exists."
+            },
+            {
+              shouldFocus: true,
+            },
+          );
           return toast({
             variant: "destructive",
             title: "Error",
@@ -125,6 +135,7 @@ export default function EditLitter({
         });
       },
     });
+
   const { mutate: mutateStamNavn, isLoading: isLoadingGetStamnavn } =
     api.cat.getStamnavnFromCatName.useMutation({
       onSuccess: (data, variables) => {
