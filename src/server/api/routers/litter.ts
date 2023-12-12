@@ -127,4 +127,129 @@ export const litterRouter = createTRPCRouter({
       await ctx.res.revalidate("/");
       return updatedLitter;
     }),
+  addWeek: protectedProcedure
+    .input(z.object({ litter_id: z.number(), name: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const litter = await db.litter.findFirst({
+          where: {
+            id: input.litter_id,
+          },
+        });
+        if (!litter) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Litter not found",
+          });
+        }
+        let ending = "-weeks";
+        if (input.name === "0" || input.name === "1") {
+          ending = "-week";
+        }
+        const week = await db.litterPictureWeek.create({
+          data: {
+            name: `${input.name}${ending}`,
+            Litter: {
+              connect: {
+                id: input.litter_id,
+              },
+            },
+          },
+        });
+        await ctx.res.revalidate(`/kittens/${litter.slug}`);
+        return week;
+      } catch (err) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
+  getLitterImagesByWeek: protectedProcedure
+    .input(z.object({ litter_id: z.number(), week_id: z.number() }))
+    .query(async ({ input }) => {
+      try {
+        const litterImages = await db.litterPictureWeek.findFirst({
+          where: {
+            id: input.week_id,
+            litter_id: input.litter_id,
+          },
+          include: {
+            KittenPictureImage: true,
+          },
+        });
+        return litterImages?.KittenPictureImage ?? [];
+      } catch (err) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
+  getLitter: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      try {
+        const litter = await db.litter.findFirst({
+          where: {
+            id: input.id,
+          },
+          include: {
+            LitterPictureWeek: {
+              include: {
+                KittenPictureImage: true,
+              },
+            },
+            Kitten: true,
+          },
+        });
+        return litter;
+      } catch (err) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
+  deleteWeek: protectedProcedure
+    .input(z.object({ litter_id: z.number(), week_id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const litter = await db.litter.findFirst({
+          where: {
+            id: input.litter_id,
+          },
+        });
+        if (!litter) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Litter not found",
+          });
+        }
+        const week = await db.litterPictureWeek.findFirst({
+          where: {
+            id: input.week_id,
+            litter_id: input.litter_id,
+          },
+        });
+        if (!week) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Week not found",
+          });
+        }
+        const deletedWeek = await db.litterPictureWeek.delete({
+          where: {
+            id: input.week_id,
+          },
+        });
+        await ctx.res.revalidate(`/kittens/${litter.slug}`);
+        return deletedWeek;
+      } catch (err) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
 });
