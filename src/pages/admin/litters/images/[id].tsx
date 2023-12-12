@@ -129,11 +129,6 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
           return;
         }
         setCurrentLitter(litter);
-        setWeekNumber(
-          currentLitter.LitterPictureWeek.length > 0
-            ? parseInt(currentLitter.LitterPictureWeek.at(-1)?.name || "") + 1
-            : 1,
-        );
         setCurrentWeekSelected(litter.LitterPictureWeek[0] ?? null);
       },
       initialData: litter,
@@ -143,7 +138,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
 
   const { mutate: mutateAddWeek, isLoading: isLoadingAddWeek } =
     api.litter.addWeek.useMutation({
-      onSuccess: (week) => {
+      onSuccess: () => {
         toast({
           variant: "default",
           title: "Success",
@@ -315,7 +310,20 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
             </Dialog>
             <Dialog open={isAddWeeksOpen} onOpenChange={setIsAddWeeksOpen}>
               <DialogTrigger asChild>
-                <Button className="w-fit" disabled={isLoadingAddWeek}>
+                <Button
+                  className="w-fit"
+                  disabled={isLoadingAddWeek}
+                  onClick={() => {
+                    let weekNumber = 1;
+                    if (currentLitter.LitterPictureWeek.length > 0) {
+                      weekNumber =
+                        parseInt(
+                          currentLitter.LitterPictureWeek.at(-1)?.name || "",
+                        ) + 1;
+                    }
+                    setWeekNumber(weekNumber);
+                  }}
+                >
                   {isLoadingAddWeek && (
                     <LoadingSpinner className="mr-2 h-4 w-4" />
                   )}
