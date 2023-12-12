@@ -75,7 +75,7 @@ export default function EditLitter({
   const litterForm = useForm<z.infer<typeof litterSchema>>({
     resolver: zodResolver(litterSchema),
     defaultValues: {
-      name: litter.name,
+      name: litter.name.replace(" LITTER", ""),
       pedigreeurl: litter.pedigreeurl ?? "",
       mother_name: litter.mother_name,
       father_name: litter.father_name,
@@ -109,7 +109,15 @@ export default function EditLitter({
         });
         void router.push("/admin/litters");
       },
-      onError: () => {
+      onError: (error) => {
+        console.error(error);
+        if (error.data?.code === "CONFLICT") {
+          return toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Litter with this name already exists.",
+          });
+        }
         toast({
           variant: "destructive",
           title: "Error",

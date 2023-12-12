@@ -198,6 +198,7 @@ export async function getStaticProps({
     },
   }));
 
+
   const mother = await db.cat.findFirst({
     where: {
       OR: searchFiltersMother,
@@ -236,5 +237,5 @@ export async function getStaticPaths() {
     params: { slug: litter.slug },
   }));
 
-  return { paths, fallback: 'blocking' };
+  return { paths, fallback: "blocking" };
 }

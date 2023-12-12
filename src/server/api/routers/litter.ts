@@ -10,10 +10,21 @@ export const litterRouter = createTRPCRouter({
   createLitter: protectedProcedure
     .input(litterSchema)
     .mutation(async ({ input, ctx }) => {
+      const doesLitterExist = await db.litter.findFirst({
+        where: {
+          name: input.name.toUpperCase(),
+        },
+      });
+      if (doesLitterExist) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Litter already exists",
+        });
+      }
       try {
         const litter = await db.litter.create({
           data: {
-            name: input.name + " LITTER",
+            name: input.name.toUpperCase(),
             slug: input.name.toLowerCase() + "-litter",
             born: input.born,
             mother_name: input.mother_name,
@@ -89,6 +100,17 @@ export const litterRouter = createTRPCRouter({
           message: "Litter not found",
         });
       }
+      const doesLitterExist = await db.litter.findFirst({
+        where: {
+          name: input.name.toUpperCase(),
+        },
+      });
+      if (doesLitterExist) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Litter already exists",
+        });
+      }
       await db.kitten.deleteMany({
         where: {
           litter_id: input.id,
@@ -99,7 +121,8 @@ export const litterRouter = createTRPCRouter({
           id: input.id,
         },
         data: {
-          name: input.name,
+          name: input.name.toUpperCase(),
+          slug: input.name.toLowerCase() + "-litter",
           born: input.born,
           mother_name: input.mother_name,
           father_name: input.father_name,
@@ -145,7 +168,10 @@ export const litterRouter = createTRPCRouter({
         });
       }
       let ending = "-weeks";
-      if (input.name === "0" || input.name === "1") {
+      if (input.name === "0") {
+        ending = "Newborn";
+      }
+      if (input.name === "1") {
         ending = "-week";
       }
 
@@ -161,7 +187,7 @@ export const litterRouter = createTRPCRouter({
       }
       const week = await db.litterPictureWeek.create({
         data: {
-          name: `${input.name}${ending}`,
+          name: ending === "Newborn" ? ending : `${input.name}${ending}`,
           Litter: {
             connect: {
               id: input.litter_id,

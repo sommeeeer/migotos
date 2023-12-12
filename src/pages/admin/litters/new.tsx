@@ -94,11 +94,20 @@ export default function NewLitter({
         });
         void router.push("/admin/litters");
       },
-      onError: () => {
+      onError: (error) => {
+        console.error(error);
+        if (error.data?.code === "CONFLICT") {
+          return toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Litter with this name already exists.",
+          });
+        }
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Something went wrong while updating. Please try again",
+          description:
+            "Something went wrong while creating litter. Please try again",
         });
       },
     });

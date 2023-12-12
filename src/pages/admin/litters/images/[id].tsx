@@ -193,14 +193,6 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
 
   function handleAddWeek() {
     setIsAddWeeksOpen(false);
-    if (!weekNumber) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please enter a week number.",
-      });
-      return;
-    }
     mutateAddWeek({
       litter_id: litter.id,
       name: `${weekNumber}`,
@@ -233,10 +225,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Add photos</DialogTitle>
-                  <DialogDescription>
-                    <p>Select images to upload.</p>
-                    <p>{addPhotosText}</p>
-                  </DialogDescription>
+                  <DialogDescription>{addPhotosText}</DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center space-x-2">
                   <div className="grid flex-1 gap-4">
@@ -314,12 +303,21 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                   className="w-fit"
                   disabled={isLoadingAddWeek}
                   onClick={() => {
-                    let weekNumber = 1;
+                    let weekNumber = 0;
                     if (currentLitter.LitterPictureWeek.length > 0) {
-                      weekNumber =
-                        parseInt(
-                          currentLitter.LitterPictureWeek.at(-1)?.name || "",
-                        ) + 1;
+                      const lastWeekName =
+                        currentLitter.LitterPictureWeek.at(-1)?.name || "0";
+                      const numberMatch = lastWeekName.match(/\d+/);
+                      if (numberMatch) {
+                        weekNumber = parseInt(numberMatch[0]) + 1;
+                      } else {
+                        if (lastWeekName === "Newborn") {
+                          weekNumber = 1;
+                        } else {
+                          weekNumber =
+                            currentLitter.LitterPictureWeek.length + 1;
+                        }
+                      }
                     }
                     setWeekNumber(weekNumber);
                   }}
