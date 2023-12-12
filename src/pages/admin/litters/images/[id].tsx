@@ -1,4 +1,5 @@
 import type {
+  Kitten,
   KittenPictureImage,
   LitterPictureWeek,
   Prisma,
@@ -14,7 +15,7 @@ import AdminLayout from "../../AdminLayout";
 import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useMemo, useState } from "react";
+import { type ChangeEvent, useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -28,7 +29,6 @@ import {
   Delete,
   ImagePlus,
   RotateCcw,
-  Save,
   Upload,
 } from "lucide-react";
 import {
@@ -42,7 +42,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { bytesToMB } from "~/utils/helpers";
+import { bytesToMB, uploadS3 } from "~/utils/helpers";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import {
@@ -67,7 +67,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import { type TRPCClientError } from "@trpc/client";
 
 type LitterWithImages = Prisma.LitterGetPayload<{
   include: {
@@ -90,7 +89,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
   );
   const [currentLitter, setCurrentLitter] = useState<LitterWithImages>(litter);
   const [currentWeekSelected, setCurrentWeekSelected] =
-    useState<LitterPictureWeek | null>(litter.LitterPictureWeek[0] ?? null);
+    useState<LitterPictureWeek | null>(litter.LitterPictureWeek.at(-1) ?? null);
   const [isAddPhotosOpen, setIsAddPhotosOpen] = useState(false);
   const [isAddWeeksOpen, setIsAddWeeksOpen] = useState(false);
   const [weekNumber, setWeekNumber] = useState<number | undefined>(
@@ -99,8 +98,11 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
       : 1,
   );
   const [size, setSize] = useState<number | undefined>();
+  const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [kittenSelectValue, setKittenSelectValue] = useState<string>("");
+  const [selectedKitten, setSelectedKitten] = useState<Kitten | null>(null);
 
   const groupedImages = useMemo(() => {
     const groups: Record<string, KittenPictureImage[]> = {};
@@ -117,7 +119,6 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
   const {
     isLoading: isLoadingGetLitter,
     isFetching: isFetchingGetLitter,
-    isError: isErrorGetLitter,
     refetch: refetchGetLitter,
   } = api.litter.getLitter.useQuery(
     {
@@ -133,6 +134,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
       },
       initialData: litter,
       refetchOnMount: false,
+      refetchOnWindowFocus: false,
     },
   );
 
@@ -166,6 +168,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         void refetchGetLitter();
       },
     });
+
   const { mutate: mutateDeleteWeek, isLoading: isLoadingDeleteWeek } =
     api.litter.deleteWeek.useMutation({
       onSuccess: () => {
@@ -188,6 +191,27 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         void refetchGetLitter();
       },
     });
+  const { mutate: mutateAddKittenImages, isLoading: isLoadingAddKittenImages } =
+    api.litter.addLitterImages.useMutation({
+      onSuccess: () => {
+        toast({
+          variant: "default",
+          title: "Success",
+          color: "green",
+          description: "Kitten images added successfully.",
+        });
+        void refetchGetLitter();
+      },
+      onError: () => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description:
+            "Something went wrong while adding images. Please try again",
+        });
+        void refetchGetLitter();
+      },
+    });
 
   const isWeeks = currentLitter.LitterPictureWeek.length > 0;
 
@@ -205,6 +229,86 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
       : `Add photos to week ${parseInt(currentWeekSelected.name)}`
     : "";
 
+  async function handleUpload() {
+    if (!filesToUpload)
+      return toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select images to upload.",
+      });
+    if (!kittenSelectValue) {
+      return toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select a kitten name.",
+      });
+    }
+    if (!currentWeekSelected) {
+      return toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select a week.",
+      });
+    }
+    setIsUploading(true);
+    try {
+      const imgs = [];
+      const res = await fetch(
+        `/api/getSignedURLS?amount=${filesToUpload.length}`,
+      );
+      if (!res.ok) {
+        throw new Error("Something went wrong while getting signed URLs");
+      }
+      const { urls } = (await res.json()) as { urls: string[] };
+      for (let i = 0; i < filesToUpload.length; i++) {
+        const file = filesToUpload[i];
+        const url = urls[i];
+        if (!url || !file)
+          throw new Error("Something went wrong while uploading images.");
+        const imageURL = await uploadS3(file, url);
+        if (!imageURL) {
+          throw new Error("Something went wrong while uploading images.");
+        }
+        imgs.push(imageURL);
+      }
+      console.log(imgs);
+      mutateAddKittenImages({
+        imageUrls: imgs,
+        title: kittenSelectValue,
+        litter_picture_week: currentWeekSelected?.id,
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong while uploading images.",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = event.target.files;
+    const imagesArray: string[] = [];
+
+    if (files) {
+      for (const file of files) {
+        if (file.type.startsWith("image/")) {
+          imagesArray.push(URL.createObjectURL(file));
+        }
+      }
+      setFilesToUpload(files);
+      setSelectedImages(imagesArray);
+      let size = 0;
+      for (const file of files) {
+        size += file.size;
+      }
+      setSize(size);
+    }
+  }
+
   return (
     <AdminLayout>
       <div className="flex flex-col gap-8">
@@ -214,7 +318,15 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
           </h1>
           <div className="flex justify-center gap-2">
             <Dialog open={isAddPhotosOpen} onOpenChange={setIsAddPhotosOpen}>
-              <DialogTrigger asChild>
+              <DialogTrigger
+                asChild
+                onClick={() => {
+                  setSelectedImages([]);
+                  setSize(undefined);
+                  setFilesToUpload(null);
+                  setKittenSelectValue("");
+                }}
+              >
                 <Button
                   disabled={currentWeekSelected === null}
                   className="w-fit"
@@ -228,32 +340,16 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                   <DialogDescription>{addPhotosText}</DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center space-x-2">
-                  <div className="grid flex-1 gap-4">
+                  <div className="grid flex-1 gap-2">
                     <Label htmlFor="link" className="sr-only">
                       Link
                     </Label>
-                    <Label>Kitten</Label>
-                    <Select>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a kitten name" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {currentLitter.Kitten.map((kitten) => (
-                            <SelectItem key={kitten.id} value={kitten.name}>
-                              {kitten.name}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <Label>Files</Label>
                     <Input
                       type="file"
                       multiple
                       className="cursor-pointer"
                       accept="image/png, image/jpeg, image/jpg"
-                      // onChange={handleImageChange}
+                      onChange={handleImageChange}
                     />
                     <div className="grid grid-cols-5 items-end gap-2">
                       {selectedImages.map((image, index) => (
@@ -274,6 +370,28 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                     )}
                   </div>
                 </div>
+                <div className="flex items-center space-x-2">
+                  <div className="grid flex-1 gap-4">
+                    <Label htmlFor="link" className="sr-only">
+                      Link
+                    </Label>
+                    <Label>Kitten</Label>
+                    <Select onValueChange={setKittenSelectValue}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select a kitten name" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {currentLitter.Kitten.map((kitten) => (
+                            <SelectItem key={kitten.id} value={kitten.name}>
+                              {kitten.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
                 <DialogFooter className="sm:justify-start">
                   <DialogClose asChild disabled={isUploading}>
                     <Button
@@ -285,7 +403,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                     </Button>
                   </DialogClose>
                   <Button
-                    // onClick={handleUpload}
+                    onClick={handleUpload}
                     type="submit"
                     variant="secondary"
                     disabled={isUploading}
@@ -393,7 +511,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
           </div>
           {isWeeks ? (
             <Tabs defaultValue={currentLitter.LitterPictureWeek.at(-1)?.name}>
-              <TabsList className="mx-auto flex w-fit border">
+              <TabsList className="mx-auto flex h-fit w-fit flex-wrap border">
                 {currentLitter.LitterPictureWeek.map((week) => (
                   <TabsTrigger
                     className="px-4 py-2 text-base"
@@ -477,6 +595,8 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                                     alt={image.title ?? "Photo of kitten"}
                                     width={image.width}
                                     height={image.height}
+                                    placeholder="blur"
+                                    blurDataURL={image.blururl}
                                     className="h-full w-full object-cover"
                                   />
                                 </picture>

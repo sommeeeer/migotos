@@ -14,6 +14,7 @@ import { findName, formatDate } from "~/utils/helpers";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import LoginButton from "~/components/LoginButton";
+import { useMemo } from "react";
 
 type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
   include: {
@@ -55,7 +56,9 @@ function LitterPage({ litter, mother, father }: Props) {
 
   const picturesSubHeading = isWeeks ? "FROM 0-12 WEEKS" : "CLICK ON NAME";
 
-  const pictureWeeks = litter.LitterPictureWeek.map((week) => (
+  const pictureWeeks = [...litter.LitterPictureWeek]
+  .sort((a, b) => (a.name === 'Newborn' ? -1 : b.name === 'Newborn' ? 1 : 0))
+  .map((week) => (
     <PictureButton
       label={week.name.replace("-", " ")}
       url={`${litter.slug}/pictures/${week.name}`}
