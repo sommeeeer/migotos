@@ -202,27 +202,6 @@ export const litterRouter = createTRPCRouter({
       await ctx.res.revalidate(`/kittens/${litter.slug}`);
       return week;
     }),
-  getLitterImagesByWeek: protectedProcedure
-    .input(z.object({ litter_id: z.number(), week_id: z.number() }))
-    .query(async ({ input }) => {
-      try {
-        const litterImages = await db.litterPictureWeek.findFirst({
-          where: {
-            id: input.week_id,
-            litter_id: input.litter_id,
-          },
-          include: {
-            KittenPictureImage: true,
-          },
-        });
-        return litterImages?.KittenPictureImage ?? [];
-      } catch (err) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
-        });
-      }
-    }),
   getLitter: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
@@ -235,7 +214,7 @@ export const litterRouter = createTRPCRouter({
             LitterPictureWeek: {
               include: {
                 KittenPictureImage: true,
-              },
+              }
             },
             Kitten: true,
           },
