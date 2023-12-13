@@ -181,7 +181,8 @@ export const litterRouter = createTRPCRouter({
       if (
         litter.LitterPictureWeek.some(
           (week) => week.name === `${input.name}${ending}`,
-        )
+        ) ||
+        litter.LitterPictureWeek.some((week) => week.name === ending)
       ) {
         throw new TRPCError({
           code: "CONFLICT",
