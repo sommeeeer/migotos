@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { type NextRouter, useRouter } from "next/router";
 import LoginModal from "./LoginModal";
+import { useSession } from "next-auth/react";
+import { Role } from "@prisma/client";
 
 interface NavbarProps {
   isOpen: boolean;
@@ -12,6 +14,7 @@ interface NavbarProps {
 function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
   const router = useRouter();
   const links = ["About", "Cats", "Kittens", "News", "Contact", "Instagram"];
+  const session = useSession();
 
   return (
     <AnimatePresence>
@@ -33,7 +36,16 @@ function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
                 closeMobileMenu={closeMobileMenu}
               />
             ))}
-           <LoginModal variant="navbar" />
+            <LoginModal variant="navbar" />
+            {session.data?.user.role === Role.ADMIN && (
+              <NavItem
+                href="/admin"
+                text="Admin"
+                router={router}
+                key="admin"
+                closeMobileMenu={closeMobileMenu}
+              />
+            )}
           </nav>
         </motion.div>
       ) : (
@@ -48,6 +60,15 @@ function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
             />
           ))}
           <LoginModal variant="navbar" />
+          {session.data?.user.role === Role.ADMIN && (
+            <NavItem
+              href="/admin"
+              text="Admin"
+              router={router}
+              key="admin"
+              closeMobileMenu={closeMobileMenu}
+            />
+          )}
         </nav>
       )}
     </AnimatePresence>
@@ -67,16 +88,10 @@ function NavItem({
 }) {
   const isActive = router.pathname === (href === "/home" ? "/" : href);
   const isInstagram = text === "Instagram";
-  let hrefFormatted = "";
-  if (text === "Sign in") {
-    hrefFormatted = "/auth/signin";
-  } else {
-    hrefFormatted = `/${text.toLowerCase()}`;
-  }
 
   return (
     <Link
-      href={isInstagram ? "https://www.instagram.com/migotos/" : hrefFormatted}
+      href={isInstagram ? "https://www.instagram.com/migotos/" : href}
       rel={isInstagram ? "noopener noreferrer" : ""}
       target={isInstagram ? "_blank" : ""}
       onClick={closeMobileMenu}
