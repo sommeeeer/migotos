@@ -2,19 +2,7 @@ import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { type NextRouter, useRouter } from "next/router";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
-import { DialogTrigger } from "@radix-ui/react-dialog";
-import { FaCat } from "react-icons/fa";
-import { signIn } from "next-auth/react";
-import { FcGoogle } from "react-icons/fc";
-import { AiFillFacebook } from "react-icons/ai";
+import LoginModal from "./LoginModal";
 
 interface NavbarProps {
   isOpen: boolean;
@@ -45,7 +33,7 @@ function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
                 closeMobileMenu={closeMobileMenu}
               />
             ))}
-            <LoginModal />
+           <LoginModal variant="navbar" />
           </nav>
         </motion.div>
       ) : (
@@ -59,7 +47,7 @@ function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
               closeMobileMenu={closeMobileMenu}
             />
           ))}
-          <LoginModal />
+          <LoginModal variant="navbar" />
         </nav>
       )}
     </AnimatePresence>
@@ -101,43 +89,6 @@ function NavItem({
     >
       {text}
     </Link>
-  );
-}
-
-function LoginModal() {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button className="mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg md:hover:text-hoverbg">
-          Sign in
-        </button>
-      </DialogTrigger>
-      <DialogContent className="flex flex-col items-center gap-8 bg-[#F1F2F3] max-w-[375px] rounded-md">
-        <DialogHeader>
-          <DialogTitle className="mx-auto">Sign in</DialogTitle>
-          <DialogDescription>Sign in to one of our providers</DialogDescription>
-        </DialogHeader>
-        <section className="flex flex-col items-center gap-4">
-          <FaCat className="text-6xl" />
-          <div className="mt-4 flex flex-col gap-3">
-            <button
-              onClick={() => void signIn("google")}
-              className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-14 py-2 font-normal text-[#3B4045] hover:bg-[#F9FAFA] hover:text-[#3b4045]"
-            >
-              <FcGoogle size={20} />
-              Log in with Google
-            </button>
-            <button
-              onClick={() => void signIn("facebook")}
-              className="flex items-center gap-2 rounded-md border border-gray-300 bg-[#385499] px-14 py-2 font-normal text-gray-100 hover:bg-[#2a4894] hover:text-gray-200"
-            >
-              <AiFillFacebook size={20} color={"white"} />
-              Log in with Facebook
-            </button>
-          </div>
-        </section>
-      </DialogContent>
-    </Dialog>
   );
 }
 
