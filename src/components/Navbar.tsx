@@ -1,17 +1,20 @@
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
-import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { type NextRouter, useRouter } from "next/router";
-import LoadingSpinner from "./ui/LoadingSpinner";
-import { Role } from "@prisma/client";
-import { type Dispatch, type SetStateAction, useState, useRef } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { FaCat } from "react-icons/fa";
+import { signIn } from "next-auth/react";
 import { FcGoogle } from "react-icons/fc";
-
-import { AiOutlineCloseCircle } from "react-icons/ai";
-import { FaFacebook } from "react-icons/fa";
-import colors from "tailwindcss/colors";
-import { useOnClickOutside } from "~/hooks/use-on-click-outside";
+import { AiFillFacebook } from "react-icons/ai";
 
 interface NavbarProps {
   isOpen: boolean;
@@ -42,11 +45,11 @@ function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
                 closeMobileMenu={closeMobileMenu}
               />
             ))}
-            <LoginNavButton closeMobileMenu={closeMobileMenu} />
+            <LoginModal />
           </nav>
         </motion.div>
       ) : (
-        <nav className="mx-auto hidden max-w-sm items-center justify-center px-4 md:flex">
+        <nav className="mx-auto hidden max-w-2xl items-center justify-center px-4 md:flex">
           {links.map((link, index) => (
             <NavItem
               href={`/${link.toLowerCase()}`}
@@ -56,7 +59,7 @@ function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
               closeMobileMenu={closeMobileMenu}
             />
           ))}
-          <LoginNavButton closeMobileMenu={closeMobileMenu} />
+          <LoginModal />
         </nav>
       )}
     </AnimatePresence>
@@ -76,10 +79,16 @@ function NavItem({
 }) {
   const isActive = router.pathname === (href === "/home" ? "/" : href);
   const isInstagram = text === "Instagram";
+  let hrefFormatted = "";
+  if (text === "Sign in") {
+    hrefFormatted = "/auth/signin";
+  } else {
+    hrefFormatted = `/${text.toLowerCase()}`;
+  }
 
   return (
     <Link
-      href={isInstagram ? "https://www.instagram.com/migotos/" : href}
+      href={isInstagram ? "https://www.instagram.com/migotos/" : hrefFormatted}
       rel={isInstagram ? "noopener noreferrer" : ""}
       target={isInstagram ? "_blank" : ""}
       onClick={closeMobileMenu}
@@ -95,87 +104,41 @@ function NavItem({
   );
 }
 
-function LoginNavButton({ closeMobileMenu }: { closeMobileMenu: () => void }) {
-  const { data: session, status } = useSession();
-
-  const isLoading = status === "loading";
-
-  function Login(setShowLoginPanel: Dispatch<SetStateAction<boolean>>) {
-    setShowLoginPanel((prevState) => !prevState);
-  }
-
-  function Logout() {
-    void signOut();
-  }
-
-  function LoginLogoutButton() {
-    const [showLoginPanel, setShowLoginPanel] = useState(false);
-    const divRef = useRef<HTMLDivElement | null>(null);
-    useOnClickOutside(divRef, () => setShowLoginPanel(false));
-
-    return (
-      <div className="relative">
-        <button
-          onClick={session ? Logout : () => Login(setShowLoginPanel)}
-          disabled={isLoading}
-          className="mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg md:hover:text-hoverbg"
-        >
-          {isLoading ? (
-            <>
-              <LoadingSpinner className="mr-3" />
-            </>
-          ) : session ? (
-            "Logout"
-          ) : (
-            "Login"
-          )}
+function LoginModal() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg md:hover:text-hoverbg">
+          Sign in
         </button>
-        {showLoginPanel && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
-            className="absolute -left-2/3 flex h-36 w-36 flex-col items-start rounded-xl bg-gray-200 p-4 transition-all duration-300 ease-out"
-            ref={divRef}
-          >
+      </DialogTrigger>
+      <DialogContent className="flex flex-col items-center gap-8 bg-[#F1F2F3] max-w-[375px] rounded-md">
+        <DialogHeader>
+          <DialogTitle className="mx-auto">Sign in</DialogTitle>
+          <DialogDescription>Sign in to one of our providers</DialogDescription>
+        </DialogHeader>
+        <section className="flex flex-col items-center gap-4">
+          <FaCat className="text-6xl" />
+          <div className="mt-4 flex flex-col gap-3">
             <button
-              onClick={() => setShowLoginPanel(false)}
-              className="absolute right-0 top-0 p-1 hover:scale-110"
+              onClick={() => void signIn("google")}
+              className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-14 py-2 font-normal text-[#3B4045] hover:bg-[#F9FAFA] hover:text-[#3b4045]"
             >
-              <AiOutlineCloseCircle className="h-6 w-6" />
+              <FcGoogle size={20} />
+              Log in with Google
             </button>
-            <div className="flex h-full gap-2 self-center justify-self-center">
-              <button className="group" onClick={() => signIn("google")}>
-                <FcGoogle className="h-16 w-16 group-hover:scale-105" />
-              </button>
-              <button className="group" onClick={() => signIn("facebook")}>
-                <FaFacebook
-                  color={colors.blue[700]}
-                  className="h-14 w-14 group-hover:scale-105"
-                />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </div>
-    );
-  }
-
-  if (session?.user.role === Role.ADMIN) {
-    return (
-      <>
-        <LoginLogoutButton />
-        <Link
-          href="/admin"
-          onClick={closeMobileMenu}
-          className={clsx("mr-4 text-3xl font-medium md:text-lg")}
-        >
-          Admin
-        </Link>
-      </>
-    );
-  }
-
-  return <LoginLogoutButton />;
+            <button
+              onClick={() => void signIn("facebook")}
+              className="flex items-center gap-2 rounded-md border border-gray-300 bg-[#385499] px-14 py-2 font-normal text-gray-100 hover:bg-[#2a4894] hover:text-gray-200"
+            >
+              <AiFillFacebook size={20} color={"white"} />
+              Log in with Facebook
+            </button>
+          </div>
+        </section>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 export default Navbar;
