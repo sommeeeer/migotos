@@ -359,4 +359,35 @@ export const litterRouter = createTRPCRouter({
         });
       }
     }),
+  deleteKittenImage: protectedProcedure
+    .input(z.object({ image_id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const image = await db.kittenPictureImage.findFirst({
+        where: {
+          id: input.image_id,
+        },
+        include: {
+          LitterPictureWeek: {
+            include: {
+              Litter: true,
+            },
+          },
+        },
+      });
+      if (!image) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Image not found",
+        });
+      }
+      const deletedImage = await db.kittenPictureImage.delete({
+        where: {
+          id: input.image_id,
+        },
+      });
+      await ctx.res.revalidate(
+        `/kittens/${image.LitterPictureWeek.Litter.slug}/pictures/${image.LitterPictureWeek.name}`,
+      );
+      return deletedImage;
+    }),
 });

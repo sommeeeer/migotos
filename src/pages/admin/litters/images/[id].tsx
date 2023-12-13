@@ -67,6 +67,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
+import { AnimatePresence, motion } from "framer-motion";
+import { AiFillDelete } from "react-icons/ai";
 
 type LitterWithImages = Prisma.LitterGetPayload<{
   include: {
@@ -102,7 +104,6 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [kittenSelectValue, setKittenSelectValue] = useState<string>("");
-  const [selectedKitten, setSelectedKitten] = useState<Kitten | null>(null);
 
   const groupedImages = useMemo(() => {
     const groups: Record<string, KittenPictureImage[]> = {};
@@ -116,27 +117,29 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
     return groups;
   }, [kittenImages]);
 
-  const {
-    isLoading: isLoadingGetLitter,
-    isFetching: isFetchingGetLitter,
-    refetch: refetchGetLitter,
-  } = api.litter.getLitter.useQuery(
-    {
-      id: litter.id,
-    },
-    {
-      onSuccess: (litter) => {
-        if (!litter) {
-          return;
-        }
-        setCurrentLitter(litter);
-        setCurrentWeekSelected(litter.LitterPictureWeek[0] ?? null);
+  const { isFetching: isFetchingGetLitter, refetch: refetchGetLitter } =
+    api.litter.getLitter.useQuery(
+      {
+        id: litter.id,
       },
-      initialData: litter,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-    },
-  );
+      {
+        onSuccess: (litter) => {
+          if (!litter) {
+            return;
+          }
+          setCurrentLitter(litter);
+          setCurrentWeekSelected(litter.LitterPictureWeek[0] ?? null);
+          setKittenImages(
+            litter.LitterPictureWeek.find(
+              (week) => week.id === litter.LitterPictureWeek.at(-1)?.id,
+            )?.KittenPictureImage ?? [],
+          );
+        },
+        initialData: litter,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+      },
+    );
 
   const { mutate: mutateAddWeek, isLoading: isLoadingAddWeek } =
     api.litter.addWeek.useMutation({
@@ -149,6 +152,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         });
         setIsAddWeeksOpen(false);
         void refetchGetLitter();
+        setIsUploading(false);
       },
       onError: (error) => {
         if (error.shape?.data.code === "CONFLICT") {
@@ -211,6 +215,9 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         });
         void refetchGetLitter();
       },
+      onSettled: () => {
+        setIsAddPhotosOpen(false);
+      },
     });
 
   const isWeeks = currentLitter.LitterPictureWeek.length > 0;
@@ -271,7 +278,6 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         }
         imgs.push(imageURL);
       }
-      console.log(imgs);
       mutateAddKittenImages({
         imageUrls: imgs,
         title: kittenSelectValue,
@@ -284,8 +290,6 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         title: "Error",
         description: "Something went wrong while uploading images.",
       });
-    } finally {
-      setIsUploading(false);
     }
   }
 
@@ -328,10 +332,18 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                 }}
               >
                 <Button
-                  disabled={currentWeekSelected === null}
+                  disabled={
+                    currentWeekSelected === null || isLoadingAddKittenImages
+                  }
                   className="w-fit"
                 >
-                  <ImagePlus className="mr-2 h-5 w-5" /> Add more photos
+                  {isLoadingAddKittenImages && (
+                    <LoadingSpinner className="mr-2 h-4 w-4" />
+                  )}
+                  {!isLoadingAddKittenImages && (
+                    <ImagePlus className="mr-2 h-5 w-5" />
+                  )}
+                  Add more photos
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
@@ -584,24 +596,17 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                         {Object.entries(groupedImages).map(([key, images]) => (
                           <div key={key}>
                             {key !== "" && <BorderText text={key} />}
-                            <div className="grid grid-cols-4 justify-items-center gap-4">
-                              {images.map((image) => (
-                                <picture
-                                  key={image.id}
-                                  className="h-48 w-48 overflow-hidden rounded"
-                                >
-                                  <Image
-                                    src={image.src}
-                                    alt={image.title ?? "Photo of kitten"}
-                                    width={image.width}
-                                    height={image.height}
-                                    placeholder="blur"
-                                    blurDataURL={image.blururl}
-                                    className="h-full w-full object-cover"
+                            <ul className="grid grid-cols-4 justify-items-center gap-4">
+                              <AnimatePresence>
+                                {images.map((image) => (
+                                  <KittenImage
+                                    key={image.id}
+                                    image={image}
+                                    refetchImages={refetchGetLitter}
                                   />
-                                </picture>
-                              ))}
-                            </div>
+                                ))}
+                              </AnimatePresence>
+                            </ul>
                           </div>
                         ))}
                       </section>
@@ -618,6 +623,89 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         </div>
       </div>
     </AdminLayout>
+  );
+}
+
+function KittenImage({
+  image,
+  refetchImages,
+}: {
+  image: KittenPictureImage;
+  refetchImages: () => void;
+}) {
+  const { mutate: mutateDeleteImage } =
+    api.litter.deleteKittenImage.useMutation({
+      onSuccess: () => {
+        toast({
+          variant: "default",
+          title: "Success",
+          color: "green",
+          description: "Image deleted successfully.",
+        });
+        refetchImages();
+      },
+      onError: () => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description:
+            "Something went wrong while deleting image. Please try again",
+        });
+      },
+    });
+  return (
+    <motion.li
+      key={image.id}
+      initial={{ opacity: 0 }}
+      animate={{
+        opacity: 1,
+        transition: { duration: 0.3 },
+      }}
+      exit={{
+        opacity: 0,
+        transition: { duration: 0.3 },
+      }}
+      className="relative flex h-[150px] w-[220px] gap-4 rounded border-2  border-slate-500"
+    >
+      <picture className="h-full w-full">
+        <Image
+          src={image.src}
+          alt={image.title ?? "Photo of kitten"}
+          // width={image.width}
+          // height={image.height}
+          placeholder="blur"
+          blurDataURL={image.blururl}
+          layout="fill"
+          objectFit="cover"
+          className="absolute"
+        />
+      </picture>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <button className="hover:-slate-300 absolute right-0 z-20 p-1">
+            <AiFillDelete className="h-6 w-6 fill-red-600 transition-colors duration-200 hover:text-zinc-600" />
+          </button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              photo and remove the data from the server.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-500 hover:bg-red-600"
+              onClick={() => mutateDeleteImage({ image_id: image.id })}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </motion.li>
   );
 }
 
