@@ -46,8 +46,8 @@ export default function LoginModal({ variant }: LoginModalProps) {
       </DialogTrigger>
       <DialogContent className="flex max-w-[375px] flex-col items-center gap-8 rounded-md bg-[#F1F2F3]">
         <DialogHeader>
-          <DialogTitle className="mx-auto">Sign in</DialogTitle>
-          <DialogDescription>Login via one of our providers</DialogDescription>
+          <DialogTitle className="mx-auto text-xl">Sign in</DialogTitle>
+          <DialogDescription className="text-base">Login via one of our providers</DialogDescription>
         </DialogHeader>
         <section className="flex flex-col items-center gap-4">
           <FaCat className="text-6xl" />
