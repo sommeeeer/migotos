@@ -29,6 +29,7 @@ import {
   Delete,
   ImagePlus,
   RotateCcw,
+  Trash2,
   Upload,
 } from "lucide-react";
 import {
@@ -68,7 +69,6 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import { AiFillDelete } from "react-icons/ai";
 
 type LitterWithImages = Prisma.LitterGetPayload<{
   include: {
@@ -694,8 +694,8 @@ function KittenImage({
       </picture>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <button className="hover:-slate-300 absolute right-0 z-20 p-1">
-            <AiFillDelete className="h-6 w-6 fill-red-600 transition-colors duration-200 hover:text-zinc-600" />
+          <button className="absolute right-0 z-20 p-1">
+            <Trash2 className="h-6 w-6 fill-red-500 hover:fill-red-700 stroke-gray-100 hover:stroke-gray-200 transition-colors duration-200" />
           </button>
         </AlertDialogTrigger>
         <AlertDialogContent>
