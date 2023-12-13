@@ -313,6 +313,8 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
     }
   }
 
+  const MotionTabsContent = motion(TabsContent);
+
   return (
     <AdminLayout>
       <div className="flex flex-col gap-8">
@@ -536,84 +538,94 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                   >{`${week.name.replace("-", " ")}`}</TabsTrigger>
                 ))}
               </TabsList>
-              {currentLitter.LitterPictureWeek.map((week) => (
-                <TabsContent
-                  key={week.id}
-                  value={week.name}
-                  className="relative"
-                >
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        className="absolute right-4 top-4"
-                        disabled={isLoadingDeleteWeek}
-                      >
-                        {isLoadingDeleteWeek && (
-                          <LoadingSpinner className="mr-2 h-4 w-4" />
-                        )}
-                        {!isLoadingDeleteWeek && (
-                          <Delete className="mr-2 h-5 w-5" />
-                        )}
-                        Delete week
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. This will permanently
-                          delete this week and remove all the photos associated
-                          with it.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          className="bg-red-500 hover:bg-red-600"
-                          onClick={() =>
-                            mutateDeleteWeek({
-                              litter_id: week.litter_id,
-                              week_id: week.id,
-                            })
-                          }
+              <AnimatePresence>
+                {currentLitter.LitterPictureWeek.map((week) => (
+                  <MotionTabsContent
+                    key={week.id}
+                    value={week.name}
+                    initial={{ opacity: 0 }}
+                    animate={{
+                      opacity: 1,
+                      transition: { duration: 0.4 },
+                    }}
+                    exit={{ opacity: 0, transition: { duration: 0.4 } }}
+                    className="relative"
+                  >
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          className="absolute right-4 top-4"
+                          disabled={isLoadingDeleteWeek}
                         >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>{week.name.replace("-", " ")}</CardTitle>
-                      <CardDescription>
-                        {week.KittenPictureImage.length} total images
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="min-h-[15rem] space-y-2">
-                      <section className="">
-                        {Object.entries(groupedImages).map(([key, images]) => (
-                          <div key={key}>
-                            {key !== "" && <BorderText text={key} />}
-                            <ul className="grid grid-cols-4 justify-items-center gap-4">
-                              <AnimatePresence>
-                                {images.map((image) => (
-                                  <KittenImage
-                                    key={image.id}
-                                    image={image}
-                                    refetchImages={refetchGetLitter}
-                                  />
-                                ))}
-                              </AnimatePresence>
-                            </ul>
-                          </div>
-                        ))}
-                      </section>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              ))}
+                          {isLoadingDeleteWeek && (
+                            <LoadingSpinner className="mr-2 h-4 w-4" />
+                          )}
+                          {!isLoadingDeleteWeek && (
+                            <Delete className="mr-2 h-5 w-5" />
+                          )}
+                          Delete week
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete this week and remove all the photos
+                            associated with it.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-red-500 hover:bg-red-600"
+                            onClick={() =>
+                              mutateDeleteWeek({
+                                litter_id: week.litter_id,
+                                week_id: week.id,
+                              })
+                            }
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>{week.name.replace("-", " ")}</CardTitle>
+                        <CardDescription>
+                          {week.KittenPictureImage.length} total images
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="min-h-[15rem] space-y-2">
+                        <section className="">
+                          {Object.entries(groupedImages).map(
+                            ([key, images]) => (
+                              <div key={key}>
+                                {key !== "" && <BorderText text={key} />}
+                                <ul className="grid grid-cols-4 justify-items-center gap-4">
+                                  <AnimatePresence>
+                                    {images.map((image) => (
+                                      <KittenImage
+                                        key={image.id}
+                                        image={image}
+                                        refetchImages={refetchGetLitter}
+                                      />
+                                    ))}
+                                  </AnimatePresence>
+                                </ul>
+                              </div>
+                            ),
+                          )}
+                        </section>
+                      </CardContent>
+                    </Card>
+                  </MotionTabsContent>
+                ))}
+              </AnimatePresence>
             </Tabs>
           ) : (
             <p className="text-xl text-gray-700">
