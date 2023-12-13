@@ -266,7 +266,11 @@ export default function NewLitter({
                         onChange(e?.value);
                         if (!e?.value)
                           return litterForm.setValue("mother_stamnavn", "");
-                        mutateStamNavn({ name: e?.value, parent: "mother" });
+                        if (
+                          motherNames.some((name) => name.name === e?.value)
+                        ) {
+                          mutateStamNavn({ name: e?.value, parent: "mother" });
+                        }
                       }}
                       onBlur={onBlur}
                       name={name}
@@ -319,7 +323,11 @@ export default function NewLitter({
                         onChange(e?.value);
                         if (!e?.value)
                           return litterForm.setValue("father_stamnavn", "");
-                        mutateStamNavn({ name: e?.value, parent: "father" });
+                        if (
+                          fatherNames.some((name) => name.name === e?.value)
+                        ) {
+                          mutateStamNavn({ name: e?.value, parent: "father" });
+                        }
                       }}
                       onBlur={onBlur}
                       name={name}
