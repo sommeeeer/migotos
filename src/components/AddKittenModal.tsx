@@ -66,7 +66,7 @@ export default function AddKittenModal({
       litterForm.setValue(
         "kittens",
         [...litterForm.getValues("kittens"), values],
-        { shouldValidate: true },
+        { shouldValidate: true, shouldDirty: true },
       );
       closeModal();
     }
