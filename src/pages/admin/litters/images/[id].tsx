@@ -601,7 +601,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="min-h-[15rem] space-y-2">
-                        <section className="">
+                        <section>
                           {Object.entries(groupedImages).map(
                             ([key, images]) => (
                               <div key={key}>
@@ -677,9 +677,9 @@ function KittenImage({
         opacity: 0,
         transition: { duration: 0.3 },
       }}
-      className="relative flex h-[150px] w-[220px] gap-4 rounded border-2  border-slate-500"
+      className="relative flex h-[150px] w-[220px] rounded border-2  border-slate-500"
     >
-      <picture className="h-full w-full">
+      <picture className="h-full w-full relative">
         <Image
           src={image.src}
           alt={image.title ?? "Photo of kitten"}
