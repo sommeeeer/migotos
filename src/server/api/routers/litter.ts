@@ -103,6 +103,9 @@ export const litterRouter = createTRPCRouter({
       const doesLitterExist = await db.litter.findFirst({
         where: {
           name: input.name.toUpperCase(),
+          id: {
+            not: input.id,
+          },
         },
       });
       if (doesLitterExist) {
@@ -315,7 +318,6 @@ export const litterRouter = createTRPCRouter({
 
         const kitten = await db.kitten.findFirst({
           where: {
-
             litter_id: litterPictureWeek?.litter_id,
             name: {
               contains: input.title,
@@ -346,10 +348,11 @@ export const litterRouter = createTRPCRouter({
           }),
         );
         await ctx.res.revalidate(
-          `/kittens/${litter?.slug}/${litterPictureWeek.name}`,
+          `/kittens/${litter?.slug}/pictures/${litterPictureWeek.name}`,
         );
         return kittenImages;
       } catch (err) {
+        console.error(err);
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
