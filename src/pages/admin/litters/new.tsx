@@ -48,8 +48,8 @@ import CreateableSelect from "react-select/creatable";
 import { db } from "~/server/db";
 
 interface NewLitterProps {
-  motherNames: { name: string }[];
-  fatherNames: { name: string }[];
+  motherNames: { name: string; stamnavn: string }[];
+  fatherNames: { name: string; stamnavn: string }[];
 }
 
 export default function NewLitter({
@@ -61,7 +61,6 @@ export default function NewLitter({
   const [fatherImage, setFatherImage] = useState<File | undefined>(undefined);
   const [postImage, setPostImage] = useState<File | undefined>(undefined);
   const [isUploading, setIsUploading] = useState(false);
-  const [loadingParent, setLoadingParent] = useState<string | null>(null);
 
   const litterForm = useForm<z.infer<typeof litterSchema>>({
     resolver: zodResolver(litterSchema),
@@ -109,40 +108,6 @@ export default function NewLitter({
           description:
             "Something went wrong while creating litter. Please try again",
         });
-      },
-    });
-  const { mutate: mutateStamNavn, isLoading: isLoadingGetStamnavn } =
-    api.cat.getStamnavnFromCatName.useMutation({
-      onSuccess: (data, variables) => {
-        setLoadingParent(null);
-        if (variables.parent === "mother") {
-          if (!data.stamnavn) {
-            litterForm.setValue("mother_stamnavn", "", {
-              shouldValidate: true,
-            });
-          } else {
-            litterForm.setValue("mother_stamnavn", data.stamnavn, {
-              shouldValidate: true,
-            });
-          }
-        } else if (variables.parent === "father") {
-          if (!data.stamnavn) {
-            litterForm.setValue("father_stamnavn", "", {
-              shouldValidate: true,
-            });
-          } else {
-            litterForm.setValue("father_stamnavn", data.stamnavn, {
-              shouldValidate: true,
-            });
-          }
-        }
-      },
-      onMutate(variables) {
-        setLoadingParent(variables.parent);
-      },
-      onError(error) {
-        setLoadingParent(null);
-        console.error(error);
       },
     });
 
@@ -258,18 +223,22 @@ export default function NewLitter({
                   <FormLabel>Mother Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      isLoading={
-                        isLoading ||
-                        (isLoadingGetStamnavn && loadingParent === "mother")
-                      }
+                      isLoading={isLoading}
                       onChange={(e) => {
                         onChange(e?.value);
                         if (!e?.value)
                           return litterForm.setValue("mother_stamnavn", "");
-                        if (
-                          motherNames.some((name) => name.name === e?.value)
-                        ) {
-                          mutateStamNavn({ name: e?.value, parent: "mother" });
+                        const motherName = motherNames.find(
+                          (name) => name.name === e?.value,
+                        );
+                        if (motherName) {
+                          litterForm.setValue(
+                            "mother_stamnavn",
+                            motherName.stamnavn,
+                            {
+                              shouldValidate: true,
+                            },
+                          );
                         }
                       }}
                       onBlur={onBlur}
@@ -293,15 +262,9 @@ export default function NewLitter({
                 <FormItem>
                   <FormLabel className="flex">
                     Mother&apos;s Fargekode
-                    {isLoadingGetStamnavn && loadingParent === "mother" && (
-                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                    )}
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={isLoading || isLoadingGetStamnavn}
-                      {...field}
-                    />
+                    <Input disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -315,18 +278,20 @@ export default function NewLitter({
                   <FormLabel>Father Name</FormLabel>
                   <FormControl>
                     <CreateableSelect
-                      isLoading={
-                        isLoading ||
-                        (isLoadingGetStamnavn && loadingParent === "mother")
-                      }
+                      isLoading={isLoading}
                       onChange={(e) => {
                         onChange(e?.value);
                         if (!e?.value)
                           return litterForm.setValue("father_stamnavn", "");
-                        if (
-                          fatherNames.some((name) => name.name === e?.value)
-                        ) {
-                          mutateStamNavn({ name: e?.value, parent: "father" });
+                        const fatherName = fatherNames.find(
+                          (name) => name.name === e?.value,
+                        );
+                        if (fatherName) {
+                          litterForm.setValue(
+                            "father_stamnavn",
+                            fatherName.stamnavn,
+                            { shouldValidate: true },
+                          );
                         }
                       }}
                       onBlur={onBlur}
@@ -350,15 +315,9 @@ export default function NewLitter({
                 <FormItem>
                   <FormLabel className="flex">
                     Father&apos;s Fargekode
-                    {isLoadingGetStamnavn && loadingParent === "father" && (
-                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                    )}
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={isLoading || isLoadingGetStamnavn}
-                      {...field}
-                    />
+                    <Input disabled={isLoading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -554,6 +513,7 @@ export async function getServerSideProps(
   const motherNames = await db.cat.findMany({
     select: {
       name: true,
+      stamnavn: true,
     },
     where: {
       gender: "Female",
@@ -566,6 +526,7 @@ export async function getServerSideProps(
   const fatherNames = await db.cat.findMany({
     select: {
       name: true,
+      stamnavn: true,
     },
     where: {
       gender: "Male",
