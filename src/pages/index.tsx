@@ -13,8 +13,9 @@ type Props = {
 export default function Home({ blogPosts, litters }: Props) {
   return (
     <div className="mt-4 flex flex-col items-center gap-8">
-      <h1>Welcome to Migotos</h1>
-      <h1 className="font-playfair text-4xl">
+      <h1 className="font-poppins text-3xl">Welcome to Migotos</h1>
+      <h3 className="text-2xl text-gray-700">Norwegian Forest Cats</h3>
+      <h1 className="font-playfair text-2xl">
         <em>The Latest</em> Litters
       </h1>
       <section className="mb-8 grid max-w-6xl gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">
@@ -29,7 +30,7 @@ export default function Home({ blogPosts, litters }: Props) {
           />
         ))}
       </section>
-      <h1 className="font-playfair text-4xl">
+      <h1 className="font-playfair text-2xl">
         <em>The Latest</em> Stories
       </h1>
       <section className="mb-8 grid max-w-6xl gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">

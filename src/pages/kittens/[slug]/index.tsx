@@ -14,7 +14,6 @@ import { findName, formatDate } from "~/utils/helpers";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import LoginButton from "~/components/LoginButton";
-import { useMemo } from "react";
 
 type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
   include: {
