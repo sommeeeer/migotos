@@ -48,7 +48,6 @@ import { FaCat } from "react-icons/fa";
 import CreateableSelect from "react-select/creatable";
 
 import { db } from "~/server/db";
-import { clear } from "console";
 
 interface NewCatProps {
   uploadUrl: string;
