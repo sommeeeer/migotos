@@ -49,6 +49,7 @@ import {
 } from "~/components/ui/tooltip";
 import { useEffect } from "react";
 import CreateableSelect from "react-select/creatable";
+import ImageUploader from "~/components/ImageUploader";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -412,16 +413,11 @@ export default function EditCat({
                   )}
                 </>
               )}
-              <Label>Select New Profile Image (300x300)</Label>
-              <Input
-                type="file"
-                className="cursor-pointer"
-                disabled={isUploading || isLoading}
-                onChange={(e) => {
-                  if (!e.target.files) return;
-                  setFile(e.target.files[0]);
-                }}
-                accept="image/png, image/jpeg, image/jpg"
+              <ImageUploader
+                label="Select New Profile Image (300x300)"
+                isLoading={isLoading}
+                isUploading={isUploading}
+                setValue={setFile}
               />
               <Button
                 disabled={isUploading || isLoading}

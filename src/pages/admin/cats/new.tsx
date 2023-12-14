@@ -48,6 +48,7 @@ import { FaCat } from "react-icons/fa";
 import CreateableSelect from "react-select/creatable";
 
 import { db } from "~/server/db";
+import ImageUploader from "~/components/ImageUploader";
 
 interface NewCatProps {
   uploadUrl: string;
@@ -388,16 +389,11 @@ export default function NewCat({
                   )}
                 </>
               )}
-              <Label>Select New Profile Image (300x300)</Label>
-              <Input
-                type="file"
-                className="cursor-pointer"
-                disabled={isUploading || isLoading}
-                onChange={(e) => {
-                  if (!e.target.files) return;
-                  setFile(e.target.files[0]);
-                }}
-                accept="image/png, image/jpeg, image/jpg"
+              <ImageUploader
+                label="Select New Profile Image (300x300)"
+                isLoading={isLoading}
+                isUploading={isUploading}
+                setValue={setFile}
               />
               <Button
                 disabled={isUploading || isLoading}
