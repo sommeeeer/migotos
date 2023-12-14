@@ -1,5 +1,4 @@
 import type {
-  Kitten,
   KittenPictureImage,
   LitterPictureWeek,
   Prisma,
