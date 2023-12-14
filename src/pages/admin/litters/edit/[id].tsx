@@ -47,6 +47,7 @@ import CreateableSelect from "react-select/creatable";
 import { db } from "~/server/db";
 import type { Prisma } from "@prisma/client";
 import { AiFillEdit } from "react-icons/ai";
+import ImageUploader from "~/components/ImageUploader";
 
 type LitterWithKittens = Prisma.LitterGetPayload<{
   include: {
@@ -460,45 +461,26 @@ export default function EditLitter({
             <div className="flex flex-col items-start gap-4">
               <Label>Current Images</Label>
               <ShowCurrentImages />
-              <div className="flex gap-8">
-                <div className="flex-col">
-                  <Label>Select New Mother Image (200x200)</Label>
-                  <Input
-                    type="file"
-                    className="cursor-pointer"
-                    disabled={isUploading || isLoading}
-                    onChange={(e) => {
-                      if (!e.target.files) return;
-                      setMotherImage(e.target.files[0]);
-                    }}
-                    accept="image/png, image/jpeg, image/jpg"
+              <div className="flex flex-col items-start gap-8">
+                <div className="flex gap-8">
+                  <ImageUploader
+                    label="Select New Mother Image (200x200)"
+                    isLoading={isLoading}
+                    isUploading={isUploading}
+                    setValue={setMotherImage}
+                  />
+                  <ImageUploader
+                    label="Select New Father Image (200x200)"
+                    isLoading={isLoading}
+                    isUploading={isUploading}
+                    setValue={setFatherImage}
                   />
                 </div>
-                <div className="flex-col gap-2">
-                  <Label>Select New Father Image (200x200)</Label>
-                  <Input
-                    type="file"
-                    className="cursor-pointer"
-                    disabled={isUploading || isLoading}
-                    onChange={(e) => {
-                      if (!e.target.files) return;
-                      setFatherImage(e.target.files[0]);
-                    }}
-                    accept="image/png, image/jpeg, image/jpg"
-                  />
-                </div>
-              </div>
-              <div className="mt-4 flex-col gap-2">
-                <Label>Select New Post Image</Label>
-                <Input
-                  type="file"
-                  className="cursor-pointer"
-                  disabled={isUploading || isLoading}
-                  onChange={(e) => {
-                    if (!e.target.files) return;
-                    setPostImage(e.target.files[0]);
-                  }}
-                  accept="image/png, image/jpeg, image/jpg"
+                <ImageUploader
+                  label="Select New Post Image"
+                  isLoading={isLoading}
+                  isUploading={isUploading}
+                  setValue={setPostImage}
                 />
               </div>
               <Button
