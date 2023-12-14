@@ -28,6 +28,7 @@ export async function getSignedURL() {
     const uploadUrl = await getSignedUrl(new S3Client({}), command);
     return uploadUrl;
   } catch (err) {
+    console.error(err)
     throw new Error("Error getting signed URL");
   }
 }
