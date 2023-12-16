@@ -11,8 +11,9 @@ import { api } from "~/utils/api";
 import CommentForm from "~/components/CommentForm";
 import Comment from "~/components/Comment";
 import LoginButton from "~/components/LoginButton";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
+import { useState } from "react";
 
 type Props = {
   cat: Cat & { CatImage: CatImageType[] };
@@ -30,6 +31,7 @@ function Cat({ cat, mother, father }: Props) {
     id: cat.id,
     commentType: "cat_id",
   });
+  const [selectedImage, setSelectedImage] = useState<CatImageType | null>(null);
 
   const profileImg = cat.CatImage[0];
   if (!profileImg) {
@@ -41,6 +43,33 @@ function Cat({ cat, mother, father }: Props) {
 
   return (
     <>
+      {selectedImage && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.7 }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            transition: { duration: 0.3 },
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center"
+        >
+          <div
+            className="absolute inset-0 bg-black bg-opacity-50"
+            onClick={() => setSelectedImage(null)}
+          ></div>
+          <CatImage
+            key={selectedImage.id}
+            src={selectedImage.src}
+            alt={`${cat.name} picture`}
+            width={selectedImage.width}
+            height={selectedImage.height}
+            className="z-10 rounded-md"
+            {...(selectedImage.blururl
+              ? { placeholder: "blur", blurDataURL: selectedImage.blururl }
+              : {})}
+          />
+        </motion.div>
+      )}
       <div className="flex w-full flex-col items-center bg-zinc-100">
         <section className="mt-12 flex max-w-4xl flex-col items-center gap-4 p-4 text-center sm:mt-16">
           <h1 className="font-playfair text-4xl">
@@ -109,19 +138,24 @@ function Cat({ cat, mother, father }: Props) {
             <p>{`Owner: ${cat.owner}`}</p>
           </div>
           <h3 className="self-center font-playfair text-2xl">Pictures</h3>
-          <section className="flex flex-col items-center gap-4">
+          <section className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4">
             {cat.CatImage.slice(1).map((img) => {
               return (
-                <CatImage
-                  key={img.src}
-                  src={img.src}
-                  alt={`${cat.name} picture`}
-                  width={img.width}
-                  height={img.height}
-                  {...(img.blururl
-                    ? { placeholder: "blur", blurDataURL: img.blururl }
-                    : {})}
-                />
+                <picture
+                  onClick={() => setSelectedImage(img)}
+                  key={img.id}
+                  className="relative h-40 w-40 cursor-pointer sm:h-52 sm:w-52 xl:h-60 xl:w-60"
+                >
+                  <CatImage
+                    src={img.src}
+                    alt={`${cat.name} picture`}
+                    fill
+                    className="rounded-md object-cover object-center"
+                    {...(img.blururl
+                      ? { placeholder: "blur", blurDataURL: img.blururl }
+                      : {})}
+                  />
+                </picture>
               );
             })}
           </section>
