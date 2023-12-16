@@ -13,7 +13,7 @@ import { AiFillFacebook, AiOutlineMail } from "react-icons/ai";
 import { useSession } from "next-auth/react";
 import { cn } from "~/lib/utils";
 import { Input } from "./ui/input";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
 
@@ -29,6 +29,8 @@ export default function LoginModal({ variant }: LoginModalProps) {
   const [isLoadingFacebook, setisLoadingFacebook] = useState(false);
   const [isLoadingEmail, setisLoadingEmail] = useState(false);
 
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
   if (session) {
     return (
       <button
@@ -39,7 +41,8 @@ export default function LoginModal({ variant }: LoginModalProps) {
       </button>
     );
   }
-  function handleEmailSignIn() {
+  function handleEmailSignIn(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
     const emailSchema = z.string().email();
     try {
       emailSchema.parse(email);
@@ -47,6 +50,7 @@ export default function LoginModal({ variant }: LoginModalProps) {
       void signIn("email", { email: email });
     } catch (error) {
       setError("Please enter a valid email address");
+      emailInputRef.current?.focus();
     }
   }
 
@@ -95,7 +99,7 @@ export default function LoginModal({ variant }: LoginModalProps) {
               ) : (
                 <FcGoogle size={20} />
               )}
-              Log in with Google
+              Sign in with Google
             </button>
             <button
               onClick={() => {
@@ -109,29 +113,32 @@ export default function LoginModal({ variant }: LoginModalProps) {
               ) : (
                 <AiFillFacebook size={20} color={"white"} />
               )}
-              Log in with Facebook
+              Sign in with Facebook
             </button>
-            <div className="flex flex-col gap-2">
-              <div className="my-4 w-full border"></div>
-              {error && <p className="text-red-500">{error}</p>}
-              <Input
-                type="email"
-                onChange={handleEmailChange}
-                value={email}
-                placeholder="email@example.com"
-              ></Input>
-              <button
-                onClick={handleEmailSignIn}
-                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-14 py-2 font-normal text-[#3B4045] hover:bg-[#F9FAFA] hover:text-[#3b4045]"
-              >
-                {isLoadingEmail ? (
-                  <Loader2 size={20} className="animate-spin" />
-                ) : (
-                  <AiOutlineMail size={20} fill="blue" />
-                )}
-                Sign in with Email
-              </button>
-            </div>
+            <form>
+              <div className="flex flex-col gap-2">
+                <div className="my-4 w-full border"></div>
+                {error && <p className="text-red-500">{error}</p>}
+                <Input
+                  type="email"
+                  onChange={handleEmailChange}
+                  ref={emailInputRef}
+                  value={email}
+                  placeholder="email@example.com"
+                ></Input>
+                <button
+                  onClick={handleEmailSignIn}
+                  className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-14 py-2 font-normal text-[#3B4045] hover:bg-[#F9FAFA] hover:text-[#3b4045]"
+                >
+                  {isLoadingEmail ? (
+                    <Loader2 size={20} className="animate-spin" />
+                  ) : (
+                    <AiOutlineMail size={20} fill="blue" />
+                  )}
+                  Sign in with Email
+                </button>
+              </div>
+            </form>
           </div>
         </section>
       </DialogContent>
