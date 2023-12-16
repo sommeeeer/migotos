@@ -7,6 +7,7 @@ import {
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import FacebookProvider from "next-auth/providers/facebook";
+import EmailProvider from "next-auth/providers/email";
 
 import { env } from "~/env.mjs";
 import { db } from "~/server/db";
@@ -51,9 +52,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  pages: {
-    signIn: '/auth/signin',
-  },
   adapter: PrismaAdapter(db),
   providers: [
     GoogleProvider({
@@ -63,6 +61,17 @@ export const authOptions: NextAuthOptions = {
     FacebookProvider({
       clientId: env.FACEBOOK_CLIENT_ID,
       clientSecret: env.FACEBOOK_CLIENT_SECRET,
+    }),
+    EmailProvider({
+      server: {
+        host: env.EMAIL_SERVER_HOST,
+        port: env.EMAIL_SERVER_PORT,
+        auth: {
+          user: env.EMAIL_SERVER_USER,
+          pass: env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+      from: env.EMAIL_FROM,
     }),
     /**
      * ...add more providers here.

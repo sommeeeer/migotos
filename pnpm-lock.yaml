@@ -118,7 +118,7 @@ dependencies:
     version: 13.5.6(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
   next-auth:
     specifier: ^4.24.3
-    version: 4.24.3(next@13.5.6)(react-dom@18.2.0)(react@18.2.0)
+    version: 4.24.3(next@13.5.6)(nodemailer@6.9.7)(react-dom@18.2.0)(react@18.2.0)
   next-superjson-plugin:
     specifier: ^0.5.9
     version: 0.5.9(next@13.5.6)(superjson@1.13.3)
@@ -128,6 +128,9 @@ dependencies:
   no-scroll:
     specifier: ^2.1.1
     version: 2.1.1
+  nodemailer:
+    specifier: ^6.9.7
+    version: 6.9.7
   npm:
     specifier: ^10.2.1
     version: 10.2.1
@@ -2310,7 +2313,7 @@ packages:
       next-auth: ^4
     dependencies:
       '@prisma/client': 5.7.0(prisma@5.7.0)
-      next-auth: 4.24.3(next@13.5.6)(react-dom@18.2.0)(react@18.2.0)
+      next-auth: 4.24.3(next@13.5.6)(nodemailer@6.9.7)(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /@next/env@13.5.6:
@@ -7253,7 +7256,7 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /next-auth@4.24.3(next@13.5.6)(react-dom@18.2.0)(react@18.2.0):
+  /next-auth@4.24.3(next@13.5.6)(nodemailer@6.9.7)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-n1EvmY7MwQMSOkCh6jhI6uBneB6VVtkYELVMEwVaCLD1mBD3IAAucwk+90kgxramW09nSp5drvynwfNCi1JjaQ==}
     peerDependencies:
       next: ^12.2.5 || ^13
@@ -7269,6 +7272,7 @@ packages:
       cookie: 0.5.0
       jose: 4.15.4
       next: 13.5.6(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
+      nodemailer: 6.9.7
       oauth: 0.9.15
       openid-client: 5.6.1
       preact: 10.18.1
@@ -7358,6 +7362,11 @@ packages:
 
   /node-releases@2.0.13:
     resolution: {integrity: sha512-uYr7J37ae/ORWdZeQ1xxMJe3NtdmqMC/JZK+geofDrkLUApKRHPd18/TxtBOJ4A0/+uUIliorNrfYV6s1b02eQ==}
+
+  /nodemailer@6.9.7:
+    resolution: {integrity: sha512-rUtR77ksqex/eZRLmQ21LKVH5nAAsVicAtAYudK7JgwenEDZ0UIQ1adUGqErz7sMkWYxWTTU1aeP2Jga6WQyJw==}
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   /normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
