@@ -14,6 +14,29 @@ import LoginButton from "~/components/LoginButton";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { useState } from "react";
+import { IoMdClose, IoMdFemale, IoMdMale } from "react-icons/io";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useSwipeable } from "react-swipeable";
+import useKeypress from "react-use-keypress";
+
+export const variants = {
+  enter: (direction: number) => {
+    return {
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+    };
+  },
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => {
+    return {
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+    };
+  },
+};
 
 type Props = {
   cat: Cat & { CatImage: CatImageType[] };
@@ -31,19 +54,60 @@ function Cat({ cat, mother, father }: Props) {
     id: cat.id,
     commentType: "cat_id",
   });
-  const [selectedImage, setSelectedImage] = useState<CatImageType | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
+  const [images, setImages] = useState<CatImageType[]>(cat.CatImage.slice(1));
+  const goToNextImage = () => {
+    setCurrentImageIndex((currentImageIndex + 1) % images.length);
+  };
+
+  const goToPreviousImage = () => {
+    setCurrentImageIndex(
+      (currentImageIndex - 1 + images.length) % images.length,
+    );
+  };
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      goToNextImage();
+    },
+    onSwipedRight: () => {
+      goToPreviousImage();
+    },
+    trackMouse: true,
+  });
+
+  useKeypress("ArrowRight", () => {
+    goToNextImage();
+  });
+
+  useKeypress("ArrowLeft", () => {
+    goToPreviousImage();
+  });
+
+  useKeypress("Escape", () => {
+    setCarouselOpen(false);
+  });
 
   const profileImg = cat.CatImage[0];
   if (!profileImg) {
     throw new Error(`Couldnt find profileImg on ${cat.name}`);
   }
 
+  const genderIcon =
+    cat.gender === "Female" ? (
+      <IoMdFemale className="h-8 w-8" />
+    ) : (
+      <IoMdMale className="h-8 w-8" />
+    );
+
   const fertileText = cat.fertile ? "Yes" : "No";
-  const birthFormatted = cat.birth.toLocaleDateString();
+  const birthFormatted = cat.birth.toLocaleDateString("no-NO");
+  const currentImage = images[currentImageIndex];
 
   return (
     <>
-      {selectedImage && (
+      {carouselOpen && currentImage && (
         <motion.div
           initial={{ opacity: 0, scale: 0.7 }}
           animate={{
@@ -54,20 +118,43 @@ function Cat({ cat, mother, father }: Props) {
           className="fixed inset-0 z-50 flex items-center justify-center"
         >
           <div
-            className="absolute inset-0 bg-black bg-opacity-50"
-            onClick={() => setSelectedImage(null)}
+            className="absolute inset-0 cursor-default bg-black backdrop-blur-2xl"
+            onClick={() => setCarouselOpen(false)}
           ></div>
-          <CatImage
-            key={selectedImage.id}
-            src={selectedImage.src}
-            alt={`${cat.name} picture`}
-            width={selectedImage.width}
-            height={selectedImage.height}
-            className="z-10 rounded-md"
-            {...(selectedImage.blururl
-              ? { placeholder: "blur", blurDataURL: selectedImage.blururl }
-              : {})}
-          />
+          <div className="relative flex flex-col" {...handlers}>
+            <button
+              className="absolute right-3 top-2 z-20 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
+              onClick={() => setCarouselOpen(false)}
+            >
+              <IoMdClose className="h-6 w-6 text-white" />
+            </button>
+            <CatImage
+              key={currentImage.id}
+              src={currentImage.src}
+              alt={`${cat.name} picture`}
+              width={currentImage.width}
+              height={currentImage.height}
+              className="z-10"
+              {...(currentImage.blururl
+                ? {
+                    placeholder: "blur",
+                    blurDataURL: currentImage.blururl,
+                  }
+                : {})}
+            />
+            <button
+              className="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
+              onClick={goToPreviousImage}
+            >
+              <ArrowLeft className="h-6 w-6 text-white" />
+            </button>
+            <button
+              className="absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
+              onClick={goToNextImage}
+            >
+              <ArrowRight className="h-6 w-6 text-white" />
+            </button>
+          </div>
         </motion.div>
       )}
       <div className="flex w-full flex-col items-center bg-zinc-100">
@@ -92,13 +179,14 @@ function Cat({ cat, mother, father }: Props) {
               <p className="mb-4 text-lg uppercase text-[#847143]">PEDIGREE</p>
             </Link>
           )}
+          {genderIcon}
 
           <CatImage
             src={profileImg.src}
             alt={`${cat.name} picture`}
             width={profileImg.width}
             height={profileImg.height}
-            className="mb-2 rounded-full"
+            className="my-2 rounded-full"
             quality={100}
             {...(profileImg.blururl
               ? { placeholder: "blur", blurDataURL: profileImg.blururl }
@@ -110,39 +198,87 @@ function Cat({ cat, mother, father }: Props) {
             </p>
           )}
         </section>
-        <section className="flex w-full flex-col items-center gap-8 bg-white p-4">
+        <section className="mt-10 flex w-full flex-col items-center gap-8 bg-white p-4">
           <h3 className="self-center font-playfair text-2xl">Information</h3>
           <div className="-mt-2 text-left leading-8 text-[#515151]">
-            <p>{`Birth: ${birthFormatted}`}</p>
-            <p>{`Gender: ${cat.gender}`}</p>
-            <p>{`Fertile: ${fertileText}`}</p>
+            <div className="flex gap-7">
+              <span className="w-16 text-right font-semibold uppercase">
+                BIRTH
+              </span>
+              <p>{birthFormatted}</p>
+            </div>
+            <div className="flex gap-7">
+              <span className="w-16 text-right font-semibold uppercase">
+                FERTILE
+              </span>
+              <p>{fertileText}</p>
+            </div>
             {father && (
               <Link href={`/cats/${father.slug}`}>
-                <p>
-                  Father:{" "}
-                  <span className="text-[#847143] underline">{cat.father}</span>
-                </p>
+                <div className="flex gap-7">
+                  <span className="w-16 text-right font-semibold uppercase">
+                    Father
+                  </span>
+                  <p>
+                    <span className="text-[#847143] underline">
+                      {cat.father}
+                    </span>
+                  </p>
+                </div>
               </Link>
             )}
-            {!father && <p>{`Father: ${cat.father}`}</p>}
+            {!father && (
+              <div className="flex gap-7">
+                <span className="w-16 text-right font-semibold uppercase">
+                  Father
+                </span>
+                <p>{cat.father}</p>
+              </div>
+            )}
             {mother && (
               <Link href={`/cats/${mother.slug}`}>
-                <p>
-                  Mother:{" "}
-                  <span className="text-[#847143] underline">{cat.mother}</span>
-                </p>
+                <div className="flex gap-7">
+                  <span className="w-16 text-right font-semibold uppercase">
+                    Mother
+                  </span>
+                  <p>
+                    <span className="text-[#847143] underline">
+                      {cat.mother}
+                    </span>
+                  </p>
+                </div>
               </Link>
             )}
-            {!mother && <p>{`Mother: ${cat.mother}`}</p>}
-            <p>{`Breeder: ${cat.breeder}`}</p>
-            <p>{`Owner: ${cat.owner}`}</p>
+            {!mother && (
+              <div className="flex gap-7">
+                <span className="w-16 text-right font-semibold uppercase">
+                  Mother
+                </span>
+                <p>{cat.mother}</p>
+              </div>
+            )}
+            <div className="flex gap-7">
+              <span className="w-16 text-right font-semibold uppercase">
+                BREEDER
+              </span>
+              <p>{cat.breeder}</p>
+            </div>
+            <div className="flex gap-7">
+              <span className="w-16 text-right font-semibold uppercase">
+                OWNER
+              </span>
+              <p>{cat.owner}</p>
+            </div>
           </div>
           <h3 className="self-center font-playfair text-2xl">Pictures</h3>
           <section className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4">
-            {cat.CatImage.slice(1).map((img) => {
+            {cat.CatImage.slice(1).map((img, idx) => {
               return (
                 <picture
-                  onClick={() => setSelectedImage(img)}
+                  onClick={() => {
+                    setCurrentImageIndex(idx);
+                    setCarouselOpen(true);
+                  }}
                   key={img.id}
                   className="relative h-40 w-40 cursor-pointer sm:h-52 sm:w-52 xl:h-60 xl:w-60"
                 >
