@@ -57,11 +57,15 @@ function Cat({ cat, mother, father }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
   const [images, setImages] = useState<CatImageType[]>(cat.CatImage.slice(1));
+  const [direction, setDirection] = useState(0);
+
   const goToNextImage = () => {
+    setDirection(1);
     setCurrentImageIndex((currentImageIndex + 1) % images.length);
   };
 
   const goToPreviousImage = () => {
+    setDirection(-1);
     setCurrentImageIndex(
       (currentImageIndex - 1 + images.length) % images.length,
     );
@@ -115,7 +119,7 @@ function Cat({ cat, mother, father }: Props) {
             scale: 1,
             transition: { duration: 0.3 },
           }}
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center"
         >
           <div
             className="absolute inset-0 cursor-default bg-black backdrop-blur-2xl"
@@ -128,20 +132,26 @@ function Cat({ cat, mother, father }: Props) {
             >
               <IoMdClose className="h-6 w-6 text-white" />
             </button>
-            <CatImage
+            <motion.div
               key={currentImage.id}
-              src={currentImage.src}
-              alt={`${cat.name} picture`}
-              width={currentImage.width}
-              height={currentImage.height}
-              className="z-10"
-              {...(currentImage.blururl
-                ? {
-                    placeholder: "blur",
-                    blurDataURL: currentImage.blururl,
-                  }
-                : {})}
-            />
+              initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <CatImage
+                src={currentImage.src}
+                alt={`${cat.name} picture`}
+                width={currentImage.width}
+                height={currentImage.height}
+                className="z-10"
+                {...(currentImage.blururl
+                  ? {
+                      placeholder: "blur",
+                      blurDataURL: currentImage.blururl,
+                    }
+                  : {})}
+              />
+            </motion.div>
             <button
               className="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
               onClick={goToPreviousImage}
