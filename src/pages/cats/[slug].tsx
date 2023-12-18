@@ -18,6 +18,7 @@ import { IoMdClose, IoMdFemale, IoMdMale } from "react-icons/io";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
 import useKeypress from "react-use-keypress";
+import { FaLeaf } from "react-icons/fa";
 
 export const variants = {
   enter: (direction: number) => {
@@ -211,21 +212,26 @@ function Cat({ cat, mother, father }: Props) {
         <section className="mt-10 flex w-full flex-col items-center gap-8 bg-white p-4">
           <h3 className="self-center font-playfair text-2xl">Information</h3>
           <div className="-mt-2 text-left leading-8 text-[#515151]">
-            <div className="flex gap-7">
+            <div className="flex gap-4 sm:gap-6 md:gap-8">
               <span className="w-16 text-right font-semibold uppercase">
                 BIRTH
               </span>
               <p>{birthFormatted}</p>
             </div>
-            <div className="flex gap-7">
+            <div className="flex gap-4 sm:gap-6 md:gap-8">
               <span className="w-16 text-right font-semibold uppercase">
                 FERTILE
               </span>
-              <p>{fertileText}</p>
+              <div className="flex items-center gap-2">
+                <p>{fertileText}</p>
+                {fertileText === "Yes" && (
+                  <FaLeaf className="-rotate-12 text-green-600" />
+                )}
+              </div>
             </div>
             {father && (
               <Link href={`/cats/${father.slug}`}>
-                <div className="flex gap-7">
+                <div className="flex gap-4 sm:gap-6 md:gap-8">
                   <span className="w-16 text-right font-semibold uppercase">
                     Father
                   </span>
@@ -238,7 +244,7 @@ function Cat({ cat, mother, father }: Props) {
               </Link>
             )}
             {!father && (
-              <div className="flex gap-7">
+              <div className="flex gap-4 sm:gap-6 md:gap-8">
                 <span className="w-16 text-right font-semibold uppercase">
                   Father
                 </span>
@@ -247,7 +253,7 @@ function Cat({ cat, mother, father }: Props) {
             )}
             {mother && (
               <Link href={`/cats/${mother.slug}`}>
-                <div className="flex gap-7">
+                <div className="flex gap-4 sm:gap-6 md:gap-8">
                   <span className="w-16 text-right font-semibold uppercase">
                     Mother
                   </span>
@@ -260,20 +266,20 @@ function Cat({ cat, mother, father }: Props) {
               </Link>
             )}
             {!mother && (
-              <div className="flex gap-7">
+              <div className="flex gap-4 sm:gap-6 md:gap-8">
                 <span className="w-16 text-right font-semibold uppercase">
                   Mother
                 </span>
                 <p>{cat.mother}</p>
               </div>
             )}
-            <div className="flex gap-7">
+            <div className="flex gap-4 sm:gap-6 md:gap-8">
               <span className="w-16 text-right font-semibold uppercase">
                 BREEDER
               </span>
               <p>{cat.breeder}</p>
             </div>
-            <div className="flex gap-7">
+            <div className="flex gap-4 sm:gap-6 md:gap-8">
               <span className="w-16 text-right font-semibold uppercase">
                 OWNER
               </span>
