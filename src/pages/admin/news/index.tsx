@@ -99,6 +99,7 @@ export default function News({ blogposts }: NewsProps) {
                         src={blogpost.image_url}
                         width={100}
                         height={100}
+                        objectFit="cover"
                         alt={`${blogpost.title} image`}
                         quality={100}
                       />
@@ -108,7 +109,7 @@ export default function News({ blogposts }: NewsProps) {
                   </a>
                 </TableCell>
                 <TableCell>
-                  {format(blogpost.post_date, "dd/MM/yyyy")}
+                  {format(blogpost.post_date, "dd.MM.yyyy")}
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
