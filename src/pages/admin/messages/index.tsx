@@ -180,7 +180,7 @@ export default function Messages({ initialMessages }: MessagesProps) {
                               <BiTime />
                               {format(message.createdAt, "dd.MM.yyyy HH:mm:ss")}
                             </span>
-                            <a href={"mailto:eva@migotos.com"}>
+                            <a href={`mailto:${message.email}`}>
                               <span className="flex items-center gap-1">
                                 <AiOutlineMail />
                                 {message.email}
