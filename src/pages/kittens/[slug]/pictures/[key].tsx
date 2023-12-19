@@ -116,7 +116,7 @@ function KittenPictures({ groupedImages }: Props) {
                     }
                   : {})}
               />
-              <h3 className="mt-1 text-center text-xl text-white">
+              <h3 className="mt-2 text-center text-xl text-white sm:mt-3 md:mt-4 md:text-2xl">
                 {currentImage.title}
               </h3>
             </motion.div>
