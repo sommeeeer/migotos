@@ -124,12 +124,18 @@ function Cat({ cat, mother, father }: Props) {
         >
           <div
             className="absolute inset-0 cursor-default bg-black backdrop-blur-2xl"
-            onClick={() => setCarouselOpen(false)}
+            onClick={() => {
+              setCarouselOpen(false);
+              
+            }}
           ></div>
           <div className="relative flex flex-col" {...handlers}>
             <button
               className="absolute right-3 top-2 z-20 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
-              onClick={() => setCarouselOpen(false)}
+              onClick={() => {
+                setCarouselOpen(false);
+
+              }}
             >
               <IoMdClose className="h-6 w-6 text-white" />
             </button>
