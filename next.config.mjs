@@ -42,6 +42,11 @@ const config = {
         hostname: "platform-lookaside.fbsbx.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "s3.eu-north-1.amazonaws.com",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {

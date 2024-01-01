@@ -101,9 +101,9 @@ function Cat({ cat, mother, father }: Props) {
 
   const genderIcon =
     cat.gender === "Female" ? (
-      <IoMdFemale className="h-8 w-8" />
+      <IoMdFemale className="h-8 w-8 text-pink-400" />
     ) : (
-      <IoMdMale className="h-8 w-8" />
+      <IoMdMale className="h-8 w-8 text-blue-500" />
     );
 
   const fertileText = cat.fertile ? "Yes" : "No";
