@@ -16,6 +16,7 @@ import { Input } from "./ui/input";
 import { useRef, useState } from "react";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
+import BorderText from "./BorderText";
 
 interface LoginModalProps {
   variant: "comment" | "navbar";
@@ -117,7 +118,7 @@ export default function LoginModal({ variant }: LoginModalProps) {
             </button>
             <form>
               <div className="flex flex-col gap-2">
-                <div className="my-4 w-full border"></div>
+                <BorderText text="or" />
                 {error && <p className="text-red-500">{error}</p>}
                 <Input
                   type="email"
