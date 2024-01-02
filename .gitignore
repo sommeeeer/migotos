@@ -44,3 +44,4 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+cdk.context.json
