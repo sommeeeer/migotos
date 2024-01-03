@@ -329,7 +329,7 @@ function Cat({ cat, mother, father }: Props) {
               userId={comment.user.id}
               avatar_src={comment.user?.image}
               date={comment.createdAt}
-              name={comment.user.name!}
+              name={comment.user.name}
               message={comment.comment}
               session={session ?? null}
               refetchPosts={refetch}
