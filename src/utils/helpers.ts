@@ -1,4 +1,5 @@
 import { parseISO, format } from "date-fns";
+import crypto from "crypto";
 
 export function formatDate(inputDate: string) {
   const date = parseISO(inputDate);
@@ -42,3 +43,18 @@ export async function uploadS3(file: File, uploadUrl: string) {
 export function bytesToMB(bytes: number) {
   return (bytes / (1024 * 1024)).toFixed(2);
 }
+
+export function createGravatarURL(
+  email: string | undefined,
+  size = 32,
+): string {
+  if (!email) {
+    return `https://www.gravatar.com/avatar/?d=mp&size=${size}`;
+  }
+  const hash = crypto
+    .createHash("md5")
+    .update(email.trim().toLowerCase())
+    .digest("hex");
+  return `https://www.gravatar.com/avatar/${hash}?d=identicon&size=${size}`;
+}
+

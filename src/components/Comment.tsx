@@ -7,10 +7,10 @@ import LoadingSpinner from "./ui/LoadingSpinner";
 import { motion } from "framer-motion";
 import { Role } from "@prisma/client";
 import { toast } from "./ui/use-toast";
-import crypto from "crypto";
+import { createGravatarURL } from "~/utils/helpers";
 
 interface CommentProps {
-  name: string;
+  name: string | null;
   message: string;
   date: Date;
   avatar_src: string | null;
@@ -49,18 +49,6 @@ export default function Comment({
   function deleteComment(commentId: number) {
     mutate({ id: commentId });
   }
-  let gravatarUrl = "";
-  if (!avatar_src) {
-    if (email) {
-      const hash = crypto
-        .createHash("md5")
-        .update(email.trim().toLowerCase())
-        .digest("hex");
-      gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon&size=32`;
-    } else {
-      gravatarUrl = "https://www.gravatar.com/avatar/?d=mp&size=32";
-    }
-  }
 
   return (
     <motion.div
@@ -71,13 +59,13 @@ export default function Comment({
     >
       <div className="flex items-center gap-1">
         <Image
-          src={avatar_src || gravatarUrl}
+          src={avatar_src || createGravatarURL(email)}
           width={32}
           height={32}
           className="rounded-lg"
           alt="User avatar"
         />
-        <h1 className="text-lg">{name}</h1>
+        <h1 className="text-lg">{name ? name : email}</h1>
         <span className="text-sm text-[#777777]">
           <time>{formatDistanceToNow(date)} ago</time>
         </span>

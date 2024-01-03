@@ -10,6 +10,7 @@ import { api } from "~/utils/api";
 import LoadingSpinner from "./ui/LoadingSpinner";
 import type { CommentType } from "~/utils/types";
 import { toast } from "./ui/use-toast";
+import { createGravatarURL } from "~/utils/helpers";
 
 interface CommentFormProps {
   session: Session;
@@ -56,16 +57,19 @@ export default function CommentForm({
       <div className="flex flex-col gap-2">
         <p className="text-lg">Logged in as:</p>
         <div className="flex items-center gap-2">
-          <p className="text-lg font-semibold">{session.user.name}</p>
-          {session.user.image && (
-            <Image
-              src={session.user.image}
-              width={32}
-              height={32}
-              className="rounded-lg"
-              alt="User avatar"
-            />
-          )}
+          <p className="text-lg font-semibold">
+            {session.user.name ? session.user.name : session.user.email}
+          </p>
+          <Image
+            src={
+              session.user.image ||
+              createGravatarURL(session?.user?.email ?? undefined)
+            }
+            width={32}
+            height={32}
+            className="rounded-lg"
+            alt="User avatar"
+          />
         </div>
       </div>
       <h3 className="mb-2 text-base">LEAVE A REPLY</h3>
