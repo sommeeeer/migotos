@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { TfiAngleDoubleUp } from "react-icons/tfi";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { cn } from "~/lib/utils";
 
 export default function Footer() {
   const [showButton, setShowButton] = useState(false);
@@ -16,7 +17,12 @@ export default function Footer() {
     };
   }, []);
   return (
-    <footer className="flex h-32 w-full max-w-3xl flex-col justify-center border-t-2 border-t-zinc-100 px-4">
+    <footer
+      className={cn(
+        "flex h-32 w-full max-w-3xl flex-col justify-center border-t-2 border-t-zinc-100 px-4",
+        !showButton && "mb-6",
+      )}
+    >
       <div className="mt-12 flex flex-col items-center justify-between gap-4 text-center">
         <div>
           <Button variant="link" asChild>
