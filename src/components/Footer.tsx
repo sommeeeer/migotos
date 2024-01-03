@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { TfiAngleDoubleUp } from "react-icons/tfi";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 export default function Footer() {
   const [showButton, setShowButton] = useState(false);
@@ -16,7 +18,15 @@ export default function Footer() {
   return (
     <footer className="flex h-32 w-full max-w-3xl flex-col justify-center border-t-2 border-t-zinc-100 px-4">
       <div className="mt-12 flex flex-col items-center justify-between gap-4 text-center">
-        <p className="text-sm font-poppins text-gray-700">
+        <div>
+          <Button variant="link" asChild>
+            <Link href="/terms">Terms of Service</Link>
+          </Button>
+          <Button variant="link" asChild>
+            <Link href="/privacy">Privacy Policy</Link>
+          </Button>
+        </div>
+        <p className="font-poppins text-sm text-gray-700">
           Copyright © Migotos {new Date().getFullYear()}
         </p>
         {showButton && (
