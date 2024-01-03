@@ -7,6 +7,7 @@ import LoadingSpinner from "./ui/LoadingSpinner";
 import { motion } from "framer-motion";
 import { Role } from "@prisma/client";
 import { toast } from "./ui/use-toast";
+import crypto from "crypto";
 
 interface CommentProps {
   name: string;
@@ -16,6 +17,7 @@ interface CommentProps {
   session: Session | null;
   userId: string;
   commentId: number;
+  email?: string;
   refetchPosts: () => void;
 }
 
@@ -28,6 +30,7 @@ export default function Comment({
   userId,
   commentId,
   refetchPosts,
+  email,
 }: CommentProps) {
   const { mutate, isLoading } = api.comment.deleteComment.useMutation({
     onSuccess: () => {
@@ -46,6 +49,18 @@ export default function Comment({
   function deleteComment(commentId: number) {
     mutate({ id: commentId });
   }
+  let gravatarUrl = "";
+  if (!avatar_src) {
+    if (email) {
+      const hash = crypto
+        .createHash("md5")
+        .update(email.trim().toLowerCase())
+        .digest("hex");
+      gravatarUrl = `https://www.gravatar.com/avatar/${hash}?d=identicon&size=32`;
+    } else {
+      gravatarUrl = "https://www.gravatar.com/avatar/?d=mp&size=32";
+    }
+  }
 
   return (
     <motion.div
@@ -55,15 +70,13 @@ export default function Comment({
       exit={{ opacity: 0, transition: { duration: 0.3 } }}
     >
       <div className="flex items-center gap-1">
-        {avatar_src && (
-          <Image
-            src={avatar_src}
-            width={32}
-            height={32}
-            className="rounded-lg"
-            alt="User avatar"
-          />
-        )}
+        <Image
+          src={avatar_src || gravatarUrl}
+          width={32}
+          height={32}
+          className="rounded-lg"
+          alt="User avatar"
+        />
         <h1 className="text-lg">{name}</h1>
         <span className="text-sm text-[#777777]">
           <time>{formatDistanceToNow(date)} ago</time>

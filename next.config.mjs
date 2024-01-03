@@ -47,6 +47,16 @@ const config = {
         hostname: "s3.eu-north-1.amazonaws.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "d264sat4r0dquo.cloudfront.net",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.gravatar.com",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {

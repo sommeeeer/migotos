@@ -5,14 +5,17 @@ export default {
   config(_input) {
     return {
       name: "newsite",
-      region: "eu-north-1",
+      region: "us-east-1",
     };
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
       const bucket = new Bucket(stack, "public");
       const site = new NextjsSite(stack, "site", {
-        customDomain: "migotos.com",
+        customDomain: {
+          domainName: 'migotos.com',
+          domainAlias: 'www.migotos.com',
+        },
         bind: [bucket],
       });
 

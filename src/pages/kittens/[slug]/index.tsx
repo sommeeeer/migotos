@@ -56,14 +56,14 @@ function LitterPage({ litter, mother, father }: Props) {
   const picturesSubHeading = isWeeks ? "FROM 0-12 WEEKS" : "CLICK ON NAME";
 
   const pictureWeeks = [...litter.LitterPictureWeek]
-  .sort((a, b) => (a.name === 'Newborn' ? -1 : b.name === 'Newborn' ? 1 : 0))
-  .map((week) => (
-    <PictureButton
-      label={week.name.replace("-", " ")}
-      url={`${litter.slug}/pictures/${week.name}`}
-      key={week.id}
-    />
-  ));
+    .sort((a, b) => (a.name === "Newborn" ? -1 : b.name === "Newborn" ? 1 : 0))
+    .map((week) => (
+      <PictureButton
+        label={week.name.replace("-", " ")}
+        url={`${litter.slug}/pictures/${week.name}`}
+        key={week.id}
+      />
+    ));
 
   return (
     <>
@@ -148,6 +148,7 @@ function LitterPage({ litter, mother, father }: Props) {
               message={comment.comment}
               session={session ?? null}
               refetchPosts={refetch}
+              email={comment.user.email ?? undefined}
             />
           ))}
         </AnimatePresence>
@@ -199,7 +200,6 @@ export async function getStaticProps({
       contains: partialName,
     },
   }));
-
 
   const mother = await db.cat.findFirst({
     where: {

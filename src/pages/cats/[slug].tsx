@@ -333,6 +333,7 @@ function Cat({ cat, mother, father }: Props) {
               message={comment.comment}
               session={session ?? null}
               refetchPosts={refetch}
+              email={comment.user.email ?? undefined}
             />
           ))}
         </AnimatePresence>

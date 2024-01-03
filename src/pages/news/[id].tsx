@@ -81,6 +81,7 @@ function BlogPost({ blogPost }: Props) {
                   message={comment.comment}
                   session={session ?? null}
                   refetchPosts={refetch}
+                  email={comment.user.email ?? undefined}
                 />
               ))}
             </AnimatePresence>
@@ -149,5 +150,5 @@ export async function getStaticPaths() {
     params: { id: blog.id.toString() },
   }));
 
-  return { paths, fallback: 'blocking' };
+  return { paths, fallback: "blocking" };
 }
