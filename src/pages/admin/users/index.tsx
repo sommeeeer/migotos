@@ -111,18 +111,20 @@ export default function Users({ users }: UsersProps) {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.emailVerified ? "Yes" : "No"}</TableCell>
                 <TableCell>
-                  <Image
-                    src={user.image!}
-                    width={32}
-                    height={32}
-                    className="rounded-lg"
-                    alt={`User avatar for ${user.name}`}
-                  />
+                  {user.image && (
+                    <Image
+                      src={user.image}
+                      width={32}
+                      height={32}
+                      className="rounded-lg"
+                      alt={`User avatar for ${user.name}`}
+                    />
+                  )}
                 </TableCell>
                 <TableCell>{user.role}</TableCell>
                 <TableCell>{user.comments.length}</TableCell>
                 <TableCell>
-                  {format(user.createdAt, "dd/MM/yyyy HH:mm:ss")}
+                  {format(user.createdAt, "dd.MM.yyyy HH:mm:ss")}
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
