@@ -158,9 +158,6 @@ export const catRouter = createTRPCRouter({
             `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`,
           ]);
         }
-        await ctx.res.revalidate("/cats/");
-        await ctx.res.revalidate("/");
-        invalidateCFPaths(["/cats/", "/"]);
         return newCat;
       } catch (err) {
         throw new TRPCError({
