@@ -210,7 +210,7 @@ function Cat({ cat, mother, father }: Props) {
               : {})}
           />
           {cat.description && (
-            <p className="mb-6 max-w-prose text-[15px] leading-8 text-zinc-500">
+            <p className="mb-6 max-w-prose text-[15px] leading-8 text-zinc-500 whitespace-pre">
               {cat.description}
             </p>
           )}
