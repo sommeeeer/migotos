@@ -202,7 +202,10 @@ export const catRouter = createTRPCRouter({
         }
         if (process.env.NODE_ENV !== "development") {
           await ctx.res.revalidate(`/cats/${cat.slug}`);
-          await invalidateCFPaths([`/cats/${cat.slug}`]);
+          await invalidateCFPaths([
+            `/cats/${cat.slug}`,
+            `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${cat.slug}.json`,
+          ]);
         }
         return updatedCatImages;
       } catch (err) {
@@ -280,7 +283,10 @@ export const catRouter = createTRPCRouter({
         }
         if (process.env.NODE_ENV !== "development") {
           await ctx.res.revalidate(`/cats/${cat.slug}`);
-          await invalidateCFPaths([`/cats/${cat.slug}`]);
+          await invalidateCFPaths([
+            `/cats/${cat.slug}`,
+            `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${cat.slug}.json`,
+          ]);
         }
         return catImages;
       } catch (err) {
@@ -312,7 +318,10 @@ export const catRouter = createTRPCRouter({
         }
         if (process.env.NODE_ENV !== "development") {
           await ctx.res.revalidate(`/cats/${cat.slug}`);
-          await invalidateCFPaths([`/cats/${cat.slug}`]);
+          await invalidateCFPaths([
+            `/cats/${cat.slug}`,
+            `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${cat.slug}.json`,
+          ]);
         }
         return deletedCatImage;
       } catch (err) {
