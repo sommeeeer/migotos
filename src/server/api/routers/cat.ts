@@ -36,7 +36,7 @@ export const catRouter = createTRPCRouter({
           `/cats/${deletedCat.slug}`,
           `/_next/data/${process.env.NEXT_BUILD_ID}/cats.json`,
           `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`,
-          `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${deletedCat.slug}.json`,
+          `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${deletedCat.slug}.json*`,
         ]);
       }
       return deletedCat;
@@ -113,7 +113,7 @@ export const catRouter = createTRPCRouter({
           `/cats/${updatedCat.slug}`,
           `/_next/data/${process.env.NEXT_BUILD_ID}/cats.json`,
           `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`,
-          `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${updatedCat.slug}.json`,
+          `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${updatedCat.slug}.json*`,
         ]);
       }
       return updatedCat;
@@ -204,7 +204,7 @@ export const catRouter = createTRPCRouter({
           await ctx.res.revalidate(`/cats/${cat.slug}`);
           await invalidateCFPaths([
             `/cats/${cat.slug}`,
-            `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${cat.slug}.json`,
+            `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${cat.slug}.json*`,
           ]);
         }
         return updatedCatImages;
@@ -285,7 +285,7 @@ export const catRouter = createTRPCRouter({
           await ctx.res.revalidate(`/cats/${cat.slug}`);
           await invalidateCFPaths([
             `/cats/${cat.slug}`,
-            `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${cat.slug}.json`,
+            `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${cat.slug}.json*`,
           ]);
         }
         return catImages;
@@ -320,7 +320,7 @@ export const catRouter = createTRPCRouter({
           await ctx.res.revalidate(`/cats/${cat.slug}`);
           await invalidateCFPaths([
             `/cats/${cat.slug}`,
-            `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${cat.slug}.json`,
+            `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${cat.slug}.json*`,
           ]);
         }
         return deletedCatImage;
