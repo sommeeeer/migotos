@@ -376,9 +376,11 @@ export async function getStaticProps({
       },
     },
   });
-  if (!cat) {
-    throw new Error(`Couldnt find cat with slug: ${params?.slug}`);
-  }
+if (!cat) {
+  return {
+    notFound: true,
+  };
+}
 
   const motherSearchStr = findName(cat.mother);
   const fatherSearchStr = findName(cat.father);
