@@ -30,7 +30,7 @@ export const catRouter = createTRPCRouter({
         await ctx.res.revalidate("/cats/");
         await ctx.res.revalidate("/");
         await ctx.res.revalidate(`/cats/${deletedCat.slug}`);
-        invalidateCFPaths([
+        await invalidateCFPaths([
           "/cats/",
           "/",
           `/cats/${deletedCat.slug}`,
@@ -107,7 +107,7 @@ export const catRouter = createTRPCRouter({
         await ctx.res.revalidate("/cats/");
         await ctx.res.revalidate("/");
         await ctx.res.revalidate(`/cats/${updatedCat.slug}`);
-        invalidateCFPaths([
+        await invalidateCFPaths([
           "/cats/",
           "/",
           `/cats/${updatedCat.slug}`,
@@ -151,7 +151,7 @@ export const catRouter = createTRPCRouter({
         if (process.env.NODE_ENV !== "development") {
           await ctx.res.revalidate("/cats/");
           await ctx.res.revalidate("/");
-          invalidateCFPaths([
+          await invalidateCFPaths([
             "/cats/",
             "/",
             `/_next/data/${process.env.NEXT_BUILD_ID}/cats.json`,
@@ -202,7 +202,7 @@ export const catRouter = createTRPCRouter({
         }
         if (process.env.NODE_ENV !== "development") {
           await ctx.res.revalidate(`/cats/${cat.slug}`);
-          invalidateCFPaths([`/cats/${cat.slug}`]);
+          await invalidateCFPaths([`/cats/${cat.slug}`]);
         }
         return updatedCatImages;
       } catch (err) {
@@ -280,7 +280,7 @@ export const catRouter = createTRPCRouter({
         }
         if (process.env.NODE_ENV !== "development") {
           await ctx.res.revalidate(`/cats/${cat.slug}`);
-          invalidateCFPaths([`/cats/${cat.slug}`]);
+          await invalidateCFPaths([`/cats/${cat.slug}`]);
         }
         return catImages;
       } catch (err) {
@@ -312,7 +312,7 @@ export const catRouter = createTRPCRouter({
         }
         if (process.env.NODE_ENV !== "development") {
           await ctx.res.revalidate(`/cats/${cat.slug}`);
-          invalidateCFPaths([`/cats/${cat.slug}`]);
+          await invalidateCFPaths([`/cats/${cat.slug}`]);
         }
         return deletedCatImage;
       } catch (err) {

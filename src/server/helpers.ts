@@ -57,8 +57,8 @@ export async function getSignedURLS(amount: number) {
 
 const cloudFront = new CloudFrontClient({});
 
-export function invalidateCFPaths(paths: string[]) {
-  void cloudFront.send(
+export async function invalidateCFPaths(paths: string[]) {
+  await cloudFront.send(
     new CreateInvalidationCommand({
       DistributionId: env.CLOUDFRONT_DISTRIBUTION_ID,
       InvalidationBatch: {
