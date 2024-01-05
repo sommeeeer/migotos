@@ -27,11 +27,11 @@ export const catRouter = createTRPCRouter({
         },
       });
       if (process.env.NODE_ENV !== "development") {
-        await ctx.res.revalidate("/cats/");
+        await ctx.res.revalidate("/cats");
         await ctx.res.revalidate("/");
-        await ctx.res.revalidate(`/cats/${deletedCat.slug}`);
+        await ctx.res.revalidate(`/cats/d${deletedCat.slug}`);
         await invalidateCFPaths([
-          "/cats/",
+          "/cats",
           "/",
           `/cats/${deletedCat.slug}`,
           `/_next/data/${process.env.NEXT_BUILD_ID}/cats.json`,
@@ -104,11 +104,11 @@ export const catRouter = createTRPCRouter({
         },
       });
       if (process.env.NODE_ENV !== "development") {
-        await ctx.res.revalidate("/cats/");
+        await ctx.res.revalidate("/cats");
         await ctx.res.revalidate("/");
         await ctx.res.revalidate(`/cats/${updatedCat.slug}`);
         await invalidateCFPaths([
-          "/cats/",
+          "/cats",
           "/",
           `/cats/${updatedCat.slug}`,
           `/_next/data/${process.env.NEXT_BUILD_ID}/cats.json`,
@@ -149,10 +149,10 @@ export const catRouter = createTRPCRouter({
           },
         });
         if (process.env.NODE_ENV !== "development") {
-          await ctx.res.revalidate("/cats/");
+          await ctx.res.revalidate("/cats");
           await ctx.res.revalidate("/");
           await invalidateCFPaths([
-            "/cats/",
+            "/cats",
             "/",
             `/_next/data/${process.env.NEXT_BUILD_ID}/cats.json`,
             `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`,
