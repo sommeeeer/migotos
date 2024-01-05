@@ -4,7 +4,7 @@ import { catSchema } from "~/lib/validators/cat";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
-import { BLURURL } from "~/server/helpers";
+import { BLURURL, invalidateCFPaths } from "~/server/helpers";
 
 export const catRouter = createTRPCRouter({
   deleteCat: protectedProcedure
@@ -26,8 +26,19 @@ export const catRouter = createTRPCRouter({
           id: input,
         },
       });
-      await ctx.res.revalidate("/cats/");
-      await ctx.res.revalidate("/");
+      if (process.env.NODE_ENV !== "development") {
+        await ctx.res.revalidate("/cats/");
+        await ctx.res.revalidate("/");
+        await ctx.res.revalidate(`/cats/${deletedCat.slug}`);
+        invalidateCFPaths([
+          "/cats/",
+          "/",
+          `/cats/${deletedCat.slug}`,
+          `/_next/data/${process.env.NEXT_BUILD_ID}/cats.json`,
+          `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`,
+          `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${deletedCat.slug}.json`,
+        ]);
+      }
       return deletedCat;
     }),
   updateCat: protectedProcedure
@@ -92,9 +103,19 @@ export const catRouter = createTRPCRouter({
           },
         },
       });
-      await ctx.res.revalidate("/cats/");
-      await ctx.res.revalidate("/");
-      await ctx.res.revalidate(`/cats/${updatedCat.slug}`);
+      if (process.env.NODE_ENV !== "development") {
+        await ctx.res.revalidate("/cats/");
+        await ctx.res.revalidate("/");
+        await ctx.res.revalidate(`/cats/${updatedCat.slug}`);
+        invalidateCFPaths([
+          "/cats/",
+          "/",
+          `/cats/${updatedCat.slug}`,
+          `/_next/data/${process.env.NEXT_BUILD_ID}/cats.json`,
+          `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`,
+          `/_next/data/${process.env.NEXT_BUILD_ID}/cats/${updatedCat.slug}.json`,
+        ]);
+      }
       return updatedCat;
     }),
   createCat: protectedProcedure
@@ -127,8 +148,19 @@ export const catRouter = createTRPCRouter({
             },
           },
         });
+        if (process.env.NODE_ENV !== "development") {
+          await ctx.res.revalidate("/cats/");
+          await ctx.res.revalidate("/");
+          invalidateCFPaths([
+            "/cats/",
+            "/",
+            `/_next/data/${process.env.NEXT_BUILD_ID}/cats.json`,
+            `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`,
+          ]);
+        }
         await ctx.res.revalidate("/cats/");
         await ctx.res.revalidate("/");
+        invalidateCFPaths(["/cats/", "/"]);
         return newCat;
       } catch (err) {
         throw new TRPCError({
@@ -171,7 +203,10 @@ export const catRouter = createTRPCRouter({
             message: "Cat not found",
           });
         }
-        await ctx.res.revalidate(`/cats/${cat.slug}`);
+        if (process.env.NODE_ENV !== "development") {
+          await ctx.res.revalidate(`/cats/${cat.slug}`);
+          invalidateCFPaths([`/cats/${cat.slug}`]);
+        }
         return updatedCatImages;
       } catch (err) {
         throw new TRPCError({
@@ -246,7 +281,10 @@ export const catRouter = createTRPCRouter({
             message: "Cat not found",
           });
         }
-        await ctx.res.revalidate(`/cats/${cat.slug}`);
+        if (process.env.NODE_ENV !== "development") {
+          await ctx.res.revalidate(`/cats/${cat.slug}`);
+          invalidateCFPaths([`/cats/${cat.slug}`]);
+        }
         return catImages;
       } catch (err) {
         throw new TRPCError({
@@ -275,7 +313,10 @@ export const catRouter = createTRPCRouter({
             message: "Cat not found",
           });
         }
-        await ctx.res.revalidate(`/cats/${cat.slug}`);
+        if (process.env.NODE_ENV !== "development") {
+          await ctx.res.revalidate(`/cats/${cat.slug}`);
+          invalidateCFPaths([`/cats/${cat.slug}`]);
+        }
         return deletedCatImage;
       } catch (err) {
         throw new TRPCError({

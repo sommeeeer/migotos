@@ -3,6 +3,11 @@ import { getServerAuthSession } from "~/server/auth";
 import { Role } from "@prisma/client";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
+import {
+  CloudFrontClient,
+  CreateInvalidationCommand,
+} from "@aws-sdk/client-cloudfront";
+import { env } from "~/env.mjs";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export const BLURURL =
@@ -28,7 +33,7 @@ export async function getSignedURL() {
     const uploadUrl = await getSignedUrl(new S3Client({}), command);
     return uploadUrl;
   } catch (err) {
-    console.error(err)
+    console.error(err);
     throw new Error("Error getting signed URL");
   }
 }
@@ -48,4 +53,21 @@ export async function getSignedURLS(amount: number) {
   } catch (err) {
     throw new Error("Error getting signed URLS");
   }
+}
+
+const cloudFront = new CloudFrontClient({});
+
+export function invalidateCFPaths(paths: string[]) {
+  void cloudFront.send(
+    new CreateInvalidationCommand({
+      DistributionId: env.CLOUDFRONT_DISTRIBUTION_ID,
+      InvalidationBatch: {
+        CallerReference: `${Date.now()}`,
+        Paths: {
+          Quantity: paths.length,
+          Items: paths,
+        },
+      },
+    }),
+  );
 }
