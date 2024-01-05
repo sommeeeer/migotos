@@ -29,7 +29,7 @@ export const catRouter = createTRPCRouter({
       if (process.env.NODE_ENV !== "development") {
         await ctx.res.revalidate("/cats");
         await ctx.res.revalidate("/");
-        await ctx.res.revalidate(`/cats/d${deletedCat.slug}`);
+        await ctx.res.revalidate(`/cats/${deletedCat.slug}`);
         await invalidateCFPaths([
           "/cats",
           "/",
