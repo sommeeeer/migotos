@@ -179,11 +179,15 @@ function ContactInfo() {
       </div>
       <div className="flex flex-col gap-1">
         <h3 className="text-xl text-[#7d7d7d]">EMAIL</h3>
-        <a href={"mailto:eva@migotos.com"}>eva@migotos.com</a>
+        <a className="hover:text-zinc-400" href={"mailto:eva@migotos.com"}>
+          eva@migotos.com
+        </a>
       </div>
       <div className="flex flex-col gap-1">
         <h3 className="text-xl text-[#7d7d7d]">TELEPHONE NUMBER</h3>
-        <a href={"tel:+4797689786"}>+47 97 68 97 86</a>
+        <a className="hover:text-zinc-400" href={"tel:+4797689786"}>
+          +47 97 68 97 86
+        </a>
       </div>
     </div>
   );
