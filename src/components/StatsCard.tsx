@@ -6,14 +6,14 @@ import { BsImages } from "react-icons/bs";
 
 export default function StatsCard({ counts }: AdminProps) {
   return (
-    <div className="flex w-fit flex-col gap-4 rounded-xl bg-white p-6 shadow-lg">
+    <div className="flex w-fit flex-col gap-6 rounded-xl bg-white p-6 shadow-lg">
       <h3 className="text-2xl">Stats</h3>
       <div className="flex gap-12">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-7">
           <h4 className="w-24 border-b-2 border-dotted border-b-slate-200 text-lg text-gray-600">
             Content
           </h4>
-          <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-2 text-xl">
+          <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-3 text-xl">
             <span className="text-blue-500">{counts.catsCount}</span>
             <div className="flex items-center gap-2">
               <span>Cats</span>
@@ -36,11 +36,11 @@ export default function StatsCard({ counts }: AdminProps) {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-7">
           <h4 className="w-24 border-b-2 border-dotted border-b-slate-200 text-lg text-gray-600">
             Discussions
           </h4>
-          <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-2 text-xl">
+          <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-3 text-xl">
             <span className="text-blue-500">{counts.commentsCount}</span>
             <div className="flex items-center gap-2">
               <span>Comments</span>
@@ -53,11 +53,11 @@ export default function StatsCard({ counts }: AdminProps) {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-7">
           <h4 className="w-24 border-b-2 border-dotted border-b-slate-200 text-lg text-gray-600">
             Photos
           </h4>
-          <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-2 text-xl">
+          <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-3 text-xl">
             <span className="text-blue-500">{counts.catImagesCount}</span>
             <div className="flex items-center gap-2">
               <span>Cat images</span>
@@ -69,7 +69,7 @@ export default function StatsCard({ counts }: AdminProps) {
               <BiSolidCat />
             </div>
             <span className="text-blue-700">
-              = {counts.litterImagesCount + counts.catImagesCount}
+              {counts.litterImagesCount + counts.catImagesCount}
             </span>
             <div className="flex items-center gap-2">
               <span>Total images</span>

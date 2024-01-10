@@ -28,7 +28,7 @@ export default function AdminLayout({
     <div className="flex h-screen self-stretch">
       <Toaster />
 
-      <div className="w-1/5 rounded-sm bg-zinc-800 p-4 text-white">
+      <div className="w-64 rounded-sm bg-zinc-800 p-4 text-white">
         <h1 className="text-2xl font-bold">{heading}</h1>
         <ul className="mt-4">
           <li className="mb-2">
@@ -121,7 +121,7 @@ export default function AdminLayout({
         </ul>
       </div>
 
-      <div className="w-4/5 rounded bg-gray-50 p-4">
+      <div className="w-full rounded bg-gray-50 p-4">
         <div className="bg-gray-100">{children}</div>
       </div>
     </div>
