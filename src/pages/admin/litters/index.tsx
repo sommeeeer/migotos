@@ -73,7 +73,7 @@ export default function Litters({ litters }: LittersProps) {
         <Link
           className={twMerge(
             buttonVariants(),
-            "bg-green-600 hover:bg-green-700",
+            "bg-green-700 hover:bg-green-800",
           )}
           href={"/admin/litters/new"}
         >
