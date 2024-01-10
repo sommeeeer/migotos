@@ -343,7 +343,7 @@ export default function NewLitter({
                   <TooltipProvider key={index}>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className="flex flex-row-reverse items-center gap-2 rounded-xl bg-zinc-200 px-4 py-2">
+                        <div className="flex select-none flex-row-reverse items-center gap-2 rounded-xl bg-zinc-200 px-4 py-2">
                           <button
                             type="button"
                             onClick={() => handleRemoveKitten(kitten.name)}
