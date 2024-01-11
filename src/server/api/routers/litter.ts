@@ -69,6 +69,9 @@ export const litterRouter = createTRPCRouter({
         where: {
           id: input,
         },
+        include: {
+          LitterPictureWeek: true,
+        },
       });
       if (!litter) {
         throw new TRPCError({
@@ -81,7 +84,14 @@ export const litterRouter = createTRPCRouter({
           id: input,
         },
       });
-      await revalidateAndInvalidate(ctx.res, ["/kittens", "/"]);
+      await revalidateAndInvalidate(
+        ctx.res,
+        ["/kittens", "/", `/kittens/${deletedLitter.slug}`].concat(
+          litter.LitterPictureWeek.map(
+            (week) => `/kittens/${deletedLitter.slug}/pictures/${week.name}`,
+          ),
+        ),
+      );
       return deletedLitter;
     }),
   updateLitter: protectedProcedure
@@ -259,7 +269,10 @@ export const litterRouter = createTRPCRouter({
             id: input.week_id,
           },
         });
-        await revalidateAndInvalidate(ctx.res, [`/kittens/${litter.slug}`]);
+        await revalidateAndInvalidate(ctx.res, [
+          `/kittens/${litter.slug}`,
+          `/kittens/${litter.slug}/pictures/${deletedWeek.name}`,
+        ]);
         return deletedWeek;
       } catch (err) {
         throw new TRPCError({
