@@ -4,7 +4,7 @@ import { litterSchema } from "~/lib/validators/litter";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
-import { BLURURL } from "~/server/helpers";
+import { BLURURL, revalidateAndInvalidate } from "~/server/helpers";
 
 export const litterRouter = createTRPCRouter({
   createLitter: protectedProcedure
@@ -53,8 +53,7 @@ export const litterRouter = createTRPCRouter({
             },
           },
         });
-        await ctx.res.revalidate("/kittens/");
-        await ctx.res.revalidate("/");
+        await revalidateAndInvalidate(ctx.res, ["/kittens", "/"]);
         return litter;
       } catch (err) {
         throw new TRPCError({
@@ -82,8 +81,7 @@ export const litterRouter = createTRPCRouter({
           id: input,
         },
       });
-      await ctx.res.revalidate("/kittens/");
-      await ctx.res.revalidate("/");
+      await revalidateAndInvalidate(ctx.res, ["/kittens", "/"]);
       return deletedLitter;
     }),
   updateLitter: protectedProcedure
@@ -148,9 +146,11 @@ export const litterRouter = createTRPCRouter({
           },
         },
       });
-      await ctx.res.revalidate("/kittens/");
-      await ctx.res.revalidate(`/kittens/${updatedLitter.slug}`);
-      await ctx.res.revalidate("/");
+      await revalidateAndInvalidate(ctx.res, [
+        "/kittens",
+        "/",
+        `/kittens/${updatedLitter.slug}`,
+      ]);
       return updatedLitter;
     }),
   addWeek: protectedProcedure
@@ -199,7 +199,7 @@ export const litterRouter = createTRPCRouter({
           },
         },
       });
-      await ctx.res.revalidate(`/kittens/${litter.slug}`);
+      await revalidateAndInvalidate(ctx.res, [`/kittens/${litter.slug}`]);
       return week;
     }),
   getLitter: protectedProcedure
@@ -214,7 +214,7 @@ export const litterRouter = createTRPCRouter({
             LitterPictureWeek: {
               include: {
                 KittenPictureImage: true,
-              }
+              },
             },
             Kitten: true,
           },
@@ -259,7 +259,7 @@ export const litterRouter = createTRPCRouter({
             id: input.week_id,
           },
         });
-        await ctx.res.revalidate(`/kittens/${litter.slug}`);
+        await revalidateAndInvalidate(ctx.res, [`/kittens/${litter.slug}`]);
         return deletedWeek;
       } catch (err) {
         throw new TRPCError({
@@ -327,9 +327,9 @@ export const litterRouter = createTRPCRouter({
             return kittenPictureImage;
           }),
         );
-        await ctx.res.revalidate(
+        await revalidateAndInvalidate(ctx.res, [
           `/kittens/${litter?.slug}/pictures/${litterPictureWeek.name}`,
-        );
+        ]);
         return kittenImages;
       } catch (err) {
         console.error(err);
@@ -365,9 +365,9 @@ export const litterRouter = createTRPCRouter({
           id: input.image_id,
         },
       });
-      await ctx.res.revalidate(
+      await revalidateAndInvalidate(ctx.res, [
         `/kittens/${image.LitterPictureWeek.Litter.slug}/pictures/${image.LitterPictureWeek.name}`,
-      );
+      ]);
       return deletedImage;
     }),
 });
