@@ -27,30 +27,6 @@ const config = {
       },
       {
         protocol: "https",
-        hostname:
-          "lillemagga-newsite-site-publicbucket5c3dbab0-1xax511ruu4gv.s3.eu-north-1.amazonaws.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname:
-          "lillemagga-newsite-site-publicbucket5c3dbab0-eucdkm3xvxtw.s3.us-east-1.amazonaws.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname:
-          "prod-newsite-site-publicbucket5c3dbab0-1h72g5nutr427.s3.eu-north-1.amazonaws.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname:
-          "prod-newsite-site-publicbucket5c3dbab0-kelcwxphe1er.s3.us-east-1.amazonaws.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
         hostname: "platform-lookaside.fbsbx.com",
         pathname: "/**",
       },
@@ -61,12 +37,13 @@ const config = {
       },
       {
         protocol: "https",
-        hostname: "d264sat4r0dquo.cloudfront.net",
+        hostname: "www.gravatar.com",
         pathname: "/**",
       },
       {
         protocol: "https",
-        hostname: "www.gravatar.com",
+        hostname:
+          "prod-newsite-site-publicbucket5c3dbab0-0irgigukcp23.s3.us-east-1.amazonaws.com",
         pathname: "/**",
       },
     ],
