@@ -189,9 +189,13 @@ export async function getStaticProps({
       LitterPictureWeek: true,
     },
   });
+  
   if (!litter) {
-    throw new Error(`Couldnt find litter with slug: ${params?.slug}`);
+    return {
+      notFound: true,
+    };
   }
+
   const motherSearchStr = findName(litter.mother_name);
   const fatherSearchStr = findName(litter.father_name);
 
