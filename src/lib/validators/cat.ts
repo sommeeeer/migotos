@@ -4,7 +4,7 @@ import { z } from "zod";
 export const catSchema = z.object({
   name: z
     .string()
-    .min(5, { message: "Name must be atleast 5 characters long." })
+    .min(3, { message: "Name must be atleast 3 characters long." })
     .max(100, { message: "Name must be less than 100 characters long." }),
   description: z
     .string()
@@ -18,7 +18,7 @@ export const catSchema = z.object({
     .or(z.literal("")),
   stamnavn: z
     .string()
-    .min(5, { message: "Stamnavn must be atleast 5 characters long." })
+    .min(3, { message: "Stamnavn must be atleast 3 characters long." })
     .max(100, { message: "Stamnavn must be less than 100 characters long." }),
   birth: z.date().max(addHours(new Date(), 4), {
     message: "Date cannot be in the future.",
@@ -29,7 +29,7 @@ export const catSchema = z.object({
     .max(50, { message: "Nickname must be less than 50 characters long." }),
   owner: z
     .string()
-    .min(5, { message: "Owner must be atleast 5 characters long." })
+    .min(3, { message: "Owner must be atleast 3 characters long." })
     .max(100, { message: "Owner must be less than 100 characters long." }),
   gender: z.enum(["Female", "Male"]),
   pedigreeurl: z.preprocess(
