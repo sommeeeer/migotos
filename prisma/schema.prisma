@@ -20,7 +20,7 @@ model Cat {
   mother      String     @db.VarChar(100)
   breeder     String     @db.VarChar(100)
   owner       String     @db.VarChar(100)
-  slug        String     @db.VarChar(255)
+  slug        String     @unique @db.VarChar(255)
   nickname    String     @db.VarChar(50)
   birth       DateTime   @db.Date
   CatImage    CatImage[]
