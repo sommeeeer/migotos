@@ -4,6 +4,7 @@ import { blogPostSchema } from "~/lib/validators/blogpost";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
+import { revalidateAndInvalidate } from "~/server/helpers";
 
 export const blogpostRouter = createTRPCRouter({
   createBlogPost: protectedProcedure
@@ -18,8 +19,7 @@ export const blogpostRouter = createTRPCRouter({
             image_url: input.image_url,
           },
         });
-        await ctx.res.revalidate("/news/");
-        await ctx.res.revalidate("/");
+        await revalidateAndInvalidate(ctx.res, ["/news", "/"]);
         return blogpost;
       } catch (err) {
         throw new TRPCError({
@@ -36,6 +36,13 @@ export const blogpostRouter = createTRPCRouter({
           where: {
             id: input,
           },
+          include: {
+            tags: {
+              include: {
+                blogposttag: true,
+              },
+            },
+          },
         });
         if (!blogpost) {
           throw new TRPCError({
@@ -48,8 +55,12 @@ export const blogpostRouter = createTRPCRouter({
             id: input,
           },
         });
-        await ctx.res.revalidate("/news/");
-        await ctx.res.revalidate("/");
+        await revalidateAndInvalidate(
+          ctx.res,
+          ["/news", "/"].concat(
+            blogpost.tags.map((tag) => `/news/tags/${tag.blogposttag.value}`),
+          ),
+        );
         return deletedBlogPost;
       } catch (err) {
         throw new TRPCError({
@@ -83,9 +94,22 @@ export const blogpostRouter = createTRPCRouter({
             post_date: input.post_date,
             image_url: input.image_url,
           },
+          include: {
+            tags: {
+              include: {
+                blogposttag: true,
+              },
+            },
+          },
         });
-        await ctx.res.revalidate("/news/");
-        await ctx.res.revalidate("/");
+        await revalidateAndInvalidate(
+          ctx.res,
+          ["/news", "/"].concat(
+            updatedBlogPost.tags.map(
+              (tag) => `/news/tags/${tag.blogposttag.value}`,
+            ),
+          ),
+        );
         return updatedBlogPost;
       } catch (err) {
         throw new TRPCError({
