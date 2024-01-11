@@ -1,4 +1,4 @@
-import { type GetServerSidePropsContext } from "next/types";
+import { type NextApiResponse, type GetServerSidePropsContext } from "next/types";
 import { getServerAuthSession } from "~/server/auth";
 import { Role } from "@prisma/client";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
@@ -70,4 +70,25 @@ export async function invalidateCFPaths(paths: string[]) {
       },
     }),
   );
+}
+
+export async function revalidateAndInvalidate(
+  res: NextApiResponse,
+  paths: string[],
+) {
+  if (process.env.NODE_ENV !== "development") {
+    for (const path of paths) {
+      await res.revalidate(path);
+    }
+    await invalidateCFPaths(
+      paths
+        .map((path) => {
+          if (path === "/") {
+            return `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`;
+          }
+          return `/_next/data/${process.env.NEXT_BUILD_ID}${path}.json*`;
+        })
+        .concat(paths),
+    );
+  }
 }
