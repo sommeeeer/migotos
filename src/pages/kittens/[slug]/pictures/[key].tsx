@@ -207,9 +207,9 @@ export async function getStaticProps({
   });
 
   if (!litter || !images) {
-    throw new Error(
-      `Couldnt find pictures for: ${params?.slug} ${params?.key} ${litter?.id}`,
-    );
+    return {
+      notFound: true,
+    };
   }
 
   return {
