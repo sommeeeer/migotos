@@ -38,15 +38,15 @@ export const catSchema = z.object({
   ),
   mother: z
     .string()
-    .min(5, { message: "Mother must be atleast 5 characters long." })
+    .min(3, { message: "Mother must be atleast 3 characters long." })
     .max(100, { message: "Mother must be less than 100 characters long." }),
   father: z
     .string()
-    .min(5, { message: "Father must be atleast 5 characters long." })
+    .min(3, { message: "Father must be atleast 3 characters long." })
     .max(100, { message: "Father must be less than 100 characters long." }),
   breeder: z
     .string()
-    .min(5, { message: "Breeder must be atleast 5 characters long." })
+    .min(3, { message: "Breeder must be atleast 3 characters long." })
     .max(100, { message: "Breeder must be less than 100 characters long." }),
   fertile: z.optional(z.boolean()),
   image_url: z
