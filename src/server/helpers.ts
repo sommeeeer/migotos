@@ -51,6 +51,7 @@ export async function getSignedURLS(amount: number) {
     }
     return urls;
   } catch (err) {
+    console.error(err)
     throw new Error("Error getting signed URLS");
   }
 }
