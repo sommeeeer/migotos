@@ -43,7 +43,7 @@ const config = {
       {
         protocol: "https",
         hostname:
-          "prod-newsite-site-publicbucket5c3dbab0-0irgigukcp23.s3.us-east-1.amazonaws.com",
+          "prod-newsite-site-publicbucket5c3dbab0-qgvmndvyhlzu.s3.us-east-1.amazonaws.com",
         pathname: "/**",
       },
     ],
