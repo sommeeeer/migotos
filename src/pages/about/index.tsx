@@ -11,11 +11,7 @@ import evaImgFive from "../../../public/static/IMG_7362-rotated-480x400.jpg";
 export default function About() {
   return (
     <>
-      <Head>
-        <title>
-          About - Migoto&#039;s Norwegian Forest Cat &#8211; Oslo based cattery
-        </title>
-      </Head>
+      <PageHead />
       <div className="flex w-full flex-col items-center bg-zinc-100">
         <section className="mt-8 flex max-w-3xl flex-col gap-14 px-6 pt-12 text-center">
           <header className="flex flex-col gap-4">
@@ -119,5 +115,47 @@ export default function About() {
       </section>
       <Footer />
     </>
+  );
+}
+
+function PageHead() {
+  return (
+    <Head>
+      <title>
+        About - Migoto&#039;s Norwegian Forest Cat &#8211; Oslo based cattery
+      </title>
+      <meta
+        name="description"
+        content="About Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
+      />
+      <meta property="og:site_name" content="About - Migotos" />
+      <meta property="og:title" content="About - Migotos" />
+      <meta
+        property="og:description"
+        content="About Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
+      />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://migotos.com/about" />
+      <meta
+        property="og:image"
+        content="https://migotos.com/static/icons/cropped-socialicon-480x480.png"
+      />
+      <meta property="og:image:alt" content="Migotos logo" />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="480" />
+      <meta property="og:image:height" content="480" />
+      <meta
+        property="article:published_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:modified_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:author"
+        content="https://www.facebook.com/eva.d.eide"
+      />
+    </Head>
   );
 }
