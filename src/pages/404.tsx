@@ -1,4 +1,4 @@
-import { ArrowBigLeftIcon, Home } from "lucide-react";
+import { ArrowBigLeftIcon, Home, MessageCircleIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import { Button } from "~/components/ui/button";
 
@@ -31,6 +31,10 @@ export default function Custom404() {
           Go back
         </Button>
       </div>
+      <Button variant="outline" onClick={() => router.push("/contact")}>
+        <MessageCircleIcon className="mr-2" />
+        Contact support
+      </Button>
     </div>
   );
 }
