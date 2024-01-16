@@ -116,14 +116,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
         async
         id="tag-manager"
         strategy="afterInteractive"
-        src="https://www.googletagmanager.com/gtag/js?id=G-H8G1WHLBW8"
+        src="https://www.googletagmanager.com/gtag/js?id=G-RMHCYY112C"
       />
       <Script async strategy="afterInteractive" id="analytics">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-H8G1WHLBW8');
+          gtag('config', 'G-RMHCYY112C');
         `}
       </Script>
       <div
