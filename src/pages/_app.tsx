@@ -28,6 +28,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <Head>
+        <meta
+          name="keywords"
+          content="norwegian forest cat, norwegian forest cats, migotos, eva dahl eide, norway, oslo, cat breeding company, norwegian forest cat breeding, norwegian forest cat breeder, norwegian cat, norwegian cats, norwegian cat breeding, norwegian cat breeder, norwegian cat breeding company, norwegian cat breeding company, norwegian cat breeder company"
+        />
+        <meta name="robots" content="index, follow" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta property="og:locale" content="en_US" />
+        <meta charSet="utf-8" />
         <link
           rel="icon"
           href="/static/icons/cropped-socialicon-32x32.png"
