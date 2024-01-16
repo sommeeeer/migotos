@@ -31,7 +31,11 @@ export default function Custom404() {
           Go back
         </Button>
       </div>
-      <Button variant="outline" onClick={() => router.push("/contact")}>
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => router.push("/contact")}
+      >
         <MessageCircleIcon className="mr-2" />
         Contact support
       </Button>
