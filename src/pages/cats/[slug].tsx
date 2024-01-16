@@ -19,6 +19,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
 import useKeypress from "react-use-keypress";
 import { FaLeaf } from "react-icons/fa";
+import Head from "next/head";
 
 export const variants = {
   enter: (direction: number) => {
@@ -112,6 +113,51 @@ function Cat({ cat, mother, father }: Props) {
 
   return (
     <>
+      <Head>
+        <title>{cat.nickname} - Migotos</title>
+        <meta
+          name="description"
+          content={`Profile page for ${cat.name}, ${cat.stamnavn}`}
+        />
+        <meta property="og:site_name" content={`${cat.nickname} - Migotos`} />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:title" content={`${cat.nickname} - Migotos`} />
+        <meta
+          property="og:description"
+          content={`Profile page for ${cat.name}, ${cat.stamnavn}`}
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:url"
+          content={`https://migotos.com/cats/${cat.slug}`}
+        />
+        <meta property="og:image" content={cat.CatImage[0]?.src} />
+        <meta
+          property="og:image:alt"
+          content={`Profile image of ${cat.nickname}`}
+        />
+        <meta property="og:image:type" content="image/png" />
+        <meta
+          property="og:image:width"
+          content={cat.CatImage[0]?.width.toString()}
+        />
+        <meta
+          property="og:image:height"
+          content={cat.CatImage[0]?.height.toString()}
+        />
+        <meta
+          property="article:published_time"
+          content="2024-01-16T12:18:00+01:00"
+        />
+        <meta
+          property="article:modified_time"
+          content="2024-01-16T12:18:00+01:00"
+        />
+        <meta
+          property="article:author"
+          content="https://www.facebook.com/eva.d.eide"
+        />
+      </Head>
       {carouselOpen && currentImage && (
         <motion.div
           initial={{ opacity: 0, scale: 0.7 }}
@@ -374,7 +420,7 @@ export async function getStaticProps({
       },
     },
   });
-  
+
   if (!cat) {
     return {
       notFound: true,
