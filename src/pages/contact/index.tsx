@@ -11,6 +11,7 @@ import { BiCheck, BiError } from "react-icons/bi";
 import { BsFacebook, BsInstagram } from "react-icons/bs";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import ErrorParagraph from "~/components/ui/ErrorParagraph";
+import Head from "next/head";
 
 type StatusType = "" | "sent" | "error";
 
@@ -51,76 +52,111 @@ export default function Contact() {
     mutate(data);
 
   return (
-    <div className="flex w-full flex-col items-center">
-      <section className="flex h-52 w-full flex-col items-center justify-center gap-4 bg-[#F7F7F7] text-center">
-        <div className="flex flex-col gap-2">
-          <h1 className="font-playfair text-4xl italic">Contact</h1>
-          <h3 className="text-sm uppercase tracking-wider">
-            Feel free to contact us
-          </h3>
-        </div>
-      </section>
-      {status && <StatusMessage status={status} />}
-      <section className="mt-10 flex w-full max-w-2xl flex-col p-4">
-        <p className="text-lg text-[#7d7d7d]">YOU CAN DROP A LINE</p>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="mb-14 flex flex-col gap-4"
-        >
-          <input
-            className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-            {...register("name")}
-            placeholder="Name"
-          />
-          {errors?.name?.message && (
-            <ErrorParagraph message={errors.name?.message} />
-          )}
-          <input
-            className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-            {...register("email")}
-            placeholder="Email"
-          />
-          {errors.email?.message && (
-            <ErrorParagraph message={errors.email?.message} />
-          )}
-          <input
-            className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-            {...register("subject")}
-            placeholder="Subject"
-          />
-          {errors.subject?.message && (
-            <ErrorParagraph message={errors.subject?.message} />
-          )}
-
-          <TextareaAutosize
-            className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-            {...register("message")}
-            placeholder="Message"
-            minRows={4}
-          />
-          {errors.message?.message && (
-            <ErrorParagraph message={errors.message?.message} />
-          )}
-
-          <button
-            className="h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 px-5 py-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
-            type="submit"
-            disabled={isLoading}
+    <>
+      <Head>
+        <title>Contact - Migotos</title>
+        <meta name="description" content="Contact page for Migotos" />
+        <meta property="og:site_name" content="Contact - Migoto" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:title" content="Contact - Migotos" />
+        <meta
+          property="og:description"
+          content="Contact page for Migotos"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://migotos.com/contact" />
+        <meta
+          property="og:image"
+          content="https://migotos.com/static/icons/cropped-socialicon-480x480.png"
+        />
+        <meta property="og:image:alt" content="Migotos logo" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="480" />
+        <meta property="og:image:height" content="480" />
+        <meta
+          property="article:published_time"
+          content="2024-01-16T12:18:00+01:00"
+        />
+        <meta
+          property="article:modified_time"
+          content="2024-01-16T12:18:00+01:00"
+        />
+        <meta
+          property="article:author"
+          content="https://www.facebook.com/eva.d.eide"
+        />
+      </Head>
+      <div className="flex w-full flex-col items-center">
+        <section className="flex h-52 w-full flex-col items-center justify-center gap-4 bg-[#F7F7F7] text-center">
+          <div className="flex flex-col gap-2">
+            <h1 className="font-playfair text-4xl italic">Contact</h1>
+            <h3 className="text-sm uppercase tracking-wider">
+              Feel free to contact us
+            </h3>
+          </div>
+        </section>
+        {status && <StatusMessage status={status} />}
+        <section className="mt-10 flex w-full max-w-2xl flex-col p-4">
+          <p className="text-lg text-[#7d7d7d]">YOU CAN DROP A LINE</p>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mb-14 flex flex-col gap-4"
           >
-            {isLoading ? (
-              <>
-                <LoadingSpinner className="mr-3" />
-                Loading...
-              </>
-            ) : (
-              "Send Message"
+            <input
+              className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+              {...register("name")}
+              placeholder="Name"
+            />
+            {errors?.name?.message && (
+              <ErrorParagraph message={errors.name?.message} />
             )}
-          </button>
-        </form>
-        <ContactInfo />
-        <Footer />
-      </section>
-    </div>
+            <input
+              className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+              {...register("email")}
+              placeholder="Email"
+            />
+            {errors.email?.message && (
+              <ErrorParagraph message={errors.email?.message} />
+            )}
+            <input
+              className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+              {...register("subject")}
+              placeholder="Subject"
+            />
+            {errors.subject?.message && (
+              <ErrorParagraph message={errors.subject?.message} />
+            )}
+
+            <TextareaAutosize
+              className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+              {...register("message")}
+              placeholder="Message"
+              minRows={4}
+            />
+            {errors.message?.message && (
+              <ErrorParagraph message={errors.message?.message} />
+            )}
+
+            <button
+              className="h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 px-5 py-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <LoadingSpinner className="mr-3" />
+                  Loading...
+                </>
+              ) : (
+                "Send Message"
+              )}
+            </button>
+          </form>
+          <ContactInfo />
+          <Footer />
+        </section>
+      </div>
+    </>
   );
 }
 
