@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import LoginButton from "~/components/LoginButton";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { AnimatePresence } from "framer-motion";
+import Head from "next/head";
 
 type Props = {
   blogPost: BlogPostWithTags;
@@ -31,6 +32,45 @@ function BlogPost({ blogPost }: Props) {
 
   return (
     <>
+      <Head>
+        <title>{blogPost.title} - Migotos</title>
+        <meta name="description" content={blogPost.title} />
+        <meta property="og:site_name" content="Migotos | Blog" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:title" content={blogPost.title} />
+        <meta property="og:description" content={blogPost.title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://migotos.com/news" />
+        <meta
+          property="og:image"
+          content={
+            blogPost.image_url ?? "/static/icons/cropped-socialicon-480x480.png"
+          }
+        />
+        <meta property="og:image:alt" content="Blogpost post image" />
+        <meta
+          property="og:image:type"
+          content={blogPost.image_url ? ".jpg" : ".png"}
+        />
+        {!blogPost.image_url && (
+          <>
+            <meta property="og:image:width" content="480" />
+            <meta property="og:image:height" content="480" />
+          </>
+        )}
+        <meta
+          property="article:published_time"
+          content={blogPost.post_date.toISOString()}
+        />
+        <meta
+          property="article:modified_time"
+          content={blogPost.post_date.toISOString()}
+        />
+        <meta
+          property="article:author"
+          content="https://www.facebook.com/eva.d.eide"
+        />
+      </Head>
       <div className="flex max-w-3xl flex-col items-center gap-8 px-2 py-4">
         <header className="flex flex-col items-center gap-4">
           <h1 className="text-center text-2xl">{blogPost.title}</h1>
