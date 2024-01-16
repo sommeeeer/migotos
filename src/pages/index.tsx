@@ -26,7 +26,6 @@ export default function Home({ blogPosts, litters }: Props) {
           property="og:site_name"
           content="Migotos, Norwegian Forest Cats"
         />
-        <meta property="og:locale" content="en_US" />
         <meta
           property="og:title"
           content="Migotos: Norwegian Forest Cat Cattery based in Oslo, Norway"

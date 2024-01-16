@@ -1,3 +1,4 @@
+import Head from "next/head";
 import type { GetStaticPropsResult } from "next/types";
 import { useState } from "react";
 import FilterLitters from "~/components/FilterLitters";
@@ -5,7 +6,6 @@ import Footer from "~/components/Footer";
 import LitterProfile from "~/components/LitterProfile";
 import { db } from "~/server/db";
 import type { LitterWithTags } from "~/utils/types";
-
 
 interface LittersProps {
   litters: LitterWithTags[];
@@ -31,6 +31,7 @@ function Litters({ litters, yearsArray }: LittersProps) {
 
   return (
     <>
+      <PageHead />
       <div className="flex w-full flex-col items-center bg-zinc-100">
         <section className="mt-16 flex max-w-6xl flex-col gap-4 px-4 text-center">
           <h1 className="font-playfair text-4xl">
@@ -82,7 +83,6 @@ export async function getStaticProps(): Promise<
     SELECT DISTINCT YEAR(born) as year FROM Litter ORDER BY year ASC
   `;
 
-
   const yearsArray = distinctYears.map((year) => year.year);
 
   return {
@@ -91,4 +91,44 @@ export async function getStaticProps(): Promise<
       yearsArray,
     },
   };
+}
+
+function PageHead() {
+  return (
+    <Head>
+      <title>Kittens - Migotos</title>
+      <meta
+        name="description"
+        content="All the litters for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
+      />
+      <meta property="og:site_name" content="Kittens - Migotos" />
+      <meta property="og:title" content="Kittens - Migotos" />
+      <meta
+        property="og:description"
+        content="All the litters for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
+      />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://migotos.com/kittens" />
+      <meta
+        property="og:image"
+        content="https://migotos.com/static/icons/cropped-socialicon-480x480.png"
+      />
+      <meta property="og:image:alt" content="Migotos logo" />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="480" />
+      <meta property="og:image:height" content="480" />
+      <meta
+        property="article:published_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:modified_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:author"
+        content="https://www.facebook.com/eva.d.eide"
+      />
+    </Head>
+  );
 }

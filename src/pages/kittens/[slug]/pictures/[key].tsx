@@ -11,17 +11,21 @@ import useKeypress from "react-use-keypress";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import CatImage from "~/components/CatImage";
 import { IoMdClose } from "react-icons/io";
+import Head from "next/head";
+import { useRouter } from "next/router";
+
+type LitterWithPictureWeeks = Prisma.LitterGetPayload<{
+  include: {
+    LitterPictureWeek: true;
+  };
+}>;
 
 type Props = {
-  litter: Prisma.LitterGetPayload<{
-    include: {
-      LitterPictureWeek: true;
-    };
-  }>;
+  litter: LitterWithPictureWeeks;
   groupedImages: Record<string, KittenPictureImage[]>;
 };
 
-function KittenPictures({ groupedImages }: Props) {
+function KittenPictures({ groupedImages, litter }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
   const [images, setImages] = useState<KittenPictureImage[]>(
@@ -72,6 +76,7 @@ function KittenPictures({ groupedImages }: Props) {
 
   return (
     <>
+      <PageHead litter={litter} />
       {carouselOpen && currentImage && (
         <motion.div
           initial={{ opacity: 0, scale: 0.7 }}
@@ -241,4 +246,69 @@ export async function getStaticPaths() {
   }
 
   return { paths, fallback: "blocking" };
+}
+
+function PageHead({ litter }: { litter: LitterWithPictureWeeks }) {
+  const router = useRouter();
+  const { key } = router.query;
+
+  return (
+    <Head>
+      <title>{`${(key as string).replace("-", " ")} ${
+        litter.name
+      }-LITTER - Migotos`}</title>
+      <meta
+        name="description"
+        content={`Pictures for ${litter.name} litter at ${(
+          key as string
+        ).replace("-", " ")}`}
+      />
+      <meta
+        property="og:site_name"
+        content={`${(key as string).replace("-", " ")} ${
+          litter.name
+        }-LITTER - Migotos`}
+      />
+      <meta
+        property="og:title"
+        content={`${(key as string).replace("-", " ")} ${
+          litter.name
+        }-LITTER - Migotos`}
+      />
+      <meta
+        property="og:description"
+        content={`Pictures for ${litter.name} litter at ${(
+          key as string
+        ).replace("-", " ")}`}
+      />
+      <meta property="og:type" content="website" />
+      <meta
+        property="og:url"
+        content={`https://migotos.com/kittens/${litter.slug}/pictures/${
+          key as string
+        }`}
+      />
+      <meta
+        property="og:image"
+        content={litter.post_image ?? litter.mother_img}
+      />
+      <meta
+        property="og:image:alt"
+        content={`Litter post image for ${litter.name}`}
+      />
+      <meta property="og:image:type" content="image/png" />
+      <meta
+        property="article:published_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:modified_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:author"
+        content="https://www.facebook.com/eva.d.eide"
+      />
+    </Head>
+  );
 }

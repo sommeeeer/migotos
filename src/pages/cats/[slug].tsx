@@ -113,7 +113,7 @@ function Cat({ cat, mother, father }: Props) {
 
   return (
     <>
-      <PageHead {...cat} />
+      <PageHead cat={cat} />
       {carouselOpen && currentImage && (
         <motion.div
           initial={{ opacity: 0, scale: 0.7 }}
@@ -440,7 +440,7 @@ export async function getStaticPaths() {
   return { paths, fallback: "blocking" };
 }
 
-function PageHead(cat: Cat & { CatImage: CatImageType[] }) {
+function PageHead({ cat }: { cat: Cat & { CatImage: CatImageType[] } }) {
   return (
     <Head>
       <title>{cat.nickname} - Migotos</title>
@@ -449,7 +449,6 @@ function PageHead(cat: Cat & { CatImage: CatImageType[] }) {
         content={`Profile page for ${cat.name}, ${cat.stamnavn}`}
       />
       <meta property="og:site_name" content={`${cat.nickname} - Migotos`} />
-      <meta property="og:locale" content="en_US" />
       <meta property="og:title" content={`${cat.nickname} - Migotos`} />
       <meta
         property="og:description"

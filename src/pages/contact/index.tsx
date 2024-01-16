@@ -203,7 +203,6 @@ function PageHead() {
       <title>Contact - Migotos</title>
       <meta name="description" content="Contact page for Migotos" />
       <meta property="og:site_name" content="Contact - Migoto" />
-      <meta property="og:locale" content="en_US" />
       <meta property="og:title" content="Contact - Migotos" />
       <meta property="og:description" content="Contact page for Migotos" />
       <meta property="og:type" content="website" />

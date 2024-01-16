@@ -14,6 +14,7 @@ import { findName, formatDate } from "~/utils/helpers";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import LoginButton from "~/components/LoginButton";
+import Head from "next/head";
 
 type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
   include: {
@@ -67,6 +68,7 @@ function LitterPage({ litter, mother, father }: Props) {
 
   return (
     <>
+      <PageHead litter={litter} />
       <div className="mb-10 flex w-full flex-col items-center border-b bg-zinc-100">
         <section className="mt-12 flex max-w-4xl flex-col items-center gap-4 p-4 text-center sm:mt-16">
           <h1 className="font-playfair text-4xl capitalize">
@@ -189,7 +191,7 @@ export async function getStaticProps({
       LitterPictureWeek: true,
     },
   });
-  
+
   if (!litter) {
     return {
       notFound: true,
@@ -244,4 +246,51 @@ export async function getStaticPaths() {
   }));
 
   return { paths, fallback: "blocking" };
+}
+
+function PageHead({ litter }: { litter: LitterWithKittensAndTagsAndPictures }) {
+  return (
+    <Head>
+      <title>{litter.name}-LITTER - Migotos</title>
+      <meta
+        name="description"
+        content={`Litter profile page for ${litter.name}`}
+      />
+      <meta
+        property="og:site_name"
+        content={`${litter.name}-LITTER - Migotos`}
+      />
+      <meta property="og:title" content={`${litter.name}-LITTER - Migotos`} />
+      <meta
+        property="og:description"
+        content={`Litter profile page for ${litter.name}`}
+      />
+      <meta property="og:type" content="website" />
+      <meta
+        property="og:url"
+        content={`https://migotos.com/kittens/${litter.slug}`}
+      />
+      <meta
+        property="og:image"
+        content={litter.post_image ?? litter.mother_img}
+      />
+      <meta
+        property="og:image:alt"
+        content={`Litter post image for ${litter.name}`}
+      />
+      <meta property="og:image:type" content="image/png" />
+      <meta
+        property="article:published_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:modified_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:author"
+        content="https://www.facebook.com/eva.d.eide"
+      />
+    </Head>
+  );
 }
