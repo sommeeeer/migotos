@@ -25,42 +25,7 @@ function Cats({
 }: Props) {
   return (
     <>
-      <Head>
-        <title>Cats - Migotos</title>
-        <meta
-          name="description"
-          content="All the cats for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
-        />
-        <meta property="og:site_name" content="Cats - Migotos" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:title" content="Cats - Migotos" />
-        <meta
-          property="og:description"
-          content="All the cats for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://migotos.com/cats" />
-        <meta
-          property="og:image"
-          content="https://migotos.com/static/icons/cropped-socialicon-480x480.png"
-        />
-        <meta property="og:image:alt" content="Migotos logo" />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="480" />
-        <meta property="og:image:height" content="480" />
-        <meta
-          property="article:published_time"
-          content="2024-01-16T12:18:00+01:00"
-        />
-        <meta
-          property="article:modified_time"
-          content="2024-01-16T12:18:00+01:00"
-        />
-        <meta
-          property="article:author"
-          content="https://www.facebook.com/eva.d.eide"
-        />
-      </Head>
+      <PageHead />
       <div className="flex w-full flex-col items-center bg-zinc-100">
         <section className="mt-16 flex max-w-6xl flex-col gap-4 px-4 text-center">
           <h1 className="font-playfair text-4xl">
@@ -151,4 +116,45 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       formerFemaleCats: formerFemaleCats,
     },
   };
+}
+
+function PageHead() {
+  return (
+    <Head>
+      <title>Cats - Migotos</title>
+      <meta
+        name="description"
+        content="All the cats for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
+      />
+      <meta property="og:site_name" content="Cats - Migotos" />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:title" content="Cats - Migotos" />
+      <meta
+        property="og:description"
+        content="All the cats for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
+      />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://migotos.com/cats" />
+      <meta
+        property="og:image"
+        content="https://migotos.com/static/icons/cropped-socialicon-480x480.png"
+      />
+      <meta property="og:image:alt" content="Migotos logo" />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="480" />
+      <meta property="og:image:height" content="480" />
+      <meta
+        property="article:published_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:modified_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:author"
+        content="https://www.facebook.com/eva.d.eide"
+      />
+    </Head>
+  );
 }
