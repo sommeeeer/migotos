@@ -257,6 +257,12 @@ function PageHead({ litter }: { litter: LitterWithPictureWeeks }) {
       <title>{`${(key as string).replace("-", " ")} ${
         litter.name
       }-LITTER - Migotos`}</title>
+      <link
+        rel="canonical"
+        href={`https://migotos.com/kittens/${litter.slug}/pictures/${
+          key as string
+        }`}
+      />
       <meta
         name="description"
         content={`Pictures for ${litter.name} litter at ${(

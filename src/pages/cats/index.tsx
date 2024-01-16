@@ -122,6 +122,7 @@ function PageHead() {
   return (
     <Head>
       <title>Cats - Migotos</title>
+      <link rel="canonical" href="https://migotos.com/cats" />
       <meta
         name="description"
         content="All the cats for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"

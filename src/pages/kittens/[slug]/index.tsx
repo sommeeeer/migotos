@@ -252,6 +252,10 @@ function PageHead({ litter }: { litter: LitterWithKittensAndTagsAndPictures }) {
   return (
     <Head>
       <title>{litter.name}-LITTER - Migotos</title>
+      <link
+        rel="canonical"
+        href={`https://migotos.com/kittens/${litter.slug}`}
+      />
       <meta
         name="description"
         content={`Litter profile page for ${litter.name}`}

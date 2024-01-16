@@ -1,8 +1,10 @@
 import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
-import { useParams } from "next/navigation";
+import Head from "next/head";
+import { useRouter } from "next/router";
 import Footer from "~/components/Footer";
 import NewsCard from "~/components/ui/NewsCard";
 import { db } from "~/server/db";
+import { capitalizeString } from "~/utils/helpers";
 import type { BlogPostWithTags } from "~/utils/types";
 
 type Props = {
@@ -10,10 +12,12 @@ type Props = {
 };
 
 function TagPage({ blogPosts }: Props) {
-  const params = useParams();
-  const title = params?.tag;
+  const router = useRouter();
+  const { tag: title } = router.query;
+
   return (
     <>
+      <PageHead title={title as string} />
       <div className="flex w-full flex-col items-center gap-8">
         <section className="mt-16 flex max-w-6xl flex-col gap-4 px-4 text-center">
           <h1 className="font-playfair text-4xl">
@@ -96,4 +100,52 @@ export async function getStaticPaths() {
   }));
 
   return { paths, fallback: "blocking" };
+}
+
+function PageHead({ title }: { title: string }) {
+  return (
+    <Head>
+      <title>{capitalizeString(title)} - Migotos</title>
+      <link rel="canonical" href={`https://migotos.com/news/tag/${title}`} />
+      <meta name="description" content={title} />
+      <meta
+        property="og:site_name"
+        content={`${capitalizeString(title)} - Migotos`}
+      />
+      <meta
+        property="og:title"
+        content={`${capitalizeString(title)} Category`}
+      />
+      <meta
+        property="og:description"
+        content={`${capitalizeString(title)} Category`}
+      />
+      <meta property="og:type" content="website" />
+      <meta
+        property="og:url"
+        content={`https://migotos.com/news/tag/${title}`}
+      />
+      <meta
+        property="og:image"
+        content="/static/icons/cropped-socialicon-480x480.png"
+      />
+      <meta property="og:image:alt" content="Migotos logo" />
+      <meta property="og:image:type" content=".png" />
+
+      <meta property="og:image:width" content="480" />
+      <meta property="og:image:height" content="480" />
+      <meta
+        property="article:published_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:modified_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:author"
+        content="https://www.facebook.com/eva.d.eide"
+      />
+    </Head>
+  );
 }

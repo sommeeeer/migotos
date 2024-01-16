@@ -201,6 +201,7 @@ function PageHead() {
   return (
     <Head>
       <title>Contact - Migotos</title>
+      <link rel="canonical" href="https://migotos.com/contact" />
       <meta name="description" content="Contact page for Migotos" />
       <meta property="og:site_name" content="Contact - Migoto" />
       <meta property="og:title" content="Contact - Migotos" />

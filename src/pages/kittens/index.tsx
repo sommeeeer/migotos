@@ -97,6 +97,7 @@ function PageHead() {
   return (
     <Head>
       <title>Kittens - Migotos</title>
+      <link rel="canonical" href="https://migotos.com/kittens" />
       <meta
         name="description"
         content="All the litters for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"

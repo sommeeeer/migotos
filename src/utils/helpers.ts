@@ -58,3 +58,6 @@ export function createGravatarURL(
   return `https://www.gravatar.com/avatar/${hash}?d=identicon&size=${size}`;
 }
 
+export function capitalizeString(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

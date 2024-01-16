@@ -159,12 +159,16 @@ function PageHead({ blogPost }: { blogPost: BlogPost }) {
   return (
     <Head>
       <title>{blogPost.title} - Migotos</title>
+      <link rel="canonical" href={`https://migotos.com/news/${blogPost.id}`} />
       <meta name="description" content={blogPost.title} />
-      <meta property="og:site_name" content="Migotos - News" />
+      <meta property="og:site_name" content="News - Migotos" />
       <meta property="og:title" content={blogPost.title} />
       <meta property="og:description" content={blogPost.title} />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://migotos.com/news" />
+      <meta
+        property="og:url"
+        content={`https://migotos.com/news/${blogPost.id}`}
+      />
       <meta
         property="og:image"
         content={

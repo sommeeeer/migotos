@@ -444,6 +444,7 @@ function PageHead({ cat }: { cat: Cat & { CatImage: CatImageType[] } }) {
   return (
     <Head>
       <title>{cat.nickname} - Migotos</title>
+      <link rel="canonical" href={`https://migotos.com/cats/${cat.slug}`} />
       <meta
         name="description"
         content={`Profile page for ${cat.name}, ${cat.stamnavn}`}
