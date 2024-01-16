@@ -124,6 +124,7 @@ function PageHead() {
       <title>
         About - Migoto&#039;s Norwegian Forest Cat &#8211; Oslo based cattery
       </title>
+      <link rel="canonical" href="https://migotos.com/about" />
       <meta
         name="description"
         content="About Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
