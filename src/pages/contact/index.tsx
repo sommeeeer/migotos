@@ -53,39 +53,7 @@ export default function Contact() {
 
   return (
     <>
-      <Head>
-        <title>Contact - Migotos</title>
-        <meta name="description" content="Contact page for Migotos" />
-        <meta property="og:site_name" content="Contact - Migoto" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:title" content="Contact - Migotos" />
-        <meta
-          property="og:description"
-          content="Contact page for Migotos"
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://migotos.com/contact" />
-        <meta
-          property="og:image"
-          content="https://migotos.com/static/icons/cropped-socialicon-480x480.png"
-        />
-        <meta property="og:image:alt" content="Migotos logo" />
-        <meta property="og:image:type" content="image/png" />
-        <meta property="og:image:width" content="480" />
-        <meta property="og:image:height" content="480" />
-        <meta
-          property="article:published_time"
-          content="2024-01-16T12:18:00+01:00"
-        />
-        <meta
-          property="article:modified_time"
-          content="2024-01-16T12:18:00+01:00"
-        />
-        <meta
-          property="article:author"
-          content="https://www.facebook.com/eva.d.eide"
-        />
-      </Head>
+      <PageHead />
       <div className="flex w-full flex-col items-center">
         <section className="flex h-52 w-full flex-col items-center justify-center gap-4 bg-[#F7F7F7] text-center">
           <div className="flex flex-col gap-2">
@@ -226,5 +194,40 @@ function ContactInfo() {
         </a>
       </div>
     </div>
+  );
+}
+
+function PageHead() {
+  return (
+    <Head>
+      <title>Contact - Migotos</title>
+      <meta name="description" content="Contact page for Migotos" />
+      <meta property="og:site_name" content="Contact - Migoto" />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:title" content="Contact - Migotos" />
+      <meta property="og:description" content="Contact page for Migotos" />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://migotos.com/contact" />
+      <meta
+        property="og:image"
+        content="https://migotos.com/static/icons/cropped-socialicon-480x480.png"
+      />
+      <meta property="og:image:alt" content="Migotos logo" />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="480" />
+      <meta property="og:image:height" content="480" />
+      <meta
+        property="article:published_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:modified_time"
+        content="2024-01-16T12:18:00+01:00"
+      />
+      <meta
+        property="article:author"
+        content="https://www.facebook.com/eva.d.eide"
+      />
+    </Head>
   );
 }
