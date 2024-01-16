@@ -18,7 +18,7 @@ function News({ blogPosts }: Props) {
           name="description"
           content="All the blogposts for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
         />
-        <meta property="og:site_name" content="Migotos | Blog" />
+        <meta property="og:site_name" content="Cats - Migotos" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:title" content="News - Migotos" />
         <meta
