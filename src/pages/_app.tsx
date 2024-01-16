@@ -8,6 +8,7 @@ import Header from "~/components/Header";
 import NextNProgress from "nextjs-progressbar";
 
 import { Poppins, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -111,6 +112,20 @@ const MyApp: AppType<{ session: Session | null }> = ({
         />
         <link rel="icon" href="/static/icons/socialicon.png" />
       </Head>
+      <Script
+        async
+        id="tag-manager"
+        strategy="afterInteractive"
+        src="https://www.googletagmanager.com/gtag/js?id=G-H8G1WHLBW8"
+      />
+      <Script async strategy="afterInteractive" id="analytics">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-H8G1WHLBW8');
+        `}
+      </Script>
       <div
         className={`flex flex-col ${poppins.className} ${playfair.variable}`}
       >
