@@ -114,7 +114,7 @@ type Params = { id: string };
 export async function getStaticProps({
   params,
 }: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
-  if (!params?.id) {
+  if (!params?.id || isNaN(Number(params.id))) {
     return {
       notFound: true,
     };
