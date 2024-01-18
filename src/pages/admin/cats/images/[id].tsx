@@ -466,7 +466,7 @@ function SortableItem({
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button className="hover:-slate-300">
-              <AiFillDelete className="h-6 w-6 transition-colors duration-200 hover:text-zinc-600" />
+              <AiFillDelete className="h-6 w-6 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
             </button>
           </AlertDialogTrigger>
           <AlertDialogContent>

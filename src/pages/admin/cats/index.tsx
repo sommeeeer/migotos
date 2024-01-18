@@ -122,15 +122,15 @@ export default function Cats({ cats }: CatsProps) {
                 <TableCell>
                   <div className="flex gap-2">
                     <Link href={`/admin/cats/edit/${cat.id}`}>
-                      <AiFillEdit className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600" />
+                      <AiFillEdit className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600 hover:scale-105" />
                     </Link>
                     <Link href={`/admin/cats/images/${cat.id}`}>
-                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600" />
+                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600 hover:scale-105" />
                     </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="hover:-slate-300">
-                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
+                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600 hover:scale-105" />
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>

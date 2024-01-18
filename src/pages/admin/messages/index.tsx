@@ -40,7 +40,7 @@ import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/use-toast";
 import { useState } from "react";
 import { cn } from "~/lib/utils";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Trash2 } from "lucide-react";
 
 type MessagesProps = {
   initialMessages: ContactMessage[];
@@ -107,7 +107,10 @@ export default function Messages({ initialMessages }: MessagesProps) {
         <div className="flex gap-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button disabled={messages.length === 0}>Delete all</Button>
+              <Button className="flex items-center gap-1" variant="destructive" disabled={messages.length === 0}>
+                <Trash2 className="h-5 w-5" />
+                Delete all
+              </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -168,7 +171,7 @@ export default function Messages({ initialMessages }: MessagesProps) {
                   <div className="flex gap-2">
                     <Dialog>
                       <DialogTrigger>
-                        <BiMessageAltDetail className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
+                        <BiMessageAltDetail className="h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                       </DialogTrigger>
                       <DialogContent className="p-8">
                         <DialogHeader>
@@ -196,7 +199,7 @@ export default function Messages({ initialMessages }: MessagesProps) {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button>
-                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
+                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>

@@ -120,15 +120,15 @@ export default function Litters({ litters }: LittersProps) {
                 <TableCell>
                   <div className="flex gap-2">
                     <Link href={`/admin/litters/edit/${litter.id}`}>
-                      <AiFillEdit className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600" />
+                      <AiFillEdit className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                     </Link>
                     <Link href={`/admin/litters/images/${litter.id}`}>
-                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600" />
+                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                     </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="hover:-slate-300">
-                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
+                          <AiFillDelete className="relative h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>

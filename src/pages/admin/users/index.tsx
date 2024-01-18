@@ -131,7 +131,7 @@ export default function Users({ users }: UsersProps) {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="hover:-slate-300">
-                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
+                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
@@ -161,7 +161,7 @@ export default function Users({ users }: UsersProps) {
                         <button>
                           <RiAdminFill
                             className={cn(
-                              "h-8 w-8 transition-colors duration-200 hover:text-zinc-600",
+                              "h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600",
                               user.role === Role.ADMIN &&
                                 "fill-gray-500 hover:fill-red-500",
                             )}
@@ -195,7 +195,7 @@ export default function Users({ users }: UsersProps) {
                       </AlertDialogContent>
                     </AlertDialog>
                     <Link href={`/admin/users/${user.id}`}>
-                      <FaComments className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600" />
+                      <FaComments className="h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                     </Link>
                   </div>
                 </TableCell>
