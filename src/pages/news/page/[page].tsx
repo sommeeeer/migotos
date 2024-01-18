@@ -19,7 +19,6 @@ type Props = {
 };
 
 function News({ blogPosts, pagination }: Props) {
-  console.log(pagination);
   return (
     <>
       <PageHead />
