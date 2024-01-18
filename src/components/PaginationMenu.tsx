@@ -7,34 +7,51 @@ import {
   PaginationPrevious,
   Pagination,
 } from "~/components/ui/pagination";
+import { cn } from "~/lib/utils";
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  postsPerPage: number;
+  className?: string;
 }
 
 export default function PaginationMenu({
   currentPage,
   totalPages,
-  postsPerPage = 5,
+  className,
 }: PaginationProps) {
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(totalPages / postsPerPage); i++) {
-    pageNumbers.push(i);
+  const pageNumbers: (number | string)[] = [];
+  const leftEllipsis = currentPage > 2;
+  const rightEllipsis = currentPage < totalPages - 1;
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (
+      i === 1 ||
+      i === totalPages ||
+      (i >= currentPage - 1 && i <= currentPage + 1)
+    ) {
+      pageNumbers.push(i);
+    }
   }
 
-  pageNumbers.push(totalPages);
+  if (leftEllipsis) {
+    pageNumbers.splice(1, 0, "...");
+  }
+
+  if (rightEllipsis) {
+    pageNumbers.splice(pageNumbers.length - 1, 0, "...");
+  }
+
   return (
-    <Pagination>
+    <Pagination className={cn(className)}>
       <PaginationContent>
         {currentPage > 1 && (
           <PaginationItem>
             <PaginationPrevious
               href={
                 currentPage - 1 <= 1
-                  ? "/news/posts/"
-                  : `/news/posts/${currentPage - 1}`
+                  ? "/news/"
+                  : `/news/page/${currentPage - 1}`
               }
             />
           </PaginationItem>
@@ -45,7 +62,7 @@ export default function PaginationMenu({
           ) : (
             <PaginationItem key={index}>
               <PaginationLink
-                href={number === 1 ? "/news/posts/" : `/news/posts/${number}`}
+                href={number === 1 ? "/news/" : `/news/page/${number}`}
                 isActive={currentPage === number}
               >
                 {number}
@@ -53,9 +70,9 @@ export default function PaginationMenu({
             </PaginationItem>
           ),
         )}
-        {currentPage < totalPages && (
+        {currentPage < totalPages - 1 && (
           <PaginationItem>
-            <PaginationNext href={`/news/posts/${currentPage + 1}`} />
+            <PaginationNext href={`/news/page/${currentPage + 1}`} />
           </PaginationItem>
         )}
       </PaginationContent>

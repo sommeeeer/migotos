@@ -1,5 +1,9 @@
 import Head from "next/head";
-import { type GetStaticPropsResult } from "next/types";
+import type {
+  GetStaticPathsResult,
+  GetStaticPropsContext,
+  GetStaticPropsResult,
+} from "next/types";
 import Footer from "~/components/Footer";
 import PaginationMenu from "~/components/PaginationMenu";
 import NewsCard from "~/components/ui/NewsCard";
@@ -15,6 +19,7 @@ type Props = {
 };
 
 function News({ blogPosts, pagination }: Props) {
+  console.log(pagination);
   return (
     <>
       <PageHead />
@@ -24,7 +29,7 @@ function News({ blogPosts, pagination }: Props) {
             <em>All Blog Posts</em>
           </h1>
           <p className="text-xs text-gray-500">
-            Showing page {pagination.currentPage} of {pagination.totalPages}
+            Showing page {pagination.currentPage + 1} of {pagination.totalPages}
           </p>
           <p className="text-base leading-loose text-zinc-500">
             Click on the card to read more.
@@ -55,17 +60,28 @@ function News({ blogPosts, pagination }: Props) {
 }
 export default News;
 
-export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
-  const blogPostCount = await db.blogPost.count();
-  const blogPostTotalCount = blogPostCount - 1;
+type Params = {
+  page: string;
+};
 
-  const totalPages = Math.ceil(
-    blogPostTotalCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
-  );
+export async function getStaticProps({
+  params,
+}: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
+  const page = parseInt(String(params?.page));
+
+  const blogPostCount = await db.blogPost.count({});
+
+  const totalPages = Math.ceil(blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE));
+
+  if (page > totalPages) {
+    return {
+      notFound: true,
+    };
+  }
 
   const blogPosts = await db.blogPost.findMany({
+    skip: (page - 1) * Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
     take: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
-    skip: 0,
     orderBy: {
       post_date: "desc",
     },
@@ -88,11 +104,30 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
     props: {
       blogPosts,
       pagination: {
-        currentPage: 1,
+        currentPage: page,
         totalPages,
       },
     },
   };
+}
+
+export async function getStaticPaths() {
+  const blogPostCount = await db.blogPost.count();
+
+  const totalPages = Math.ceil(blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE));
+
+  const staticPathsResult: GetStaticPathsResult = {
+    paths: [],
+    fallback: "blocking",
+  };
+
+  for (let i = 2; i <= totalPages; i++) {
+    staticPathsResult.paths.push({
+      params: { page: i.toString() },
+    });
+  }
+
+  return staticPathsResult;
 }
 
 function PageHead() {
