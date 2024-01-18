@@ -21,7 +21,7 @@ import { type z } from "zod";
 import { toast } from "~/components/ui/use-toast";
 import { checkAdminSession } from "~/server/helpers";
 import { litterSchema } from "~/lib/validators/litter";
-import { CalendarIcon, Delete, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, Trash2 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import {
   Popover,
@@ -346,9 +346,10 @@ export default function NewLitter({
                         <div className="flex select-none flex-row-reverse items-center gap-2 rounded-xl bg-zinc-200 px-4 py-2">
                           <button
                             type="button"
+                            className="transform rounded-full transition-all duration-200 ease-in-out hover:scale-110 hover:bg-gray-300"
                             onClick={() => handleRemoveKitten(kitten.name)}
                           >
-                            <Delete className="h-5 w-5" />
+                            <Trash2 className="h-5 w-5" />
                           </button>
                           <p>{kitten.name}</p>
                           {kitten.gender === "female" ? (
