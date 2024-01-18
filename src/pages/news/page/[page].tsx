@@ -21,7 +21,7 @@ type Props = {
 function News({ blogPosts, pagination }: Props) {
   return (
     <>
-      <PageHead />
+      <PageHead page={pagination.currentPage} />
       <div className="flex w-full flex-col items-center gap-8">
         <section className="mt-8 flex max-w-6xl flex-col gap-4 px-4 text-center">
           <h1 className="font-playfair text-lg tracking-wider sm:text-xl md:text-2xl">
@@ -70,7 +70,9 @@ export async function getStaticProps({
 
   const blogPostCount = await db.blogPost.count({});
 
-  const totalPages = Math.ceil(blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE));
+  const totalPages = Math.ceil(
+    blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
+  );
 
   if (page > totalPages) {
     return {
@@ -113,7 +115,9 @@ export async function getStaticProps({
 export async function getStaticPaths() {
   const blogPostCount = await db.blogPost.count();
 
-  const totalPages = Math.ceil(blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE));
+  const totalPages = Math.ceil(
+    blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
+  );
 
   const staticPathsResult: GetStaticPathsResult = {
     paths: [],
@@ -129,11 +133,11 @@ export async function getStaticPaths() {
   return staticPathsResult;
 }
 
-function PageHead() {
+function PageHead({ page }: { page: number }) {
   return (
     <Head>
       <title>News - Migotos</title>
-      <link rel="canonical" href="https://migotos.com/news" />
+      <link rel="canonical" href={`https://migotos.com/news/page/${page}`} />
       <meta
         name="description"
         content="All the blogposts for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
@@ -145,7 +149,10 @@ function PageHead() {
         content="All the blogposts for Migotos, Norwegian Forest Cat Cattery based in Oslo, Norway"
       />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://migotos.com/news" />
+      <meta
+        property="og:url"
+        content={`https://migotos.com/news/page/${page}`}
+      />
       <meta
         property="og:image"
         content="https://migotos.com/static/icons/cropped-socialicon-480x480.png"
