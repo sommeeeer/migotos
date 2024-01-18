@@ -150,7 +150,7 @@ export default function AddKittenModal({
         </div>
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
-            <Button type="button">Cancel</Button>
+            <Button type="button" variant="secondary">Cancel</Button>
           </DialogClose>
           <Button type="submit" onClick={handleSubmit(onSubmitKitten)}>
             Add new kitten
