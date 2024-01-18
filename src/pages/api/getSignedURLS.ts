@@ -1,3 +1,4 @@
+import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerAuthSession } from "~/server/auth";
 import { getSignedURLS } from "~/server/helpers";
@@ -17,6 +18,11 @@ export default async function handler(
   });
   if (!session) {
     res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
+  if (session.user.role !== Role.ADMIN) {
+    res.status(403).json({ message: "Forbidden" });
     return;
   }
 
