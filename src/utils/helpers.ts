@@ -34,7 +34,12 @@ export async function uploadS3(file: File, uploadUrl: string) {
         "Content-Disposition": `attachment; filename="${file.name}"`,
       },
     });
-    return image.url.split("?")[0];
+    return image.url
+      .split("?")[0]
+      ?.replace(
+        "https://s3.eu-north-1.amazonaws.com/images.migotos.com/",
+        "https://cdn.migotos.com/",
+      );
   } catch (error) {
     throw new Error("Error uploading image");
   }
