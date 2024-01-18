@@ -409,6 +409,7 @@ export default function NewCat({
               <div className="mt-4 flex gap-1">
                 <Button
                   type="button"
+                  variant="secondary"
                   onClick={() => router.back()}
                   disabled={isLoading}
                 >

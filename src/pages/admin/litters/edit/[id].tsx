@@ -495,7 +495,11 @@ export default function EditLitter({
                 Upload
               </Button>
               <div className="mt-4 flex gap-1">
-                <Button type="button" onClick={() => router.back()}>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={() => router.back()}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isLoading}>
