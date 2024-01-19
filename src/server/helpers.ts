@@ -1,4 +1,7 @@
-import { type NextApiResponse, type GetServerSidePropsContext } from "next/types";
+import {
+  type NextApiResponse,
+  type GetServerSidePropsContext,
+} from "next/types";
 import { getServerAuthSession } from "~/server/auth";
 import { Role } from "@prisma/client";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
@@ -25,12 +28,16 @@ export async function checkAdminSession(ctx: GetServerSidePropsContext) {
 
 export async function getSignedURL() {
   try {
-    const command = new PutObjectCommand({
-      ACL: "public-read",
-      Key: crypto.randomUUID(),
-      Bucket: Bucket.public.bucketName,
-    });
-    const uploadUrl = await getSignedUrl(new S3Client({}), command);
+const command = new PutObjectCommand({
+  Key: `uploads/${crypto.randomUUID()}`,
+  Bucket: Bucket.bucketid.bucketName,
+});
+const uploadUrl = await getSignedUrl(
+  new S3Client({
+    region: "eu-north-1",
+  }),
+  command,
+);
     return uploadUrl;
   } catch (err) {
     console.error(err);
@@ -42,16 +49,20 @@ export async function getSignedURLS(amount: number) {
   try {
     for (let i = 0; i < amount; i++) {
       const command = new PutObjectCommand({
-        ACL: "public-read",
-        Key: crypto.randomUUID(),
-        Bucket: Bucket.public.bucketName,
+        Key: `uploads/${crypto.randomUUID()}`,
+        Bucket: Bucket.bucketid.bucketName,
       });
-      const uploadUrl = await getSignedUrl(new S3Client({}), command);
+      const uploadUrl = await getSignedUrl(
+        new S3Client({
+          region: "eu-north-1",
+        }),
+        command,
+      );
       urls.push(uploadUrl);
     }
     return urls;
   } catch (err) {
-    console.error(err)
+    console.error(err);
     throw new Error("Error getting signed URLS");
   }
 }

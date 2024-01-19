@@ -40,6 +40,7 @@ export const env = createEnv({
     EMAIL_FROM: z.string().email(),
     CLOUDFRONT_DISTRIBUTION_ID: z.string(),
     S3_BUCKET_NAME: z.string(),
+    S3_BUCKET_ARN: z.string(),
   },
 
   /**
@@ -71,6 +72,7 @@ export const env = createEnv({
     EMAIL_FROM: process.env.EMAIL_FROM,
     CLOUDFRONT_DISTRIBUTION_ID: process.env.CLOUDFRONT_DISTRIBUTION_ID,
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
+    S3_BUCKET_ARN: process.env.S3_BUCKET_ARN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

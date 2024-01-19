@@ -32,18 +32,7 @@ const config = {
       },
       {
         protocol: "https",
-        hostname: "s3.eu-north-1.amazonaws.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
         hostname: "www.gravatar.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname:
-          "prod-newsite-site-publicbucket5c3dbab0-qgvmndvyhlzu.s3.us-east-1.amazonaws.com",
         pathname: "/**",
       },
     ],
