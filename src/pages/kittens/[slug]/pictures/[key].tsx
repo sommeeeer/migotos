@@ -141,9 +141,11 @@ function KittenPictures({ groupedImages, litter }: Props) {
         </motion.div>
       )}
       <div className="flex flex-col gap-4 px-2">
-        <p className="text-center text-lg text-zinc-500">
-          {litter.LitterPictureWeek[0]?.title}
-        </p>
+        {litter.LitterPictureWeek[0]?.title && (
+          <p className="text-center text-lg text-zinc-500">
+            {litter.LitterPictureWeek[0]?.title}
+          </p>
+        )}
         {Object.entries(groupedImages).map(([key, images], groupIdx) => (
           <div key={key}>
             <BorderText text={key} />
