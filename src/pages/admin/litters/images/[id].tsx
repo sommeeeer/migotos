@@ -379,6 +379,13 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         description: "Please enter a title.",
       });
     }
+    if (weekTitle === currentWeekSelected.title) {
+      return toast({
+        variant: "default",
+        title: "Info",
+        description: "Title is the same as before.",
+      });
+    }
     mutateSetWeekTitle({
       litter_id: currentLitter.id,
       week_id: currentWeekSelected?.id,
