@@ -216,6 +216,56 @@ export const litterRouter = createTRPCRouter({
       await revalidateAndInvalidate(ctx.res, [`/kittens/${litter.slug}`]);
       return week;
     }),
+  setWeekTitle: protectedProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        litter_id: z.number(),
+        week_id: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const litter = await db.litter.findFirst({
+          where: {
+            id: input.litter_id,
+          },
+          include: {
+            LitterPictureWeek: true,
+          },
+        });
+
+        if (
+          !litter ||
+          !litter.LitterPictureWeek.find((week) => week.id === input.week_id)
+        ) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Litter or week not found",
+          });
+        }
+
+        const updatedWeek = await db.litterPictureWeek.update({
+          where: {
+            id: input.week_id,
+          },
+          data: {
+            title: input.title,
+          },
+        });
+
+        await revalidateAndInvalidate(ctx.res, [
+          `/kittens/${litter.slug}/pictures/${updatedWeek.name}`,
+        ]);
+        return updatedWeek;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
   getLitter: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
