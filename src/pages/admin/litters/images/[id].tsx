@@ -25,7 +25,6 @@ import {
 import BorderText from "~/components/BorderText";
 import {
   CalendarPlus,
-  Delete,
   ImagePlus,
   RotateCcw,
   Trash2,
@@ -86,9 +85,10 @@ type EditLitterImagesProps = {
 
 export default function EditCatImages({ litter }: EditLitterImagesProps) {
   const [kittenImages, setKittenImages] = useState<KittenPictureImage[]>(
-    litter.LitterPictureWeek[0]?.KittenPictureImage ?? [],
+    litter.LitterPictureWeek.at(-1)?.KittenPictureImage ?? [],
   );
   const [currentLitter, setCurrentLitter] = useState<LitterWithImages>(litter);
+  const [tab, setTab] = useState(currentLitter.LitterPictureWeek.at(-1)?.name);
   const [currentWeekSelected, setCurrentWeekSelected] =
     useState<LitterPictureWeek | null>(litter.LitterPictureWeek.at(-1) ?? null);
   const [isAddPhotosOpen, setIsAddPhotosOpen] = useState(false);
@@ -127,12 +127,21 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
             return;
           }
           setCurrentLitter(litter);
-          setCurrentWeekSelected(litter.LitterPictureWeek[0] ?? null);
           setKittenImages(
             litter.LitterPictureWeek.find(
-              (week) => week.id === litter.LitterPictureWeek.at(-1)?.id,
+              (week) => week.id === currentWeekSelected?.id,
             )?.KittenPictureImage ?? [],
           );
+          if (currentWeekSelected) {
+            if (
+              !litter.LitterPictureWeek.find(
+                (week) => week.name === currentWeekSelected?.name,
+              )
+            ) {
+              setCurrentWeekSelected(litter.LitterPictureWeek.at(-1) ?? null);
+              setTab(litter.LitterPictureWeek.at(-1)?.name ?? "");
+            }
+          }
         },
         initialData: litter,
         refetchOnMount: false,
@@ -142,7 +151,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
 
   const { mutate: mutateAddWeek, isLoading: isLoadingAddWeek } =
     api.litter.addWeek.useMutation({
-      onSuccess: () => {
+      onSuccess: (newWeek) => {
         toast({
           variant: "default",
           title: "Success",
@@ -151,6 +160,8 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         });
         setIsAddWeeksOpen(false);
         void refetchGetLitter();
+        setTab(newWeek.name);
+        setCurrentWeekSelected(newWeek);
         setIsUploading(false);
       },
       onError: (error) => {
@@ -216,6 +227,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
       },
       onSettled: () => {
         setIsAddPhotosOpen(false);
+        setIsUploading(false);
       },
     });
 
@@ -289,6 +301,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         title: "Error",
         description: "Something went wrong while uploading images.",
       });
+      setIsUploading(false);
     }
   }
 
@@ -310,6 +323,18 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
       }
       setSize(size);
     }
+  }
+
+  function onTabChange(value: string) {
+    setTab(value);
+    setCurrentWeekSelected(
+      currentLitter.LitterPictureWeek.find((week) => week.name === value) ??
+        null,
+    );
+    setKittenImages(
+      currentLitter.LitterPictureWeek.find((week) => week.name === value)
+        ?.KittenPictureImage ?? [],
+    );
   }
 
   const MotionTabsContent = motion(TabsContent);
@@ -334,7 +359,10 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
               >
                 <Button
                   disabled={
-                    currentWeekSelected === null || isLoadingAddKittenImages
+                    !currentWeekSelected ||
+                    isLoadingAddKittenImages ||
+                    isLoadingAddWeek ||
+                    isLoadingDeleteWeek
                   }
                   className="w-fit"
                 >
@@ -432,7 +460,11 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
               <DialogTrigger asChild>
                 <Button
                   className="w-fit"
-                  disabled={isLoadingAddWeek}
+                  disabled={
+                    isLoadingAddWeek ||
+                    isLoadingAddKittenImages ||
+                    isLoadingDeleteWeek
+                  }
                   onClick={() => {
                     let weekNumber = 0;
                     if (currentLitter.LitterPictureWeek.length > 0) {
@@ -523,17 +555,17 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
             </Button>
           </div>
           {isWeeks ? (
-            <Tabs defaultValue={currentLitter.LitterPictureWeek.at(-1)?.name}>
+            <Tabs value={tab} onValueChange={onTabChange}>
               <TabsList className="mx-auto flex h-fit w-fit flex-wrap border">
-                {currentLitter.LitterPictureWeek.map((week) => (
+                {currentLitter.LitterPictureWeek.sort((a, b) => {
+                  if (a.name === "Newborn") return -1;
+                  if (b.name === "Newborn") return 1;
+                  return parseInt(a.name) - parseInt(b.name);
+                }).map((week) => (
                   <TabsTrigger
                     className="px-4 py-2 text-base"
                     key={week.id}
                     value={week.name}
-                    onClick={() => {
-                      setCurrentWeekSelected(week);
-                      setKittenImages(week.KittenPictureImage);
-                    }}
                   >{`${week.name.replace("-", " ")}`}</TabsTrigger>
                 ))}
               </TabsList>
@@ -553,14 +585,15 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
-                          className="absolute right-4 top-4"
+                          variant="destructive"
+                          className="absolute right-4 top-4 flex items-center"
                           disabled={isLoadingDeleteWeek}
                         >
                           {isLoadingDeleteWeek && (
                             <LoadingSpinner className="mr-2 h-4 w-4" />
                           )}
                           {!isLoadingDeleteWeek && (
-                            <Delete className="mr-2 h-5 w-5" />
+                            <Trash2 className="mr-2 h-5 w-5" />
                           )}
                           Delete week
                         </Button>
@@ -678,15 +711,13 @@ function KittenImage({
       }}
       className="relative flex h-[150px] w-[220px] rounded border-2  border-slate-500"
     >
-      <picture className="h-full w-full relative">
+      <picture className="relative h-full w-full">
         <Image
           src={image.src}
           alt={image.title ?? "Photo of kitten"}
-          // width={image.width}
-          // height={image.height}
           placeholder="blur"
           blurDataURL={image.blururl}
-          layout="fill"
+          fill
           objectFit="cover"
           className="absolute"
         />
@@ -694,7 +725,7 @@ function KittenImage({
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <button className="absolute right-0 z-20 p-1">
-            <Trash2 className="h-6 w-6 fill-red-500 hover:fill-red-700 stroke-gray-100 hover:stroke-gray-200 transition-colors duration-200" />
+            <Trash2 className="h-6 w-6 fill-red-500 stroke-gray-100 transition-colors duration-200 hover:fill-red-700 hover:stroke-gray-200" />
           </button>
         </AlertDialogTrigger>
         <AlertDialogContent>
