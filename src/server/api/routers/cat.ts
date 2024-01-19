@@ -6,6 +6,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 import {
   BLURURL,
+  getImageDimensions,
   revalidateAndInvalidate,
 } from "~/server/helpers";
 
@@ -226,15 +227,24 @@ export const catRouter = createTRPCRouter({
             priority: true,
           },
         });
+
         let newPriority = highestCatImage?.priority ?? 1;
         const catImages = await Promise.all(
           input.imageUrls.map(async (image) => {
             newPriority = newPriority + 1;
+            const dimensions = await getImageDimensions(image);
+            if (!dimensions) {
+              console.error("Error getting image dimensions");
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Invalid request",
+              });
+            }
             const newCatImage = await db.catImage.create({
               data: {
                 src: image,
-                height: 300,
-                width: 300,
+                height: dimensions.height,
+                width: dimensions.width,
                 priority: newPriority,
                 cat_id: input.cat_id,
               },

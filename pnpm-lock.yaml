@@ -111,8 +111,8 @@ dependencies:
     specifier: ^0.3.7
     version: 0.3.7
   image-dimensions:
-    specifier: ^2.2.0
-    version: 2.2.0
+    specifier: ^2.3.0
+    version: 2.3.0
   lucide-react:
     specifier: ^0.292.0
     version: 0.292.0(react@18.2.0)
@@ -7117,8 +7117,8 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
-  /image-dimensions@2.2.0:
-    resolution: {integrity: sha512-GYWCXrbRw28p4h8InYxfEaoavBWZAQZ7a+w53/mpK5a8UA1sCRZGmNQADdj/HndUT+ouzV0sD5+3dEBnyMqFIQ==}
+  /image-dimensions@2.3.0:
+    resolution: {integrity: sha512-8Ar3lsO6+/JLfnUeHnR8Jp/IyQR85Jut5t4Swy1yiXNwj/xM9h5V53v5KE/m/ZSMG4qGRopnSy37uPzKyQCv0A==}
     engines: {node: '>=18'}
     hasBin: true
     dev: false

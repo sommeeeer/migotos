@@ -1,3 +1,4 @@
+import { imageDimensionsFromStream } from "image-dimensions";
 import {
   type NextApiResponse,
   type GetServerSidePropsContext,
@@ -28,16 +29,16 @@ export async function checkAdminSession(ctx: GetServerSidePropsContext) {
 
 export async function getSignedURL() {
   try {
-const command = new PutObjectCommand({
-  Key: `uploads/${crypto.randomUUID()}`,
-  Bucket: Bucket.bucketid.bucketName,
-});
-const uploadUrl = await getSignedUrl(
-  new S3Client({
-    region: "eu-north-1",
-  }),
-  command,
-);
+    const command = new PutObjectCommand({
+      Key: `uploads/${crypto.randomUUID()}`,
+      Bucket: Bucket.bucketid.bucketName,
+    });
+    const uploadUrl = await getSignedUrl(
+      new S3Client({
+        region: "eu-north-1",
+      }),
+      command,
+    );
     return uploadUrl;
   } catch (err) {
     console.error(err);
@@ -103,4 +104,13 @@ export async function revalidateAndInvalidate(
         .concat(paths),
     );
   }
+}
+
+export async function getImageDimensions(url: string) {
+  const { body } = await fetch(url);
+  if (!body) {
+    throw new Error("No body in response");
+  }
+  const dimensions = await imageDimensionsFromStream(body);
+  return dimensions;
 }

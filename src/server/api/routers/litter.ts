@@ -4,7 +4,11 @@ import { litterSchema } from "~/lib/validators/litter";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
-import { BLURURL, revalidateAndInvalidate } from "~/server/helpers";
+import {
+  BLURURL,
+  getImageDimensions,
+  revalidateAndInvalidate,
+} from "~/server/helpers";
 
 export const litterRouter = createTRPCRouter({
   createLitter: protectedProcedure
@@ -327,11 +331,19 @@ export const litterRouter = createTRPCRouter({
 
         const kittenImages = await Promise.all(
           input.imageUrls.map(async (image) => {
+            const dimensions = await getImageDimensions(image);
+            if (!dimensions) {
+              console.error("Error getting image dimensions");
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Invalid request",
+              });
+            }
             const kittenPictureImage = await db.kittenPictureImage.create({
               data: {
                 src: image,
-                height: 300,
-                width: 300,
+                height: dimensions.height,
+                width: dimensions.width,
                 litter_picture_week: input.litter_picture_week,
                 blururl: BLURURL,
                 title: `(N)Migoto's ${input.title}, ${kitten?.stamnavn}`,
