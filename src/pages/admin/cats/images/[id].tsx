@@ -23,7 +23,7 @@ import {
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from "lucide-react";
-import { type ChangeEvent, useState, useId } from "react";
+import { useState, useId } from "react";
 import {
   DndContext,
   useSensors,
@@ -54,11 +54,13 @@ import {
 } from "~/components/ui/alert-dialog";
 import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
-import { bytesToMB, uploadS3 } from "~/utils/helpers";
+import { bytesToMB, handleImageChange } from "~/utils/helpers";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { cn } from "~/lib/utils";
 import { AiFillDelete } from "react-icons/ai";
 import { AnimatePresence, motion } from "framer-motion";
+import { useUploadImages } from "~/hooks/use-upload-images";
+import { Progress } from "~/components/ui/progress";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -76,7 +78,9 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   const [size, setSize] = useState<number | undefined>();
   const [items, setItems] = useState<CatImage[]>(cat.CatImage);
   const [open, setOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [progressValue, setProgressValue] = useState(0);
+
+  const { isUploading, uploadImages } = useUploadImages();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -132,6 +136,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
           "Cat images succesfully uploaded and added to the database.",
       });
       void refetch();
+      setProgressValue(0);
     },
     onError: () => {
       toast({
@@ -159,26 +164,6 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
     }
   }
 
-  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
-    const files = event.target.files;
-    const imagesArray: string[] = [];
-
-    if (files) {
-      for (const file of files) {
-        if (file.type.startsWith("image/")) {
-          imagesArray.push(URL.createObjectURL(file));
-        }
-      }
-      setFilesToUpload(files);
-      setSelectedImages(imagesArray);
-      let size = 0;
-      for (const file of files) {
-        size += file.size;
-      }
-      setSize(size);
-    }
-  }
-
   function handleSaveOrder() {
     if (!items) return;
     const newOrder = items.map((item, index) => {
@@ -200,40 +185,15 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
         title: "Error",
         description: "Please select images to upload.",
       });
-    setIsUploading(true);
-    try {
-      const imgs = [];
-      const res = await fetch(
-        `/api/getSignedURLS?amount=${filesToUpload.length}`,
-      );
-      if (!res.ok) {
-        throw new Error("Something went wrong while getting signed URLs");
-      }
-      const { urls } = (await res.json()) as { urls: string[] };
-      for (let i = 0; i < filesToUpload.length; i++) {
-        const file = filesToUpload[i];
-        const url = urls[i];
-        if (!url || !file)
-          throw new Error("Something went wrong while uploading images.");
-        const imageURL = await uploadS3(file, url);
-        if (!imageURL) {
-          throw new Error("Something went wrong while uploading images.");
-        }
-        imgs.push(imageURL);
-      }
+    const imageUrls = await uploadImages(filesToUpload, (i) => {
+      const progress = (i / filesToUpload.length) * 100;
+      setProgressValue(progress);
+    });
+    if (imageUrls) {
       mutateAddCatImages({
         cat_id: cat.id,
-        imageUrls: imgs,
+        imageUrls,
       });
-    } catch (err) {
-      console.error(err);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while uploading images.",
-      });
-    } finally {
-      setIsUploading(false);
     }
   }
 
@@ -310,7 +270,14 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                       multiple
                       className="cursor-pointer"
                       accept="image/png, image/jpeg, image/jpg"
-                      onChange={handleImageChange}
+                      onChange={(e) =>
+                        handleImageChange(
+                          e,
+                          setFilesToUpload,
+                          setSelectedImages,
+                          setSize,
+                        )
+                      }
                     />
                     <div className="grid grid-cols-5 items-end gap-2">
                       {selectedImages.map((image, index) => (
@@ -331,6 +298,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                     )}
                   </div>
                 </div>
+                {isUploading && <Progress value={progressValue} />}
                 <DialogFooter className="sm:justify-start">
                   <DialogClose asChild disabled={isUploading}>
                     <Button
@@ -379,8 +347,8 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
             id={id}
           >
             <SortableContext items={items} strategy={rectSortingStrategy}>
-              <section className="flex justify-center">
-                <ul className="grid grid-cols-5 gap-1 gap-x-2">
+              <section className="w-full max-w-7xl">
+                <ul className="grid-cols-responsive grid place-items-center gap-1 gap-x-2">
                   <AnimatePresence>
                     {items.map((catimage) => (
                       <SortableItem

@@ -1,5 +1,6 @@
 import { parseISO, format } from "date-fns";
 import crypto from "crypto";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 export function formatDate(inputDate: string) {
   const date = parseISO(inputDate);
@@ -65,4 +66,29 @@ export function createGravatarURL(
 
 export function capitalizeString(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function handleImageChange(
+  event: ChangeEvent<HTMLInputElement>,
+  setFilesToUpload: Dispatch<SetStateAction<FileList | null | undefined>>,
+  setSelectedImages: Dispatch<SetStateAction<string[]>>,
+  setSize: Dispatch<SetStateAction<number | undefined>>,
+) {
+  const files = event.target.files;
+  const imagesArray: string[] = [];
+
+  if (files) {
+    for (const file of files) {
+      if (file.type.startsWith("image/")) {
+        imagesArray.push(URL.createObjectURL(file));
+      }
+    }
+    setFilesToUpload(files);
+    setSelectedImages(imagesArray);
+    let size = 0;
+    for (const file of files) {
+      size += file.size;
+    }
+    setSize(size);
+  }
 }

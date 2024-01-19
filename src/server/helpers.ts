@@ -45,12 +45,12 @@ export async function getSignedURL() {
     throw new Error("Error getting signed URL");
   }
 }
-export async function getSignedURLS(amount: number) {
+export async function getSignedURLS(filenames: string[]) {
   const urls = [];
   try {
-    for (let i = 0; i < amount; i++) {
+    for (const filename of filenames) {
       const command = new PutObjectCommand({
-        Key: `uploads/${crypto.randomUUID()}`,
+        Key: `uploads/${filename}`,
         Bucket: Bucket.bucketid.bucketName,
       });
       const uploadUrl = await getSignedUrl(

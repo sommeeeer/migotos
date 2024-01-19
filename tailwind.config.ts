@@ -16,6 +16,9 @@ module.exports = {
       },
     },
     extend: {
+      gridTemplateColumns: {
+        "responsive": "repeat(auto-fit, minmax(210px, 1fr))",
+      },
       fontFamily: {
         poppins: "var(--font-poppins)",
         playfair: "var(--font-playfair)",

@@ -42,7 +42,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { bytesToMB, uploadS3 } from "~/utils/helpers";
+import { bytesToMB, handleImageChange } from "~/utils/helpers";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import {
@@ -68,6 +68,8 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { AnimatePresence, motion } from "framer-motion";
+import { useUploadImages } from "~/hooks/use-upload-images";
+import { Progress } from "~/components/ui/progress";
 
 type LitterWithImages = Prisma.LitterGetPayload<{
   include: {
@@ -100,13 +102,15 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
       : 1,
   );
   const [size, setSize] = useState<number | undefined>();
-  const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
+  const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
   const [kittenSelectValue, setKittenSelectValue] = useState<string>("");
   const [weekTitle, setWeekTitle] = useState<string>(
     currentWeekSelected?.title ?? "",
   );
+  const [progressValue, setProgressValue] = useState(0);
+
+  const { isUploading, uploadImages } = useUploadImages();
 
   const groupedImages = useMemo(() => {
     const groups: Record<string, KittenPictureImage[]> = {};
@@ -198,7 +202,6 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         void refetchGetLitter();
         setTab(newWeek.name);
         setCurrentWeekSelected(newWeek);
-        setIsUploading(false);
       },
       onError: (error) => {
         if (error.shape?.data.code === "CONFLICT") {
@@ -264,7 +267,6 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
       },
       onSettled: () => {
         setIsAddPhotosOpen(false);
-        setIsUploading(false);
       },
     });
 
@@ -305,61 +307,16 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         description: "Please select a week.",
       });
     }
-    setIsUploading(true);
-    try {
-      const imgs = [];
-      const res = await fetch(
-        `/api/getSignedURLS?amount=${filesToUpload.length}`,
-      );
-      if (!res.ok) {
-        throw new Error("Something went wrong while getting signed URLs");
-      }
-      const { urls } = (await res.json()) as { urls: string[] };
-      for (let i = 0; i < filesToUpload.length; i++) {
-        const file = filesToUpload[i];
-        const url = urls[i];
-        if (!url || !file)
-          throw new Error("Something went wrong while uploading images.");
-        const imageURL = await uploadS3(file, url);
-        if (!imageURL) {
-          throw new Error("Something went wrong while uploading images.");
-        }
-        imgs.push(imageURL);
-        console.log("uploaded", i);
-      }
+    const imageUrls = await uploadImages(filesToUpload, (i) => {
+      const progress = (i / filesToUpload.length) * 100;
+      setProgressValue(progress);
+    });
+    if (imageUrls) {
       mutateAddKittenImages({
-        imageUrls: imgs,
+        imageUrls: imageUrls,
         title: kittenSelectValue,
         litter_picture_week: currentWeekSelected?.id,
       });
-    } catch (err) {
-      console.error(err);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while uploading images.",
-      });
-      setIsUploading(false);
-    }
-  }
-
-  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
-    const files = event.target.files;
-    const imagesArray: string[] = [];
-
-    if (files) {
-      for (const file of files) {
-        if (file.type.startsWith("image/")) {
-          imagesArray.push(URL.createObjectURL(file));
-        }
-      }
-      setFilesToUpload(files);
-      setSelectedImages(imagesArray);
-      let size = 0;
-      for (const file of files) {
-        size += file.size;
-      }
-      setSize(size);
     }
   }
 
@@ -460,7 +417,14 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                       multiple
                       className="cursor-pointer"
                       accept="image/png, image/jpeg, image/jpg"
-                      onChange={handleImageChange}
+                      onChange={(e) =>
+                        handleImageChange(
+                          e,
+                          setFilesToUpload,
+                          setSelectedImages,
+                          setSize,
+                        )
+                      }
                     />
                     <div className="grid grid-cols-5 items-end gap-2">
                       {selectedImages.map((image, index) => (
@@ -503,6 +467,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                     </Select>
                   </div>
                 </div>
+                {isUploading && <Progress value={progressValue} />}
                 <DialogFooter className="sm:justify-start">
                   <DialogClose asChild disabled={isUploading}>
                     <Button
@@ -692,6 +657,11 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                     <div className="flex gap-1">
                       <Input
                         className="flex-1"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleSetWeekTitle();
+                          }
+                        }}
                         placeholder="Enter title..."
                         value={weekTitle}
                         onChange={(e) => setWeekTitle(e.target.value)}
@@ -718,7 +688,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                         {Object.entries(groupedImages).map(([key, images]) => (
                           <div key={key}>
                             {key !== "" && <BorderText text={key} />}
-                            <ul className="grid grid-cols-2 justify-items-center gap-2 md:grid-cols-3 md:gap-3 lg:grid-cols-4 lg:gap-4">
+                            <ul className="mb-6 grid grid-cols-responsive justify-items-center gap-2 gap-y-4">
                               <AnimatePresence>
                                 {images.map((image) => (
                                   <KittenImage
@@ -787,7 +757,7 @@ function KittenImage({
         opacity: 0,
         transition: { duration: 0.4 },
       }}
-      className="relative flex h-[100px] w-[140px] rounded border-2  border-slate-500 md:h-[120px] md:w-[180px] lg:h-[150px]  lg:w-[220px]"
+      className="relative flex h-[150px] w-[220px] rounded border-2 border-slate-500"
     >
       <picture className="relative h-full w-full">
         <Image

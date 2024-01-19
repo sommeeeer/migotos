@@ -41,12 +41,12 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { Label } from "~/components/ui/label";
-import { uploadS3 } from "~/utils/helpers";
 import { api } from "~/utils/api";
 import ShowCurrentImages from "~/components/ShowCurrentImages";
 import CreateableSelect from "react-select/creatable";
 import { db } from "~/server/db";
 import ImageUploader from "~/components/ImageUploader";
+import { useUploadImages } from "~/hooks/use-upload-images";
 
 interface NewLitterProps {
   motherNames: { name: string; stamnavn: string }[];
@@ -61,7 +61,7 @@ export default function NewLitter({
   const [motherImage, setMotherImage] = useState<File | undefined>(undefined);
   const [fatherImage, setFatherImage] = useState<File | undefined>(undefined);
   const [postImage, setPostImage] = useState<File | undefined>(undefined);
-  const [isUploading, setIsUploading] = useState(false);
+  const { isUploading, uploadImages } = useUploadImages();
 
   const litterForm = useForm<z.infer<typeof litterSchema>>({
     resolver: zodResolver(litterSchema),
@@ -113,42 +113,24 @@ export default function NewLitter({
     });
 
   async function handleUpload() {
-    const filesToUpload = [motherImage, fatherImage, postImage];
+    const filesToUpload = [motherImage, fatherImage, postImage].filter(
+      (file) => file !== undefined,
+    ) as File[];
 
-    if (filesToUpload.some((file) => !file)) {
+    if (filesToUpload.length < 3) {
       return toast({
         variant: "destructive",
         title: "Error",
         description: "Please select all images before uploading.",
       });
     }
-    setIsUploading(true);
     try {
-      const imgs: string[] = [];
-      const res = await fetch(
-        `/api/getSignedURLS?amount=${filesToUpload.length}`,
-      );
-      if (!res.ok) {
-        throw new Error("Something went wrong while getting signed URLs");
+      const imageUrls = await uploadImages(filesToUpload);
+      if (imageUrls?.length === 3) {
+        litterForm.setValue("mother_img", imageUrls[0]!);
+        litterForm.setValue("father_img", imageUrls[1]!);
+        litterForm.setValue("post_image", imageUrls[2]!);
       }
-      const { urls } = (await res.json()) as { urls: string[] };
-      for (let i = 0; i < filesToUpload.length; i++) {
-        const file = filesToUpload[i];
-        const url = urls[i];
-        if (!url || !file)
-          throw new Error("Something went wrong while uploading images.");
-        const imageURL = await uploadS3(file, url);
-        if (!imageURL) {
-          throw new Error("Something went wrong while uploading images.");
-        }
-        imgs.push(imageURL);
-      }
-      if (imgs.length !== 3) {
-        throw new Error("Something went wrong while uploading images.");
-      }
-      litterForm.setValue("mother_img", imgs[0]!);
-      litterForm.setValue("father_img", imgs[1]!);
-      litterForm.setValue("post_image", imgs[2]!);
     } catch (err) {
       console.error(err);
       toast({
@@ -156,10 +138,9 @@ export default function NewLitter({
         title: "Error",
         description: "Something went wrong while uploading images.",
       });
-    } finally {
-      setIsUploading(false);
     }
   }
+
   function onSubmitLitter(values: z.infer<typeof litterSchema>) {
     mutateCreateLitter({
       ...values,
@@ -464,7 +445,11 @@ export default function NewLitter({
                 Upload
               </Button>
               <div className="mt-4 flex gap-1">
-                <Button variant="secondary" type="button" onClick={() => router.back()}>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={() => router.back()}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isLoading}>

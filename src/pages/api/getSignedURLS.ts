@@ -1,5 +1,6 @@
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { z, TypeOf } from "zod";
 import { getServerAuthSession } from "~/server/auth";
 import { getSignedURLS } from "~/server/helpers";
 
@@ -8,8 +9,17 @@ type ResponseData = {
   urls?: string[];
 };
 
+const body = z.object({
+  filenames: z.array(z.string()),
+});
+
+export interface NextApiRequestWithBody extends NextApiRequest {
+  // use TypeOf to infer the properties from helloSchema
+  body: TypeOf<typeof body>;
+}
+
 export default async function handler(
-  req: NextApiRequest,
+  req: NextApiRequestWithBody,
   res: NextApiResponse<ResponseData>,
 ) {
   const session = await getServerAuthSession({
@@ -26,18 +36,19 @@ export default async function handler(
     return;
   }
 
-  if (req.method !== "GET") {
+  if (req.method !== "POST") {
     res.status(405).json({ message: "Method not allowed" });
     return;
   }
 
-  const { amount } = req.query;
-  if (!amount || isNaN(Number(amount))) {
-    res.status(400).json({ message: "Amount must be a valid number" });
+  const { filenames } = req.body;
+  if (!filenames || !Array.isArray(filenames)) {
+    res.status(400).json({ message: "Filenames must be an array" });
     return;
   }
 
-  const urls = await getSignedURLS(Number(amount));
+  console.log(filenames);
+  const urls = await getSignedURLS(filenames);
 
   if (!urls) {
     res.status(500).json({ message: "Internal server error" });
