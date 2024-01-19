@@ -140,6 +140,9 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
             ) {
               setCurrentWeekSelected(litter.LitterPictureWeek.at(-1) ?? null);
               setTab(litter.LitterPictureWeek.at(-1)?.name ?? "");
+              setKittenImages(
+                litter.LitterPictureWeek.at(-1)?.KittenPictureImage ?? [],
+              );
             }
           }
         },
@@ -288,6 +291,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
           throw new Error("Something went wrong while uploading images.");
         }
         imgs.push(imageURL);
+        console.log("uploaded", i);
       }
       mutateAddKittenImages({
         imageUrls: imgs,
@@ -638,7 +642,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                             ([key, images]) => (
                               <div key={key}>
                                 {key !== "" && <BorderText text={key} />}
-                                <ul className="grid grid-cols-4 justify-items-center gap-4">
+                                <ul className="grid grid-cols-2 justify-items-center gap-2 md:grid-cols-3 md:gap-3 lg:grid-cols-4 lg:gap-4">
                                   <AnimatePresence>
                                     {images.map((image) => (
                                       <KittenImage
@@ -709,7 +713,7 @@ function KittenImage({
         opacity: 0,
         transition: { duration: 0.3 },
       }}
-      className="relative flex h-[150px] w-[220px] rounded border-2  border-slate-500"
+      className="relative flex h-[100px] w-[140px] rounded border-2  border-slate-500 md:h-[120px] md:w-[180px] lg:h-[150px]  lg:w-[220px]"
     >
       <picture className="relative h-full w-full">
         <Image

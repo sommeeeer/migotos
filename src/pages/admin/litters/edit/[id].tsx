@@ -477,7 +477,7 @@ export default function EditLitter({
                   />
                 </div>
                 <ImageUploader
-                  label="Select New Post Image"
+                  label="Select New Post Image (650x400)"
                   isLoading={isLoading}
                   isUploading={isUploading}
                   setValue={setPostImage}

@@ -84,9 +84,9 @@ export default function ShowCurrentImages() {
                   <TooltipTrigger asChild>
                     <Image
                       src={post_image}
-                      width={112}
-                      height={112}
-                      className="h-auto w-48 object-cover"
+                      width={640}
+                      height={400}
+                      className="aspect-[16/10] w-48 object-cover"
                       alt={`${name} post image`}
                       quality={100}
                       priority

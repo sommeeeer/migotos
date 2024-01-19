@@ -446,7 +446,7 @@ export default function NewLitter({
                   />
                 </div>
                 <ImageUploader
-                  label="Select New Post Image"
+                  label="Select New Post Image (650x400)"
                   isLoading={isLoading}
                   isUploading={isUploading}
                   setValue={setPostImage}
