@@ -25,6 +25,7 @@ import {
 import BorderText from "~/components/BorderText";
 import {
   CalendarPlus,
+  HardDriveIcon,
   ImagePlus,
   RotateCcw,
   Trash2,
@@ -103,6 +104,9 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [kittenSelectValue, setKittenSelectValue] = useState<string>("");
+  const [weekTitle, setWeekTitle] = useState<string>(
+    currentWeekSelected?.title ?? "",
+  );
 
   const groupedImages = useMemo(() => {
     const groups: Record<string, KittenPictureImage[]> = {};
@@ -143,6 +147,13 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
               setKittenImages(
                 litter.LitterPictureWeek.at(-1)?.KittenPictureImage ?? [],
               );
+              setWeekTitle(litter.LitterPictureWeek.at(-1)?.title ?? "");
+            } else {
+              setWeekTitle(
+                litter.LitterPictureWeek.find(
+                  (week) => week.name === currentWeekSelected?.name,
+                )?.title ?? "",
+              );
             }
           }
         },
@@ -151,6 +162,28 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         refetchOnWindowFocus: false,
       },
     );
+
+  const { mutate: mutateSetWeekTitle, isLoading: isLoadingSetWeekTitle } =
+    api.litter.setWeekTitle.useMutation({
+      onSuccess: () => {
+        toast({
+          variant: "default",
+          title: "Success",
+          color: "green",
+          description: "Week title updated successfully.",
+        });
+        void refetchGetLitter();
+      },
+      onError: () => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description:
+            "Something went wrong while updating week title. Please try again",
+        });
+        void refetchGetLitter();
+      },
+    });
 
   const { mutate: mutateAddWeek, isLoading: isLoadingAddWeek } =
     api.litter.addWeek.useMutation({
@@ -208,6 +241,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         void refetchGetLitter();
       },
     });
+
   const { mutate: mutateAddKittenImages, isLoading: isLoadingAddKittenImages } =
     api.litter.addLitterImages.useMutation({
       onSuccess: () => {
@@ -329,6 +363,29 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
     }
   }
 
+  function handleSetWeekTitle() {
+    if (!currentWeekSelected) {
+      return toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select a week.",
+      });
+    }
+
+    if (!weekTitle) {
+      return toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please enter a title.",
+      });
+    }
+    mutateSetWeekTitle({
+      litter_id: currentLitter.id,
+      week_id: currentWeekSelected?.id,
+      title: weekTitle,
+    });
+  }
+
   function onTabChange(value: string) {
     setTab(value);
     setCurrentWeekSelected(
@@ -339,9 +396,11 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
       currentLitter.LitterPictureWeek.find((week) => week.name === value)
         ?.KittenPictureImage ?? [],
     );
+    setWeekTitle(
+      currentLitter.LitterPictureWeek.find((week) => week.name === value)
+        ?.title ?? "",
+    );
   }
-
-  const MotionTabsContent = motion(TabsContent);
 
   return (
     <AdminLayout>
@@ -573,95 +632,103 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                   >{`${week.name.replace("-", " ")}`}</TabsTrigger>
                 ))}
               </TabsList>
-              <AnimatePresence>
-                {currentLitter.LitterPictureWeek.map((week) => (
-                  <MotionTabsContent
-                    key={week.id}
-                    value={week.name}
-                    initial={{ opacity: 0 }}
-                    animate={{
-                      opacity: 1,
-                      transition: { duration: 0.4 },
-                    }}
-                    exit={{ opacity: 0, transition: { duration: 0.4 } }}
-                    className="relative"
-                  >
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="destructive"
-                          className="absolute right-4 top-4 flex items-center"
-                          disabled={isLoadingDeleteWeek}
+              {currentLitter.LitterPictureWeek.map((week) => (
+                <TabsContent
+                  key={week.id}
+                  value={week.name}
+                  className="relative"
+                >
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        className="absolute right-4 top-4 flex items-center"
+                        disabled={isLoadingDeleteWeek}
+                      >
+                        {isLoadingDeleteWeek && (
+                          <LoadingSpinner className="mr-2 h-4 w-4" />
+                        )}
+                        {!isLoadingDeleteWeek && (
+                          <Trash2 className="mr-2 h-5 w-5" />
+                        )}
+                        Delete week
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete this week and remove all the photos associated
+                          with it.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-red-500 hover:bg-red-600"
+                          onClick={() =>
+                            mutateDeleteWeek({
+                              litter_id: week.litter_id,
+                              week_id: week.id,
+                            })
+                          }
                         >
-                          {isLoadingDeleteWeek && (
-                            <LoadingSpinner className="mr-2 h-4 w-4" />
-                          )}
-                          {!isLoadingDeleteWeek && (
-                            <Trash2 className="mr-2 h-5 w-5" />
-                          )}
-                          Delete week
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete this week and remove all the photos
-                            associated with it.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            className="bg-red-500 hover:bg-red-600"
-                            onClick={() =>
-                              mutateDeleteWeek({
-                                litter_id: week.litter_id,
-                                week_id: week.id,
-                              })
-                            }
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>{week.name.replace("-", " ")}</CardTitle>
-                        <CardDescription>
-                          {week.KittenPictureImage.length} total images
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="min-h-[15rem] space-y-2">
-                        <section>
-                          {Object.entries(groupedImages).map(
-                            ([key, images]) => (
-                              <div key={key}>
-                                {key !== "" && <BorderText text={key} />}
-                                <ul className="grid grid-cols-2 justify-items-center gap-2 md:grid-cols-3 md:gap-3 lg:grid-cols-4 lg:gap-4">
-                                  <AnimatePresence>
-                                    {images.map((image) => (
-                                      <KittenImage
-                                        key={image.id}
-                                        image={image}
-                                        refetchImages={refetchGetLitter}
-                                      />
-                                    ))}
-                                  </AnimatePresence>
-                                </ul>
-                              </div>
-                            ),
-                          )}
-                        </section>
-                      </CardContent>
-                    </Card>
-                  </MotionTabsContent>
-                ))}
-              </AnimatePresence>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <div className="absolute left-4 top-4 flex w-60 flex-col items-start gap-2">
+                    <div className="flex gap-1">
+                      <Input
+                        className="flex-1"
+                        placeholder="Enter title..."
+                        value={weekTitle}
+                        onChange={(e) => setWeekTitle(e.target.value)}
+                      />
+                      <Button variant="outline" onClick={handleSetWeekTitle}>
+                        {isLoadingSetWeekTitle && (
+                          <LoadingSpinner className="mr-2 h-4 w-4" />
+                        )}
+                        {!isLoadingSetWeekTitle && (
+                          <HardDriveIcon className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>{week.name.replace("-", " ")}</CardTitle>
+                      <CardDescription>
+                        {week.KittenPictureImage.length} total images
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="min-h-[15rem] space-y-2">
+                      <section>
+                        {Object.entries(groupedImages).map(([key, images]) => (
+                          <div key={key}>
+                            {key !== "" && <BorderText text={key} />}
+                            <ul className="grid grid-cols-2 justify-items-center gap-2 md:grid-cols-3 md:gap-3 lg:grid-cols-4 lg:gap-4">
+                              <AnimatePresence>
+                                {images.map((image) => (
+                                  <KittenImage
+                                    key={image.id}
+                                    image={image}
+                                    refetchImages={refetchGetLitter}
+                                  />
+                                ))}
+                              </AnimatePresence>
+                            </ul>
+                          </div>
+                        ))}
+                      </section>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              ))}
             </Tabs>
           ) : (
             <p className="text-xl text-gray-700">
@@ -707,11 +774,11 @@ function KittenImage({
       initial={{ opacity: 0 }}
       animate={{
         opacity: 1,
-        transition: { duration: 0.3 },
+        transition: { duration: 0.4 },
       }}
       exit={{
         opacity: 0,
-        transition: { duration: 0.3 },
+        transition: { duration: 0.4 },
       }}
       className="relative flex h-[100px] w-[140px] rounded border-2  border-slate-500 md:h-[120px] md:w-[180px] lg:h-[150px]  lg:w-[220px]"
     >
