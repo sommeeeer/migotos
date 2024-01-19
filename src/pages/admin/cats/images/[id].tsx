@@ -194,7 +194,12 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   }
 
   async function handleUpload() {
-    if (!filesToUpload) return;
+    if (!filesToUpload)
+      return toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please select images to upload.",
+      });
     setIsUploading(true);
     try {
       const imgs = [];
