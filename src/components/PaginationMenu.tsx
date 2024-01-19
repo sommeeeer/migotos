@@ -48,6 +48,7 @@ export default function PaginationMenu({
         {currentPage > 1 && (
           <PaginationItem>
             <PaginationPrevious
+              rel="prev"
               href={
                 currentPage - 1 <= 1
                   ? "/news/"
@@ -72,7 +73,7 @@ export default function PaginationMenu({
         )}
         {currentPage < totalPages - 1 && (
           <PaginationItem>
-            <PaginationNext href={`/news/page/${currentPage + 1}`} />
+            <PaginationNext rel="next" href={`/news/page/${currentPage + 1}`} />
           </PaginationItem>
         )}
       </PaginationContent>
