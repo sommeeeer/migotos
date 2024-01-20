@@ -27,6 +27,10 @@ export default {
           domainName: "migotos.com",
           domainAlias: "www.migotos.com",
         },
+        environment: {
+          NEXTAUTH_URL:
+            app.mode === "dev" ? "http://localhost:3000" : env.NEXTAUTH_URL,
+        },
         bind: [bucket],
       });
       stack.addOutputs({
