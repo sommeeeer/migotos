@@ -112,20 +112,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
         />
         <link rel="icon" href="/static/icons/socialicon.png" />
       </Head>
-      <Script
-        async
-        id="tag-manager"
-        strategy="afterInteractive"
-        src="https://www.googletagmanager.com/gtag/js?id=G-RMHCYY112C"
-      />
-      <Script async strategy="afterInteractive" id="analytics">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-RMHCYY112C');
-        `}
-      </Script>
       <div
         className={`flex flex-col ${poppins.className} ${playfair.variable}`}
       >
