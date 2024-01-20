@@ -1,6 +1,6 @@
 import { parseISO, format } from "date-fns";
 import crypto from "crypto";
-import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 
 export function formatDate(inputDate: string) {
   const date = parseISO(inputDate);

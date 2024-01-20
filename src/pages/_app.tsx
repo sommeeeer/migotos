@@ -8,7 +8,6 @@ import Header from "~/components/Header";
 import NextNProgress from "nextjs-progressbar";
 
 import { Poppins, Playfair_Display } from "next/font/google";
-import Script from "next/script";
 
 const poppins = Poppins({
   subsets: ["latin"],

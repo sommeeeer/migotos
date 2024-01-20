@@ -1,6 +1,6 @@
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { z, TypeOf } from "zod";
+import { z, type TypeOf } from "zod";
 import { getServerAuthSession } from "~/server/auth";
 import { getSignedURLS } from "~/server/helpers";
 
