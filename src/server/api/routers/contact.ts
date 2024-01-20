@@ -64,4 +64,28 @@ export const contactRouter = createTRPCRouter({
       });
     }
   }),
+  setOpened: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ input }) => {
+      try {
+        const msg = await db.contactMessage.findFirst({ where: { id: input } });
+        if (!msg) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Message not found",
+          });
+        }
+        await db.contactMessage.update({
+          where: { id: input },
+          data: { seen: true },
+        });
+        return msg;
+      } catch (error) {
+        console.error(error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to set message as opened",
+        });
+      }
+    }),
 });

@@ -140,6 +140,7 @@ model ContactMessage {
   message   String   @db.Text
   createdAt DateTime @default(now())
   subject   String   @db.VarChar(255)
+  seen      Boolean  @default(false)
 }
 
 model Comment {

@@ -40,7 +40,7 @@ import { Button } from "~/components/ui/button";
 import { toast } from "~/components/ui/use-toast";
 import { useState } from "react";
 import { cn } from "~/lib/utils";
-import { RotateCcw, Trash2 } from "lucide-react";
+import { Inbox, MailCheck, MailOpen, RotateCcw, Trash2 } from "lucide-react";
 
 type MessagesProps = {
   initialMessages: ContactMessage[];
@@ -92,6 +92,21 @@ export default function Messages({ initialMessages }: MessagesProps) {
       });
     },
   });
+  const { mutate: mutateSetOpened } = api.contact.setOpened.useMutation({
+    onSuccess: () => {
+      toast({
+        variant: "default",
+        title: "Success",
+        color: "green",
+        description: "Messages deleted successfully.",
+      });
+      void refetch();
+    },
+  });
+
+  function handleOpenMessage(id: number) {
+    mutateSetOpened(id);
+  }
 
   function deleteMessage(id: number) {
     mutateDeleteOne(id);
@@ -107,7 +122,11 @@ export default function Messages({ initialMessages }: MessagesProps) {
         <div className="flex gap-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button className="flex items-center gap-1" variant="destructive" disabled={messages.length === 0}>
+              <Button
+                className="flex items-center gap-1"
+                variant="destructive"
+                disabled={messages.length === 0}
+              >
                 <Trash2 className="h-5 w-5" />
                 Delete all
               </Button>
@@ -151,13 +170,19 @@ export default function Messages({ initialMessages }: MessagesProps) {
               <TableHead>Name</TableHead>
               <TableHead>Subject</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>
+                <Inbox />
+              </TableHead>
               <TableHead>Created At</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {messages.map((message) => (
-              <TableRow key={message.id} className="text-base">
+              <TableRow
+                key={message.id}
+                className={cn("text-base", !message.seen && "font-semibold")}
+              >
                 <TableCell>{message.id}</TableCell>
                 <TableCell>{message.name}</TableCell>
                 <TableCell className="max-w-xs overflow-hidden text-ellipsis px-3 py-4">
@@ -165,12 +190,17 @@ export default function Messages({ initialMessages }: MessagesProps) {
                 </TableCell>
                 <TableCell>{message.email}</TableCell>
                 <TableCell>
+                  {message.seen ? <MailCheck /> : <MailOpen />}
+                </TableCell>
+                <TableCell>
                   {format(message.createdAt, "dd.MM.yyyy HH:mm:ss")}
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Dialog>
-                      <DialogTrigger>
+                      <DialogTrigger
+                        onClick={() => handleOpenMessage(message.id)}
+                      >
                         <BiMessageAltDetail className="h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                       </DialogTrigger>
                       <DialogContent className="p-8">
