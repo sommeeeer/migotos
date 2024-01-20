@@ -94,12 +94,6 @@ export default function Messages({ initialMessages }: MessagesProps) {
   });
   const { mutate: mutateSetOpened } = api.contact.setOpened.useMutation({
     onSuccess: () => {
-      toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Messages deleted successfully.",
-      });
       void refetch();
     },
   });
