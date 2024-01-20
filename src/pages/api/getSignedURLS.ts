@@ -47,7 +47,6 @@ export default async function handler(
     return;
   }
 
-  console.log(filenames);
   const urls = await getSignedURLS(filenames);
 
   if (!urls) {

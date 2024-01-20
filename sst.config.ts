@@ -34,7 +34,7 @@ export default {
         bind: [bucket],
       });
       stack.addOutputs({
-        SiteUrl: site.url,
+        SiteUrl: site.customDomainUrl ?? site.url,
       });
     });
   },
