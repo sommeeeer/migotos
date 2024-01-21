@@ -58,8 +58,10 @@ function BlogPost({ blogPost }: Props) {
         {blogPost.image_url && (
           <Image
             src={blogPost.image_url}
-            width={384}
-            height={167}
+            width="0"
+            height="0"
+            sizes="100vw"
+            className="w-full h-auto"
             alt={`${blogPost.title} image`}
             quality={100}
           />
