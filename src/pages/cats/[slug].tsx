@@ -11,34 +11,13 @@ import { api } from "~/utils/api";
 import CommentForm from "~/components/CommentForm";
 import Comment from "~/components/Comment";
 import LoginButton from "~/components/LoginButton";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { useState } from "react";
-import { IoMdClose, IoMdFemale, IoMdMale } from "react-icons/io";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useSwipeable } from "react-swipeable";
-import useKeypress from "react-use-keypress";
+import { IoMdFemale, IoMdMale } from "react-icons/io";
 import { FaLeaf } from "react-icons/fa";
 import Head from "next/head";
-
-export const variants = {
-  enter: (direction: number) => {
-    return {
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-    };
-  },
-  center: {
-    x: 0,
-    opacity: 1,
-  },
-  exit: (direction: number) => {
-    return {
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-    };
-  },
-};
+import ImageCarousel from "~/components/ImageCarousel";
 
 type Props = {
   cat: Cat & { CatImage: CatImageType[] };
@@ -58,42 +37,6 @@ function Cat({ cat, mother, father }: Props) {
   });
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
-  const [images, setImages] = useState<CatImageType[]>(cat.CatImage.slice(1));
-  const [direction, setDirection] = useState(0);
-
-  const goToNextImage = () => {
-    setDirection(1);
-    setCurrentImageIndex((currentImageIndex + 1) % images.length);
-  };
-
-  const goToPreviousImage = () => {
-    setDirection(-1);
-    setCurrentImageIndex(
-      (currentImageIndex - 1 + images.length) % images.length,
-    );
-  };
-
-  const handlers = useSwipeable({
-    onSwipedLeft: () => {
-      goToNextImage();
-    },
-    onSwipedRight: () => {
-      goToPreviousImage();
-    },
-    trackMouse: true,
-  });
-
-  useKeypress("ArrowRight", () => {
-    goToNextImage();
-  });
-
-  useKeypress("ArrowLeft", () => {
-    goToPreviousImage();
-  });
-
-  useKeypress("Escape", () => {
-    setCarouselOpen(false);
-  });
 
   const profileImg = cat.CatImage[0];
   if (!profileImg) {
@@ -109,70 +52,17 @@ function Cat({ cat, mother, father }: Props) {
 
   const fertileText = cat.fertile ? "Yes" : "No";
   const birthFormatted = cat.birth.toLocaleDateString("no-NO");
-  const currentImage = images[currentImageIndex];
 
   return (
     <>
       <PageHead cat={cat} />
-      {carouselOpen && currentImage && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-            transition: { duration: 0.3 },
-          }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-        >
-          <div
-            className="absolute inset-0 cursor-default bg-black backdrop-blur-2xl"
-            onClick={() => {
-              setCarouselOpen(false);
-            }}
-          ></div>
-          <div className="relative flex flex-col" {...handlers}>
-            <button
-              className="absolute right-3 top-2 z-20 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
-              onClick={() => {
-                setCarouselOpen(false);
-              }}
-            >
-              <IoMdClose className="h-6 w-6 text-white" />
-            </button>
-            <motion.div
-              key={currentImage.id}
-              initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <CatImage
-                src={currentImage.src}
-                alt={`${cat.name} picture`}
-                width={currentImage.width}
-                height={currentImage.height}
-                className="z-10"
-                {...(currentImage.blururl
-                  ? {
-                      placeholder: "blur",
-                      blurDataURL: currentImage.blururl,
-                    }
-                  : {})}
-              />
-            </motion.div>
-            <button
-              className="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
-              onClick={goToPreviousImage}
-            >
-              <ArrowLeft className="h-6 w-6 text-white" />
-            </button>
-            <button
-              className="absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
-              onClick={goToNextImage}
-            >
-              <ArrowRight className="h-6 w-6 text-white" />
-            </button>
-          </div>
-        </motion.div>
+      {carouselOpen && (
+        <ImageCarousel
+          imageIndex={currentImageIndex}
+          images={cat.CatImage.slice(1)}
+          setOpen={setCarouselOpen}
+          name={cat.name}
+        />
       )}
       <div className="flex w-full flex-col items-center bg-zinc-100">
         <section className="mt-12 flex max-w-4xl flex-col items-center gap-4 p-4 text-center sm:mt-16">
