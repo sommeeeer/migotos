@@ -52,7 +52,7 @@ export default Tags;
 function PageHead() {
   return (
     <Head>
-      <title>Categories - Migotos</title>
+      <title>Categories - Migotots</title>
       <link rel="canonical" href="https://migotos.com/news/tag" />
       <meta name="description" content="All the categories for news posts" />
       <meta

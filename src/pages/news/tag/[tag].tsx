@@ -105,7 +105,7 @@ export async function getStaticPaths() {
 function PageHead({ title }: { title: string }) {
   return (
     <Head>
-      <title>{capitalizeString(title)} - Migotos</title>
+      <title>{`${capitalizeString(title)} - Migotos`}</title>
       <link rel="canonical" href={`https://migotos.com/news/tag/${title}`} />
       <meta name="description" content={title} />
       <meta

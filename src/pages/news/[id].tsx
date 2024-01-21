@@ -158,7 +158,7 @@ export async function getStaticPaths() {
 function PageHead({ blogPost }: { blogPost: BlogPost }) {
   return (
     <Head>
-      <title>{blogPost.title} - Migotos</title>
+      <title>{`${blogPost.title} - Migotos`}</title>
       <link rel="canonical" href={`https://migotos.com/news/${blogPost.id}`} />
       <meta name="description" content={blogPost.title} />
       <meta property="og:site_name" content="News - Migotos" />

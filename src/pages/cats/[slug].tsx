@@ -333,7 +333,7 @@ export async function getStaticPaths() {
 function PageHead({ cat }: { cat: Cat & { CatImage: CatImageType[] } }) {
   return (
     <Head>
-      <title>{cat.nickname} - Migotos</title>
+      <title>{`${cat.nickname} - Migotos`}</title>
       <link rel="canonical" href={`https://migotos.com/cats/${cat.slug}`} />
       <meta
         name="description"

@@ -251,7 +251,7 @@ export async function getStaticPaths() {
 function PageHead({ litter }: { litter: LitterWithKittensAndTagsAndPictures }) {
   return (
     <Head>
-      <title>{litter.name}-LITTER - Migotos</title>
+      <title>{`${litter.name}-LITTER - Migotos`}</title>
       <link
         rel="canonical"
         href={`https://migotos.com/kittens/${litter.slug}`}
