@@ -11,6 +11,7 @@ import type { CatImage, KittenPictureImage } from "@prisma/client";
 import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import { motion } from "framer-motion";
 import noScroll from "no-scroll";
+import { X } from "lucide-react";
 
 interface Props {
   name: string;
@@ -26,23 +27,7 @@ export default function ImageCarousel({
   imageIndex,
 }: Props) {
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
 
-  console.log(current, count);
-
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
-
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
-
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    });
-  }, [api]);
 
   useEffect(() => {
     noScroll.on();
@@ -63,7 +48,7 @@ export default function ImageCarousel({
       noScroll.off();
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [api, setOpen]);
+  }, [api, setOpen, imageIndex]);
 
   const MotionImage = motion(Image);
 
@@ -78,12 +63,17 @@ export default function ImageCarousel({
         }}
         className="fixed inset-0 z-50 flex flex-col items-center justify-center"
       >
-        <div
-          className="absolute inset-0 cursor-default bg-black backdrop-blur-2xl"
-          onClick={() => {
-            setOpen(false);
-          }}
-        ></div>
+        <div className="absolute inset-0 cursor-default bg-black backdrop-blur-2xl"></div>
+
+        <button
+          type="button"
+          className="absolute right-2 top-2 z-50 me-2 inline-flex cursor-pointer items-center rounded-lg bg-black/40 p-2.5 text-gray-200 hover:scale-105 hover:bg-black/70 hover:text-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300"
+          onClick={() => setOpen(false)}
+        >
+          <X className="h-10 w-10" />
+          <span className="sr-only">Close image carousel</span>
+        </button>
+
         <CarouselContent>
           {images.map((image) => (
             <CarouselItem
@@ -104,7 +94,7 @@ export default function ImageCarousel({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="duration-400 left-2 z-[60] p-2 opacity-0 transition-all hover:inline-flex hover:opacity-60 disabled:hidden" />
+        <CarouselPrevious className="duration-400 left-2 z-[60] p-2 opacity-0 transition-all hover:opacity-60 disabled:hidden sm:left-6 sm:opacity-60 md:left-10 lg:left-12 xl:left-16" />
         <CarouselNext className="duration-400 right-2 z-[60] p-2 opacity-0 transition-all hover:opacity-60 disabled:hidden sm:right-6 sm:opacity-60 md:right-10 lg:right-12 xl:right-16" />
       </motion.div>
     </Carousel>
