@@ -4,15 +4,10 @@ import BorderText from "~/components/BorderText";
 import Image from "next/image";
 import { db } from "~/server/db";
 import Footer from "~/components/Footer";
-import { motion } from "framer-motion";
 import { useState } from "react";
-import { useSwipeable } from "react-swipeable";
-import useKeypress from "react-use-keypress";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import CatImage from "~/components/CatImage";
-import { IoMdClose } from "react-icons/io";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import ImageCarousel from "~/components/ImageCarousel";
 
 type LitterWithPictureWeeks = Prisma.LitterGetPayload<{
   include: {
@@ -28,117 +23,20 @@ type Props = {
 function KittenPictures({ groupedImages, litter }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
-  const [images, setImages] = useState<KittenPictureImage[]>(
-    Object.values(groupedImages).flat(),
-  );
-  const [direction, setDirection] = useState(0);
+  const [imageName, setImageName] = useState<string>("");
 
-  const goToNextImage = () => {
-    setDirection(1);
-    setCurrentImageIndex((currentImageIndex + 1) % images.length);
-  };
-
-  const goToPreviousImage = () => {
-    setDirection(-1);
-    setCurrentImageIndex(
-      (currentImageIndex - 1 + images.length) % images.length,
-    );
-  };
-
-  const handlers = useSwipeable({
-    onSwipedLeft: () => {
-      goToNextImage();
-    },
-    onSwipedRight: () => {
-      goToPreviousImage();
-    },
-    trackMouse: true,
-  });
-
-  useKeypress("ArrowRight", () => {
-    goToNextImage();
-  });
-
-  useKeypress("ArrowLeft", () => {
-    goToPreviousImage();
-  });
-
-  useKeypress("Escape", () => {
-    setCarouselOpen(false);
-  });
-
-  const currentImage = images[currentImageIndex];
-
-  const cumulativeLengths = Object.values(groupedImages).map(
-    (images, i, arr) =>
-      i === 0 ? images.length : images.length + arr[i - 1]!.length,
-  );
+  const images = Object.values(groupedImages).flat();
 
   return (
     <>
       <PageHead litter={litter} />
-      {carouselOpen && currentImage && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-            transition: { duration: 0.3 },
-          }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-        >
-          <div
-            className="absolute inset-0 cursor-default bg-black backdrop-blur-2xl"
-            onClick={() => {
-              setCarouselOpen(false);
-            }}
-          ></div>
-          <div className="relative flex flex-col" {...handlers}>
-            <button
-              className="absolute right-3 top-2 z-20 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
-              onClick={() => {
-                setCarouselOpen(false);
-              }}
-            >
-              <IoMdClose className="h-6 w-6 text-white" />
-            </button>
-            <motion.div
-              key={currentImage.id}
-              initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <CatImage
-                src={currentImage.src}
-                alt={`${currentImage.title} picture`}
-                width={currentImage.width}
-                height={currentImage.height}
-                className="z-10"
-                {...(currentImage.blururl
-                  ? {
-                      placeholder: "blur",
-                      blurDataURL: currentImage.blururl,
-                    }
-                  : {})}
-              />
-              <h3 className="mt-2 text-center text-xl text-white sm:mt-3 md:mt-4 md:text-2xl">
-                {currentImage.title}
-              </h3>
-            </motion.div>
-            <button
-              className="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
-              onClick={goToPreviousImage}
-            >
-              <ArrowLeft className="h-6 w-6 text-white" />
-            </button>
-            <button
-              className="absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/50 p-3 text-white/75 backdrop-blur-lg transition hover:bg-black/75 hover:text-white focus:outline-none"
-              onClick={goToNextImage}
-            >
-              <ArrowRight className="h-6 w-6 text-white" />
-            </button>
-          </div>
-        </motion.div>
+      {carouselOpen && (
+        <ImageCarousel
+          imageIndex={currentImageIndex}
+          setOpen={setCarouselOpen}
+          images={images}
+          name={imageName}
+        />
       )}
       <div className="flex flex-col gap-4 px-2">
         {litter.LitterPictureWeek[0]?.title && (
@@ -155,11 +53,11 @@ function KittenPictures({ groupedImages, litter }: Props) {
                   key={image.id}
                   className="relative h-40 w-40 cursor-pointer sm:h-52 sm:w-52 xl:h-60 xl:w-60"
                   onClick={() => {
-                    const flatIndex =
-                      groupIdx === 0
-                        ? idx
-                        : cumulativeLengths[groupIdx - 1]! + idx;
-                    setCurrentImageIndex(flatIndex);
+                    setCurrentImageIndex(
+                      Object.values(groupedImages).slice(0, groupIdx).flat()
+                        .length + idx,
+                    );
+                    setImageName(image.title ?? "");
                     setCarouselOpen(true);
                   }}
                 >
