@@ -28,7 +28,6 @@ export default function ImageCarousel({
 }: Props) {
   const [api, setApi] = useState<CarouselApi>();
 
-
   useEffect(() => {
     noScroll.on();
     if (!api) return;
@@ -86,6 +85,7 @@ export default function ImageCarousel({
                   opacity: 1,
                   transition: { duration: 0.3 },
                 }}
+                priority
                 src={image.src}
                 alt={`Profile image of ${name}`}
                 width={image.width}
