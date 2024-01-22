@@ -13,11 +13,13 @@ import Comment from "~/components/Comment";
 import LoginButton from "~/components/LoginButton";
 import { AnimatePresence } from "framer-motion";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { IoMdFemale, IoMdMale } from "react-icons/io";
 import { FaLeaf } from "react-icons/fa";
 import Head from "next/head";
 import ImageCarousel from "~/components/ImageCarousel";
+import CommentsIconButton from "~/components/CommentsIconButton";
+import PicturesIconButton from "~/components/PicturesIconButton";
 
 type Props = {
   cat: Cat & { CatImage: CatImageType[] };
@@ -37,6 +39,9 @@ function Cat({ cat, mother, father }: Props) {
   });
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
+
+  const commentsRef = useRef<HTMLElement>(null);
+  const picturesRef = useRef<HTMLDivElement>(null);
 
   const profileImg = cat.CatImage[0];
   if (!profileImg) {
@@ -66,28 +71,35 @@ function Cat({ cat, mother, father }: Props) {
       )}
       <div className="flex w-full flex-col items-center bg-zinc-100">
         <section className="mt-12 flex max-w-4xl flex-col items-center gap-4 p-4 text-center sm:mt-16">
-          <h1 className="font-playfair text-4xl">
-            <em>{cat.name}</em>
-          </h1>
-          <p
-            className={clsx(
-              "text-lg text-zinc-500",
-              !cat.pedigreeurl && "mb-4",
-            )}
-          >
-            {cat.stamnavn}
-          </p>
-          {cat.pedigreeurl && (
-            <Link
-              href={cat.pedigreeurl}
-              rel="noopener noreferrer"
-              target="_blank"
+          <div className="flex flex-col items-center gap-2">
+            <h1 className="font-playfair text-4xl">
+              <em>{cat.name}</em>
+            </h1>
+            <p
+              className={clsx(
+                "text-lg text-zinc-500",
+                !cat.pedigreeurl && "mb-1",
+              )}
             >
-              <p className="mb-4 text-lg uppercase text-[#847143]">PEDIGREE</p>
-            </Link>
-          )}
-          {genderIcon}
-
+              {cat.stamnavn}
+            </p>
+            {cat.pedigreeurl && (
+              <Link
+                href={cat.pedigreeurl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <p className="mb-4 text-lg uppercase text-[#847143]">
+                  PEDIGREE
+                </p>
+              </Link>
+            )}
+            {genderIcon}
+          </div>
+          <div className="flex items-center">
+            <CommentsIconButton commentsRef={commentsRef} />
+            <PicturesIconButton picturesRef={picturesRef} />
+          </div>
           <CatImage
             src={profileImg.src}
             alt={`${cat.name} picture`}
@@ -183,7 +195,10 @@ function Cat({ cat, mother, father }: Props) {
             </div>
           </div>
           <h3 className="self-center font-playfair text-2xl">Pictures</h3>
-          <section className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4">
+          <section
+            className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4"
+            ref={picturesRef}
+          >
             {cat.CatImage.slice(1).map((img, idx) => {
               return (
                 <picture
@@ -209,7 +224,10 @@ function Cat({ cat, mother, father }: Props) {
           </section>
         </section>
       </div>
-      <section className="mt-12 flex max-w-5xl flex-col gap-4 px-4">
+      <section
+        className="mt-12 flex max-w-5xl flex-col gap-4 px-4"
+        ref={commentsRef}
+      >
         <AnimatePresence>
           {isLoading && <LoadingSpinner />}
           {comments?.map((comment) => (

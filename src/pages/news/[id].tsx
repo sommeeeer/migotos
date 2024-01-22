@@ -14,6 +14,8 @@ import LoginButton from "~/components/LoginButton";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
+import CommentsIconButton from "~/components/CommentsIconButton";
+import { useRef } from "react";
 
 type Props = {
   blogPost: BlogPostWithTags;
@@ -29,19 +31,20 @@ function BlogPost({ blogPost }: Props) {
     id: blogPost.id,
     commentType: "post_id",
   });
+  const commentsRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
       <PageHead blogPost={blogPost} />
-      <div className="flex max-w-3xl flex-col items-center gap-8 px-2 py-4">
+      <div className="flex max-w-3xl flex-col items-center gap-8 px-3 py-4">
         <header className="flex flex-col items-center gap-4">
-          <h1 className="text-center text-2xl">{blogPost.title}</h1>
+          <h1 className="text-center text-xl sm:text-2xl">{blogPost.title}</h1>
           <div className="flex w-full items-center justify-center gap-2 border-b-2 border-t-zinc-100 text-[#777777]">
             <span className="text-sm">
               {format(new Date(blogPost.post_date), "MMMM d, yyyy")}
             </span>
             <span>•</span>
-            <div className="flex gap-0">
+            <div className="flex items-center gap-0">
               {blogPost.tags.map((tag) => (
                 <Tag
                   key={tag.blogposttag.id}
@@ -49,6 +52,12 @@ function BlogPost({ blogPost }: Props) {
                   value={tag.blogposttag.value}
                 />
               ))}
+              <span>•</span>
+              <CommentsIconButton
+                commentsLength={comments?.length}
+                className="h-5 w-5 ml-2 text-[#777777]"
+                commentsRef={commentsRef}
+              />
             </div>
           </div>
         </header>
@@ -61,13 +70,13 @@ function BlogPost({ blogPost }: Props) {
             width="0"
             height="0"
             sizes="100vw"
-            className="w-full h-auto"
+            className="h-auto w-full"
             alt={`${blogPost.title} image`}
             quality={100}
           />
         )}
         <div className="mb-4 w-full border-t border-zinc-200" />
-        <div className="flex w-full flex-col gap-2 px-2">
+        <div className="flex w-full flex-col gap-2 px-2" ref={commentsRef}>
           <h1 className="text-lg uppercase text-[#777777]">
             {comments?.length ?? "0"} comments
           </h1>

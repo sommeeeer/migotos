@@ -15,6 +15,9 @@ import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import LoginButton from "~/components/LoginButton";
 import Head from "next/head";
+import { useRef } from "react";
+import CommentsIconButton from "~/components/CommentsIconButton";
+import PicturesIconButton from "~/components/PicturesIconButton";
 
 type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
   include: {
@@ -31,6 +34,8 @@ type Props = {
 };
 
 function LitterPage({ litter, mother, father }: Props) {
+  const commentsRef = useRef<HTMLElement>(null);
+  const picturesRef = useRef<HTMLDivElement>(null);
   const { data: session } = useSession();
   const {
     isLoading,
@@ -77,6 +82,10 @@ function LitterPage({ litter, mother, father }: Props) {
           <p className="text-lg uppercase text-zinc-500">
             {formatDate(litter.born.toISOString())}
           </p>
+          <div className="flex items-center">
+            <CommentsIconButton commentsRef={commentsRef} />
+            <PicturesIconButton picturesRef={picturesRef} />
+          </div>
           {litter.pedigreeurl && (
             <Link
               href={litter.pedigreeurl}
@@ -131,12 +140,15 @@ function LitterPage({ litter, mother, father }: Props) {
               {picturesSubHeading}
             </p>
           </header>
-          <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-8">
+          <div
+            className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-8"
+            ref={picturesRef}
+          >
             {pictureWeeks}
           </div>
         </section>
       </div>
-      <section className="flex max-w-5xl flex-col gap-4 px-4">
+      <section className="flex max-w-5xl flex-col gap-4 px-4" ref={commentsRef}>
         <AnimatePresence>
           {isLoading && <LoadingSpinner />}
           {comments?.map((comment) => (
