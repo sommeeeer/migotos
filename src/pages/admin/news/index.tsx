@@ -64,13 +64,8 @@ export default function News({ blogposts }: NewsProps) {
   return (
     <AdminLayout>
       <div className="mb-4 flex flex-col items-start gap-4 rounded-lg bg-white p-4 shadow">
-        <Link
-          className={twMerge(
-            buttonVariants(),
-            "bg-green-700 hover:bg-green-800",
-          )}
-          href={"/admin/news/new"}
-        >
+        
+        <Link className={twMerge(buttonVariants())} href={"/admin/news/new"}>
           <MdOutlinePostAdd className="mr-1 h-4 w-4" />
           New BlogPost
         </Link>

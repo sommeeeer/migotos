@@ -25,10 +25,10 @@ export default function Footer() {
     >
       <div className="mt-12 flex flex-col items-center justify-between gap-4 text-center">
         <div>
-          <Button variant="link" asChild>
+          <Button variant="link" className="text-gray-600 hover:text-gray-800" asChild>
             <Link href="/terms">Terms of Service</Link>
           </Button>
-          <Button variant="link" asChild>
+          <Button variant="link" className="text-gray-600 hover:text-gray-800" asChild>
             <Link href="/privacy">Privacy Policy</Link>
           </Button>
         </div>

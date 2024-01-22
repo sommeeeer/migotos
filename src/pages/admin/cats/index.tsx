@@ -70,13 +70,7 @@ export default function Cats({ cats }: CatsProps) {
   return (
     <AdminLayout>
       <div className="mb-4 flex flex-col items-start gap-4 rounded-lg bg-white p-4 shadow">
-        <Link
-          className={twMerge(
-            buttonVariants(),
-            "bg-green-700 hover:bg-green-800",
-          )}
-          href={"/admin/cats/new"}
-        >
+        <Link className={twMerge(buttonVariants())} href={"/admin/cats/new"}>
           <FaCat className="mr-1 h-4 w-4" />
           New Cat
         </Link>
@@ -122,15 +116,15 @@ export default function Cats({ cats }: CatsProps) {
                 <TableCell>
                   <div className="flex gap-2">
                     <Link href={`/admin/cats/edit/${cat.id}`}>
-                      <AiFillEdit className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600 hover:scale-105" />
+                      <AiFillEdit className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                     </Link>
                     <Link href={`/admin/cats/images/${cat.id}`}>
-                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:text-zinc-600 hover:scale-105" />
+                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                     </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="hover:-slate-300">
-                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:text-zinc-600 hover:scale-105" />
+                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
