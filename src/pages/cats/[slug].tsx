@@ -41,7 +41,7 @@ function Cat({ cat, mother, father }: Props) {
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
 
   const commentsRef = useRef<HTMLElement>(null);
-  const picturesRef = useRef<HTMLDivElement>(null);
+  const picturesRef = useRef<HTMLHeadingElement>(null);
 
   const profileImg = cat.CatImage[0];
   if (!profileImg) {
@@ -194,11 +194,10 @@ function Cat({ cat, mother, father }: Props) {
               <p>{cat.owner}</p>
             </div>
           </div>
-          <h3 className="self-center font-playfair text-2xl">Pictures</h3>
-          <section
-            className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4"
-            ref={picturesRef}
-          >
+          <h3 className="self-center font-playfair text-2xl" ref={picturesRef}>
+            Pictures
+          </h3>
+          <section className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4">
             {cat.CatImage.slice(1).map((img, idx) => {
               return (
                 <picture
