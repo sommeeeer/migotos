@@ -13,6 +13,7 @@ import {
 } from "@aws-sdk/client-cloudfront";
 import { env } from "~/env.mjs";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { createTransport } from "nodemailer";
 
 export const BLURURL =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC";
@@ -113,4 +114,45 @@ export async function getImageDimensions(url: string) {
   }
   const dimensions = await imageDimensionsFromStream(body);
   return dimensions;
+}
+
+export async function sendEmail({
+  subject,
+  text,
+  email,
+}: {
+  subject: string;
+  text: string;
+  email: string;
+}): Promise<boolean> {
+  try {
+    const transporter = createTransport({
+      host: env.EMAIL_SERVER_HOST,
+      port: Number(env.EMAIL_SERVER_PORT),
+      auth: {
+        user: env.EMAIL_SERVER_USER,
+        pass: env.EMAIL_SERVER_PASSWORD,
+      },
+      secure: true,
+    });
+
+    await transporter.sendMail({
+      from: env.EMAIL_FROM,
+      to: env.EMAIL_TO_LIST,
+      subject: subject,
+      html: `
+      <div style="font-family: Arial, sans-serif;">
+        <h1 style="color: #444;">${subject}</h1>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Body:</strong>${text}</p>
+      </div>
+    `,
+    });
+
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 }
