@@ -38,7 +38,7 @@ export const env = createEnv({
     EMAIL_SERVER_USER: z.string(),
     EMAIL_SERVER_PASSWORD: z.string(),
     EMAIL_FROM: z.string().email(),
-    EMAIL_TO_LIST: z.string().email(),
+    EMAIL_TO_LIST: z.string(),
     CLOUDFRONT_DISTRIBUTION_ID: z.string(),
     S3_BUCKET_NAME: z.string(),
     S3_BUCKET_ARN: z.string(),
