@@ -71,7 +71,7 @@ export const env = createEnv({
     EMAIL_SERVER_USER: process.env.EMAIL_SERVER_USER,
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
     EMAIL_FROM: process.env.EMAIL_FROM,
-    EMAIL_TO_LIST: process.env.EMAIL_TO,
+    EMAIL_TO_LIST: process.env.EMAIL_TO_LIST,
     CLOUDFRONT_DISTRIBUTION_ID: process.env.CLOUDFRONT_DISTRIBUTION_ID,
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
     S3_BUCKET_ARN: process.env.S3_BUCKET_ARN,
