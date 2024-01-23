@@ -24,7 +24,6 @@ type Props = {
 function KittenPictures({ groupedImages, litter, title }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
-  const [imageName, setImageName] = useState<string>("");
 
   const images = Object.values(groupedImages).flat();
 
@@ -36,7 +35,7 @@ function KittenPictures({ groupedImages, litter, title }: Props) {
           imageIndex={currentImageIndex}
           setOpen={setCarouselOpen}
           images={images}
-          name={imageName}
+          name={title}
         />
       )}
       <div className="flex flex-col gap-4 px-2">
@@ -58,7 +57,6 @@ function KittenPictures({ groupedImages, litter, title }: Props) {
                       Object.values(groupedImages).slice(0, groupIdx).flat()
                         .length + idx,
                     );
-                    setImageName(image.title ?? "");
                     setCarouselOpen(true);
                   }}
                 >
