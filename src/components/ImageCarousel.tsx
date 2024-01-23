@@ -57,8 +57,6 @@ export default function ImageCarousel({
     };
   }, [api, setOpen, imageIndex, images, name]);
 
-  const MotionImage = motion(Image);
-
   useEffect(() => {
     setTitle((images[current - 1] as KittenPictureImage)?.title ?? name);
   }, [current, images, name]);
@@ -74,7 +72,7 @@ export default function ImageCarousel({
         }}
         className="fixed inset-0 z-50 flex flex-col items-center justify-center"
       >
-        <div className="absolute inset-0 cursor-default bg-black backdrop-blur-2xl"></div>
+        <div className="absolute inset-0 bg-black backdrop-blur-2xl"></div>
 
         <button
           type="button"
@@ -88,6 +86,8 @@ export default function ImageCarousel({
           <a
             href={images[imageIndex]?.src}
             download
+            rel="noopener noreferrer"
+            target="_blank"
             className="absolute left-2 top-2 z-50 me-2 inline-flex cursor-pointer items-center rounded-lg bg-black/40 p-2.5 text-gray-200 hover:scale-105 hover:bg-black/70 hover:text-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300"
           >
             <svg
@@ -113,12 +113,7 @@ export default function ImageCarousel({
               className="flex items-center justify-center"
               key={image.id}
             >
-              <MotionImage
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  transition: { duration: 0.3 },
-                }}
+              <Image
                 priority
                 src={image.src}
                 alt={`Profile image of ${name}`}
