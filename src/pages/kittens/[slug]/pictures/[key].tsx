@@ -18,9 +18,10 @@ type LitterWithPictureWeeks = Prisma.LitterGetPayload<{
 type Props = {
   litter: LitterWithPictureWeeks;
   groupedImages: Record<string, KittenPictureImage[]>;
+  title?: string;
 };
 
-function KittenPictures({ groupedImages, litter }: Props) {
+function KittenPictures({ groupedImages, litter, title }: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
   const [imageName, setImageName] = useState<string>("");
@@ -46,7 +47,7 @@ function KittenPictures({ groupedImages, litter }: Props) {
         )}
         {Object.entries(groupedImages).map(([key, images], groupIdx) => (
           <div key={key}>
-            <BorderText text={key} />
+            <BorderText text={key !== "" ? key : title} />
             <div className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4">
               {images.map((image, idx) => (
                 <picture
@@ -124,6 +125,7 @@ export async function getStaticProps({
     props: {
       litter,
       groupedImages,
+      title: images.name,
     },
   };
 }
