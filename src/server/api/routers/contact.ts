@@ -21,9 +21,10 @@ export const contactRouter = createTRPCRouter({
       },
     });
     const emailSent = await sendEmail({
-      subject: `New message from ${input.name} on your website`,
+      subject: input.subject,
       text: input.message,
       email: input.email,
+      name: input.name,
     });
     if (!emailSent) {
       console.error("Failed to send email when someone messaged.");

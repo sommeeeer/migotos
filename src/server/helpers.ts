@@ -120,9 +120,11 @@ export async function sendEmail({
   subject,
   text,
   email,
+  name,
 }: {
   subject: string;
   text: string;
+  name: string;
   email: string;
 }): Promise<boolean> {
   try {
@@ -142,7 +144,7 @@ export async function sendEmail({
       subject: subject,
       html: `
       <div style="font-family: Arial, sans-serif;">
-        <h1 style="color: #444;">${subject}</h1>
+        <h1 style="color: #444;">${`Mail from ${name}`}</h1>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Subject:</strong> ${subject}</p>
         <p><strong>Body:</strong></p>
