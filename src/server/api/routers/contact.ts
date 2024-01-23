@@ -8,6 +8,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import { db } from "~/server/db";
+import { sendEmail } from "~/server/helpers";
 
 export const contactRouter = createTRPCRouter({
   hello: publicProcedure.input(contactSchema).mutation(async ({ input }) => {
@@ -19,6 +20,14 @@ export const contactRouter = createTRPCRouter({
         message: input.message,
       },
     });
+    const emailSent = await sendEmail({
+      subject: `New message from ${input.name} on your website`,
+      text: input.message,
+      email: input.email,
+    });
+    if (!emailSent) {
+      console.error("Failed to send email when someone messaged.");
+    }
     if (!msg) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
