@@ -28,6 +28,7 @@ export default function Contact() {
   const { mutate, isLoading } = api.contact.hello.useMutation({
     onSuccess(data) {
       if (data.success) {
+        window.scrollTo(0, 0);
         setStatus("sent");
         reset();
       } else {
@@ -43,7 +44,7 @@ export default function Contact() {
     if (status !== "") {
       const timeout = setTimeout(() => {
         setStatus("");
-      }, 5000);
+      }, 7500);
       return () => clearTimeout(timeout);
     }
   }, [status]);
