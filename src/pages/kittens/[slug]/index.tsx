@@ -133,17 +133,17 @@ function LitterPage({ litter, mother, father }: Props) {
             />
           ))}
         </section>
-        <section className="flex w-full flex-col items-center gap-2 bg-white p-8 text-center">
+        <section
+          className="flex w-full flex-col items-center gap-2 bg-white p-8 text-center"
+          ref={picturesRef}
+        >
           <header className="mb-6 flex flex-col gap-2">
             <h1 className="font-playfair text-4xl">Pictures</h1>
             <p className="text-lg uppercase text-zinc-500">
               {picturesSubHeading}
             </p>
           </header>
-          <div
-            className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-8"
-            ref={picturesRef}
-          >
+          <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-8">
             {pictureWeeks}
           </div>
         </section>
