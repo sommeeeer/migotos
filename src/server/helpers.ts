@@ -145,7 +145,8 @@ export async function sendEmail({
         <h1 style="color: #444;">${subject}</h1>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Body:</strong>${text}</p>
+        <p><strong>Body:</strong></p>
+        <p>${text}</p>
       </div>
     `,
     });
