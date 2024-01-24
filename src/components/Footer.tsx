@@ -3,6 +3,7 @@ import { TfiAngleDoubleUp } from "react-icons/tfi";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { cn } from "~/lib/utils";
+import { BsFacebook, BsInstagram } from "react-icons/bs";
 
 export default function Footer() {
   const [showButton, setShowButton] = useState(false);
@@ -19,18 +20,42 @@ export default function Footer() {
   return (
     <footer
       className={cn(
-        "flex h-32 w-full max-w-3xl flex-col justify-center border-t-2 border-t-zinc-100 px-4",
+        "flex w-full max-w-3xl flex-col justify-center border-t-2 border-t-zinc-100 px-4",
         !showButton && "mb-6",
       )}
     >
-      <div className="mt-12 flex flex-col items-center justify-between gap-4 text-center">
+      <div className="mt-8 flex flex-col items-center justify-between gap-6 text-center">
         <div>
-          <Button variant="link" className="text-gray-600 hover:text-gray-800" asChild>
+          <Button
+            variant="link"
+            className="text-gray-600 hover:text-gray-800"
+            asChild
+          >
             <Link href="/terms">Terms of Service</Link>
           </Button>
-          <Button variant="link" className="text-gray-600 hover:text-gray-800" asChild>
+          <Button
+            variant="link"
+            className="text-gray-600 hover:text-gray-800"
+            asChild
+          >
             <Link href="/privacy">Privacy Policy</Link>
           </Button>
+        </div>
+        <div className="flex gap-4">
+          <a
+            href="https://www.facebook.com/eva.d.eide"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <BsFacebook className="h-10 w-10 text-zinc-700 hover:relative hover:bottom-[2px] hover:text-zinc-400" />
+          </a>
+          <a
+            href="https://www.instagram.com/migotos/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <BsInstagram className="h-10 w-10 text-zinc-700 hover:relative hover:bottom-[2px] hover:text-zinc-400" />
+          </a>
         </div>
         <p className="font-poppins text-sm text-gray-700">
           Copyright © Migotos {new Date().getFullYear()}
