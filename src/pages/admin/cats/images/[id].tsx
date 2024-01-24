@@ -429,7 +429,7 @@ function SortableItem({
         <Image
           width={width}
           height={height}
-          className="h-auto w-[200px] "
+          className="h-auto w-[200px]"
           src={src}
           alt={`photo number ${id}`}
           draggable
