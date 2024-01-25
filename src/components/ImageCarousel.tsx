@@ -12,6 +12,7 @@ import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import { motion } from "framer-motion";
 import noScroll from "no-scroll";
 import { X } from "lucide-react";
+import { cn } from "~/lib/utils";
 
 interface Props {
   name?: string;
@@ -126,8 +127,20 @@ export default function ImageCarousel({
         </CarouselContent>
         <CarouselPrevious className="duration-400 left-2 z-[60] p-2 opacity-0 transition-all hover:opacity-60 disabled:hidden sm:left-6 sm:opacity-60 md:left-10 lg:left-12 xl:left-16" />
         <CarouselNext className="duration-400 right-2 z-[60] p-2 opacity-0 transition-all hover:opacity-60 disabled:hidden sm:right-6 sm:opacity-60 md:right-10 lg:right-12 xl:right-16" />
-        <p className="absolute bottom-3 left-3 p-1 tracking-wide text-white">{`${current}/${images.length}`}</p>
-        <p className="absolute bottom-3 right-3 p-1 tracking-wide text-white">
+        <p
+          className={cn(
+            "absolute bottom-3 left-3 p-1 tracking-wide text-white",
+            title && title.length > 20 && "left-1/2 top-6 -translate-x-1/2",
+          )}
+        >{`${current}/${images.length}`}</p>
+        <p
+          className={cn(
+            "absolute bottom-3 right-3 p-1 tracking-wide text-white",
+            title &&
+              title.length > 20 &&
+              "left-2 text-center text-xs min-[400px]:text-lg md:bottom-4",
+          )}
+        >
           {title}
         </p>
       </motion.div>
