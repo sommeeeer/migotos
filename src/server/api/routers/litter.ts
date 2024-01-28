@@ -14,18 +14,18 @@ export const litterRouter = createTRPCRouter({
   createLitter: protectedProcedure
     .input(litterSchema)
     .mutation(async ({ input, ctx }) => {
-      const doesLitterExist = await db.litter.findFirst({
-        where: {
-          name: input.name.toUpperCase(),
-        },
-      });
-      if (doesLitterExist) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Litter already exists",
-        });
-      }
       try {
+        const doesLitterExist = await db.litter.findFirst({
+          where: {
+            name: input.name.toUpperCase(),
+          },
+        });
+        if (doesLitterExist) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Litter already exists",
+          });
+        }
         const litter = await db.litter.create({
           data: {
             name: input.name.toUpperCase(),
@@ -60,6 +60,7 @@ export const litterRouter = createTRPCRouter({
         await revalidateAndInvalidate(ctx.res, ["/kittens", "/"]);
         return litter;
       } catch (err) {
+        console.error(err);
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -69,152 +70,176 @@ export const litterRouter = createTRPCRouter({
   deleteLitter: protectedProcedure
     .input(z.number())
     .mutation(async ({ input, ctx }) => {
-      const litter = await db.litter.findFirst({
-        where: {
-          id: input,
-        },
-        include: {
-          LitterPictureWeek: true,
-        },
-      });
-      if (!litter) {
+      try {
+        const litter = await db.litter.findFirst({
+          where: {
+            id: input,
+          },
+          include: {
+            LitterPictureWeek: true,
+          },
+        });
+        if (!litter) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Litter not found",
+          });
+        }
+        const deletedLitter = await db.litter.delete({
+          where: {
+            id: input,
+          },
+        });
+        await revalidateAndInvalidate(
+          ctx.res,
+          ["/kittens", "/", `/kittens/${deletedLitter.slug}`].concat(
+            litter.LitterPictureWeek.map(
+              (week) => `/kittens/${deletedLitter.slug}/pictures/${week.name}`,
+            ),
+          ),
+        );
+        return deletedLitter;
+      } catch (err) {
+        console.error(err);
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Litter not found",
+          code: "BAD_REQUEST",
+          message: "Invalid request",
         });
       }
-      const deletedLitter = await db.litter.delete({
-        where: {
-          id: input,
-        },
-      });
-      await revalidateAndInvalidate(
-        ctx.res,
-        ["/kittens", "/", `/kittens/${deletedLitter.slug}`].concat(
-          litter.LitterPictureWeek.map(
-            (week) => `/kittens/${deletedLitter.slug}/pictures/${week.name}`,
-          ),
-        ),
-      );
-      return deletedLitter;
     }),
   updateLitter: protectedProcedure
     .input(litterSchema.extend({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const litter = await db.litter.findFirst({
-        where: {
-          id: input.id,
-        },
-      });
-      if (!litter) {
+      try {
+        const litter = await db.litter.findFirst({
+          where: {
+            id: input.id,
+          },
+        });
+        if (!litter) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Litter not found",
+          });
+        }
+        const doesLitterExist = await db.litter.findFirst({
+          where: {
+            name: input.name.toUpperCase(),
+            id: {
+              not: input.id,
+            },
+          },
+        });
+        if (doesLitterExist) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Litter already exists",
+          });
+        }
+        await db.kitten.deleteMany({
+          where: {
+            litter_id: input.id,
+          },
+        });
+        const updatedLitter = await db.litter.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            name: input.name.toUpperCase(),
+            slug: input.name.toLowerCase() + "-litter",
+            born: input.born,
+            mother_name: input.mother_name,
+            father_name: input.father_name,
+            father_stamnavn: input.father_stamnavn,
+            mother_stamnavn: input.mother_stamnavn,
+            pedigreeurl: input.pedigreeurl,
+            mother_img: input.mother_img,
+            mother_img_blururl: BLURURL,
+            father_img: input.father_img,
+            father_img_blururl: BLURURL,
+            post_image: input.post_image,
+            description: input.description,
+            Kitten: {
+              create: input.kittens.map((kitten) => ({
+                name: kitten.name,
+                gender: kitten.gender,
+                info: kitten.info,
+                stamnavn: kitten.stamnavn ?? "",
+              })),
+            },
+          },
+        });
+        await revalidateAndInvalidate(ctx.res, [
+          "/kittens",
+          "/",
+          `/kittens/${updatedLitter.slug}`,
+        ]);
+        return updatedLitter;
+      } catch (err) {
+        console.error(err);
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Litter not found",
+          code: "BAD_REQUEST",
+          message: "Invalid request",
         });
       }
-      const doesLitterExist = await db.litter.findFirst({
-        where: {
-          name: input.name.toUpperCase(),
-          id: {
-            not: input.id,
-          },
-        },
-      });
-      if (doesLitterExist) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Litter already exists",
-        });
-      }
-      await db.kitten.deleteMany({
-        where: {
-          litter_id: input.id,
-        },
-      });
-      const updatedLitter = await db.litter.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          name: input.name.toUpperCase(),
-          slug: input.name.toLowerCase() + "-litter",
-          born: input.born,
-          mother_name: input.mother_name,
-          father_name: input.father_name,
-          father_stamnavn: input.father_stamnavn,
-          mother_stamnavn: input.mother_stamnavn,
-          pedigreeurl: input.pedigreeurl,
-          mother_img: input.mother_img,
-          mother_img_blururl: BLURURL,
-          father_img: input.father_img,
-          father_img_blururl: BLURURL,
-          post_image: input.post_image,
-          description: input.description,
-          Kitten: {
-            create: input.kittens.map((kitten) => ({
-              name: kitten.name,
-              gender: kitten.gender,
-              info: kitten.info,
-              stamnavn: kitten.stamnavn ?? "",
-            })),
-          },
-        },
-      });
-      await revalidateAndInvalidate(ctx.res, [
-        "/kittens",
-        "/",
-        `/kittens/${updatedLitter.slug}`,
-      ]);
-      return updatedLitter;
     }),
   addWeek: protectedProcedure
     .input(z.object({ litter_id: z.number(), name: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const litter = await db.litter.findFirst({
-        where: {
-          id: input.litter_id,
-        },
-        include: {
-          LitterPictureWeek: true,
-        },
-      });
-      if (!litter) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Litter not found",
+      try {
+        const litter = await db.litter.findFirst({
+          where: {
+            id: input.litter_id,
+          },
+          include: {
+            LitterPictureWeek: true,
+          },
         });
-      }
-      let ending = "-weeks";
-      if (input.name === "0") {
-        ending = "Newborn";
-      }
-      if (input.name === "1") {
-        ending = "-week";
-      }
+        if (!litter) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Litter not found",
+          });
+        }
+        let ending = "-weeks";
+        if (input.name === "0") {
+          ending = "Newborn";
+        }
+        if (input.name === "1") {
+          ending = "-week";
+        }
 
-      if (
-        litter.LitterPictureWeek.some(
-          (week) => week.name === `${input.name}${ending}`,
-        ) ||
-        litter.LitterPictureWeek.some((week) => week.name === ending)
-      ) {
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "Week already exists",
-        });
-      }
-      const week = await db.litterPictureWeek.create({
-        data: {
-          name: ending === "Newborn" ? ending : `${input.name}${ending}`,
-          Litter: {
-            connect: {
-              id: input.litter_id,
+        if (
+          litter.LitterPictureWeek.some(
+            (week) => week.name === `${input.name}${ending}`,
+          ) ||
+          litter.LitterPictureWeek.some((week) => week.name === ending)
+        ) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Week already exists",
+          });
+        }
+        const week = await db.litterPictureWeek.create({
+          data: {
+            name: ending === "Newborn" ? ending : `${input.name}${ending}`,
+            Litter: {
+              connect: {
+                id: input.litter_id,
+              },
             },
           },
-        },
-      });
-      await revalidateAndInvalidate(ctx.res, [`/kittens/${litter.slug}`]);
-      return week;
+        });
+        await revalidateAndInvalidate(ctx.res, [`/kittens/${litter.slug}`]);
+        return week;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
     }),
   setWeekTitle: protectedProcedure
     .input(
@@ -329,6 +354,7 @@ export const litterRouter = createTRPCRouter({
         ]);
         return deletedWeek;
       } catch (err) {
+        console.error(err);
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -417,32 +443,40 @@ export const litterRouter = createTRPCRouter({
   deleteKittenImage: protectedProcedure
     .input(z.object({ image_id: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const image = await db.kittenPictureImage.findFirst({
-        where: {
-          id: input.image_id,
-        },
-        include: {
-          LitterPictureWeek: {
-            include: {
-              Litter: true,
+      try {
+        const image = await db.kittenPictureImage.findFirst({
+          where: {
+            id: input.image_id,
+          },
+          include: {
+            LitterPictureWeek: {
+              include: {
+                Litter: true,
+              },
             },
           },
-        },
-      });
-      if (!image) {
+        });
+        if (!image) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Image not found",
+          });
+        }
+        const deletedImage = await db.kittenPictureImage.delete({
+          where: {
+            id: input.image_id,
+          },
+        });
+        await revalidateAndInvalidate(ctx.res, [
+          `/kittens/${image.LitterPictureWeek.Litter.slug}/pictures/${image.LitterPictureWeek.name}`,
+        ]);
+        return deletedImage;
+      } catch (err) {
+        console.error(err);
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Image not found",
+          code: "BAD_REQUEST",
+          message: "Invalid request",
         });
       }
-      const deletedImage = await db.kittenPictureImage.delete({
-        where: {
-          id: input.image_id,
-        },
-      });
-      await revalidateAndInvalidate(ctx.res, [
-        `/kittens/${image.LitterPictureWeek.Litter.slug}/pictures/${image.LitterPictureWeek.name}`,
-      ]);
-      return deletedImage;
     }),
 });
