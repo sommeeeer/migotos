@@ -22,6 +22,7 @@ export const blogpostRouter = createTRPCRouter({
         await revalidateAndInvalidate(ctx.res, ["/news", "/"]);
         return blogpost;
       } catch (err) {
+        console.error(err);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
@@ -63,6 +64,7 @@ export const blogpostRouter = createTRPCRouter({
         );
         return deletedBlogPost;
       } catch (err) {
+        console.error(err);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
@@ -112,6 +114,7 @@ export const blogpostRouter = createTRPCRouter({
         );
         return updatedBlogPost;
       } catch (err) {
+        console.error(err);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
