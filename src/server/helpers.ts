@@ -92,7 +92,11 @@ export async function revalidateAndInvalidate(
 ) {
   if (process.env.NODE_ENV !== "development") {
     for (const path of paths) {
-      await res.revalidate(path);
+      try {
+        await res.revalidate(path);
+      } catch (err) {
+        console.error(`Error validating: ${path} Error: \n`, err);
+      }
     }
     await invalidateCFPaths(
       paths
