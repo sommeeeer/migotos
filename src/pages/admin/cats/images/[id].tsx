@@ -423,7 +423,7 @@ function SortableItem({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, transition: { duration: 0.3 } }}
-      className="flex h-[150px] w-[220px] gap-4 rounded border-2 border-slate-500 p-2"
+      className="flex h-[150px] w-[220px] gap-4 rounded border-2 border-slate-500 p-2 cursor-default"
     >
       <div className="overflow-hidden">
         <Image
@@ -438,7 +438,7 @@ function SortableItem({
       <div className="flex flex-col items-center justify-between pt-2">
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <button className="hover:-slate-300">
+            <button>
               <AiFillDelete className="h-6 w-6 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
             </button>
           </AlertDialogTrigger>
