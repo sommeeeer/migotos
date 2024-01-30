@@ -95,19 +95,34 @@ export async function revalidateAndInvalidate(
       try {
         await res.revalidate(path);
       } catch (err) {
-        console.error(`Error validating: ${path} Error: \n`, err);
+        console.error(`Error res.validate(${path}): ${path} Error: \n`, err);
       }
     }
-    await invalidateCFPaths(
-      paths
-        .map((path) => {
-          if (path === "/") {
-            return `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`;
-          }
-          return `/_next/data/${process.env.NEXT_BUILD_ID}${path}.json*`;
-        })
-        .concat(paths),
-    );
+    try {
+      await invalidateCFPaths(
+        paths
+          .map((path) => {
+            if (path === "/") {
+              return `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`;
+            }
+            return `/_next/data/${process.env.NEXT_BUILD_ID}${path}.json*`;
+          })
+          .concat(paths),
+      );
+    } catch (err) {
+      console.error(
+        `Error invalidateCFPaths() on these routes: \n${paths
+          .map((path) => {
+            if (path === "/") {
+              return `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`;
+            }
+            return `/_next/data/${process.env.NEXT_BUILD_ID}${path}.json*`;
+          })
+          .concat(paths)
+          .join("\n")}\n\n\nError:\n\n\n`,
+        err,
+      );
+    }
   }
 }
 
