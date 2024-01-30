@@ -147,7 +147,6 @@ export const litterRouter = createTRPCRouter({
           },
           data: {
             name: input.name.toUpperCase(),
-            slug: input.name.toLowerCase() + "-litter",
             born: input.born,
             mother_name: input.mother_name,
             father_name: input.father_name,

@@ -81,7 +81,6 @@ export const catRouter = createTRPCRouter({
             father: input.father,
             pedigreeurl: input.pedigreeurl,
             stamnavn: input.stamnavn,
-            slug: `${input.nickname.replaceAll(" ", "-").toLowerCase()}-page`,
             gender: input.gender,
             owner: input.owner,
             fertile: input.fertile,
