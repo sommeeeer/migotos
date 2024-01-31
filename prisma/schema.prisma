@@ -213,6 +213,12 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Counter {
+  id        Int      @id @default(autoincrement())
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
 enum Role {
   USER
   ADMIN

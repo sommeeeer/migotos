@@ -16,7 +16,7 @@ export default function Privacy() {
       <div className="flex w-full flex-col items-center bg-zinc-100 px-6 py-12 lg:px-24">
         <article className="flex max-w-full flex-col gap-6 rounded-lg bg-white px-6 py-8 shadow-lg">
           <h1 className="text-3xl">Privacy Policy</h1>
-          <p className="text-gray-700">Last updated: January 4, 2024</p>
+          <p className="text-gray-700">Last updated: January 31, 2024</p>
           <p className="text-lg">
             Welcome to Migotos. This Privacy Policy describes how we collect,
             use, and disclose your personal information when you use our website
@@ -43,6 +43,11 @@ export default function Privacy() {
             that provide services on our behalf, such as hosting services and
             data analytics. We may also disclose your information if required by
             law or in response to a legal request.
+          </p>
+          <p>
+            We also keep track of how many visitors we have on our website, and
+            that is only a counter of how many times the website has been
+            visited. We do not collect any personal information from this.
           </p>
           <h2 className="text-xl font-semibold">Your Rights</h2>
           <p>
