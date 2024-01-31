@@ -8,7 +8,7 @@ export default function StatsCard({ counts }: AdminProps) {
   return (
     <div className="flex w-fit flex-col gap-6 rounded-xl bg-white p-6 shadow-lg">
       <h3 className="text-2xl">Stats</h3>
-      <div className="flex gap-12">
+      <div className="flex gap-12 flex-wrap">
         <div className="flex flex-col gap-7">
           <h4 className="w-24 border-b-2 border-dotted border-b-slate-200 text-lg text-gray-600">
             Content
