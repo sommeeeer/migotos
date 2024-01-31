@@ -17,6 +17,7 @@ export type AdminProps = {
     litterImagesCount: number;
     messageCount: number;
     commentsCount: number;
+    visitsCount: number;
   };
 };
 
@@ -48,6 +49,7 @@ export async function getServerSideProps(
     litterImagesCount,
     messageCount,
     commentsCount,
+    visitsCount,
   ] = await Promise.all([
     db.user.count(),
     db.cat.count(),
@@ -57,6 +59,11 @@ export async function getServerSideProps(
     db.kittenPictureImage.count(),
     db.contactMessage.count(),
     db.comment.count(),
+    db.counter.findFirst({
+      select: {
+        count: true,
+      },
+    }),
   ]);
 
   const counts = {
@@ -68,6 +75,7 @@ export async function getServerSideProps(
     litterImagesCount,
     messageCount,
     commentsCount,
+    visitsCount: visitsCount?.count ?? 0,
   };
 
   return {

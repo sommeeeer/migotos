@@ -1,4 +1,4 @@
-import { FaCat, FaComments } from "react-icons/fa";
+import { FaCat, FaComments, FaUserFriends } from "react-icons/fa";
 import { BiMessageSquareDetail, BiNews, BiSolidCat } from "react-icons/bi";
 import { HiUsers } from "react-icons/hi";
 import { type AdminProps } from "~/pages/admin";
@@ -74,6 +74,18 @@ export default function StatsCard({ counts }: AdminProps) {
             <div className="flex items-center gap-2">
               <span>Total images</span>
               <BsImages />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-7">
+          <h4 className="w-24 border-b-2 border-dotted border-b-slate-200 text-lg text-gray-600">
+            Visitors
+          </h4>
+          <div className="grid grid-cols-[max-content_1fr] gap-x-5 gap-y-3 text-xl">
+            <span className="text-blue-500">{counts.visitsCount}</span>
+            <div className="flex items-center gap-2">
+              <span>Unique visitors</span>
+              <FaUserFriends />
             </div>
           </div>
         </div>
