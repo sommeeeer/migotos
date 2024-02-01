@@ -99,7 +99,7 @@ export default function Home({ searchResults }: Props) {
                 <Link
                   href={`/news/${post.id}`}
                   key={post.id}
-                  className="underline hover:text-hoverbg transition-colors duration-300"
+                  className="underline transition-colors duration-300 hover:text-hoverbg"
                 >
                   {post.title}
                 </Link>
@@ -133,12 +133,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const blogPostResults = await db.blogPost.findMany({
     where: {
-      title: {
-        search: q,
-      },
-      body: {
-        search: q,
-      },
+      OR: [{ title: { contains: q } }, { body: { contains: q } }],
     },
   });
 
