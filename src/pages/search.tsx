@@ -36,6 +36,7 @@ export default function Home({ searchResults }: Props) {
             aria-label="Search"
             autoComplete="off"
             name="q"
+            minLength={2}
             defaultValue={q}
             className="w-[90%] rounded-md bg-gray-200 py-2 pl-10 pr-4 text-base"
             placeholder="Search..."
@@ -125,7 +126,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (q.length < 2) {
     return {
-      notFound: true,
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
     };
   }
 
