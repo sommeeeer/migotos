@@ -123,7 +123,7 @@ export default function Home({ searchResults }: Props) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const q = context.query.q as string;
 
-  if (q.length < 3) {
+  if (q.length < 2) {
     return {
       notFound: true,
     };
