@@ -7,6 +7,7 @@ import { db } from "~/server/db";
 import { type CatWithImage } from "./cats";
 import Image from "next/image";
 import Link from "next/link";
+import Head from "next/head";
 
 type Props = {
   searchResults: {
@@ -28,6 +29,7 @@ export default function Home({ searchResults }: Props) {
 
   return (
     <>
+      <PageHead />
       <div className="mb-10 mt-8 flex max-w-6xl flex-col gap-y-6 px-3">
         <form action="/search" className="relative">
           <Search className="absolute left-0 ml-2 mt-3 h-4 w-4" />
@@ -198,3 +200,36 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
+
+function PageHead() {
+  const router = useRouter();
+  const q = router.query.q as string;
+  return (
+    <Head>
+      <title>{`Search results for "${q}" - Migotos`}</title>
+      <meta
+        name="description"
+        content="Migoto's Norwegian Forest Cat cattery based in Oslo, Norway"
+      />
+      <meta property="og:site_name" content="Migotos, Norwegian Forest Cats" />
+      <meta
+        property="og:title"
+        content="Migotos: Norwegian Forest Cat Cattery based in Oslo, Norway"
+      />
+      <meta
+        property="og:description"
+        content="Migoto's Norwegian Forest Cat cattery based in Oslo, Norway"
+      />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={`https://migotos.com/search?q=${q}`} />
+      <meta
+        property="og:image"
+        content="https://migotos.com/static/icons/cropped-socialicon-480x480.png"
+      />
+      <meta property="og:image:alt" content="Migotos logo" />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="480" />
+      <meta property="og:image:height" content="480" />
+    </Head>
+  );
+}
