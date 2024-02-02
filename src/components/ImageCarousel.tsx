@@ -30,12 +30,14 @@ export default function ImageCarousel({
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(imageIndex + 1);
   const [title, setTitle] = useState<string | undefined>("");
+  const [currentImageSrc, setCurrentImageSrc] = useState<string | undefined>();
 
   useEffect(() => {
     noScroll.on();
     if (!api) return;
     api.scrollTo(imageIndex, true);
     setTitle((images[imageIndex] as KittenPictureImage)?.title ?? name);
+    setCurrentImageSrc(images[imageIndex]?.src);
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpen(false);
@@ -60,6 +62,7 @@ export default function ImageCarousel({
 
   useEffect(() => {
     setTitle((images[current - 1] as KittenPictureImage)?.title ?? name);
+    setCurrentImageSrc(images[current - 1]?.src);
   }, [current, images, name]);
 
   return (
@@ -83,9 +86,9 @@ export default function ImageCarousel({
           <X className="h-10 w-10" />
           <span className="sr-only">Close image carousel</span>
         </button>
-        {images[imageIndex]?.src && (
+        {currentImageSrc && (
           <a
-            href={images[imageIndex]?.src}
+            href={currentImageSrc}
             download
             rel="noopener noreferrer"
             target="_blank"
@@ -130,7 +133,9 @@ export default function ImageCarousel({
         <p
           className={cn(
             "absolute bottom-3 left-3 p-1 tracking-wide text-white",
-            title && title.length > 20 && "left-1/2 top-6 -translate-x-1/2",
+            title &&
+              title.length > 20 &&
+              "left-1/2 top-6 max-h-fit -translate-x-1/2 rounded-md bg-black/40  px-2 py-1",
           )}
         >{`${current}/${images.length}`}</p>
         <p
@@ -138,7 +143,7 @@ export default function ImageCarousel({
             "absolute bottom-3 right-3 p-1 tracking-wide text-white",
             title &&
               title.length > 20 &&
-              "left-2 text-center text-xs min-[400px]:text-lg md:bottom-4",
+              "left-2 mx-auto max-w-fit rounded-md bg-black/40 px-2 py-1 text-center text-xs min-[400px]:text-lg md:bottom-4",
           )}
         >
           {title}
