@@ -162,7 +162,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         searchResults: {
           blogPosts: [],
           litters: litterResults,
-          cats: catResults ?? [],
+          cats: catResults,
         },
       },
     };
