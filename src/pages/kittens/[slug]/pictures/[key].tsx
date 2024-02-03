@@ -19,9 +19,15 @@ type Props = {
   litter: LitterWithPictureWeeks;
   groupedImages: Record<string, KittenPictureImage[]>;
   title?: string;
+  alternativeTitle: string | null;
 };
 
-function KittenPictures({ groupedImages, litter, title }: Props) {
+function KittenPictures({
+  groupedImages,
+  litter,
+  title,
+  alternativeTitle,
+}: Props) {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
 
@@ -39,9 +45,9 @@ function KittenPictures({ groupedImages, litter, title }: Props) {
         />
       )}
       <div className="flex flex-col gap-4 px-2">
-        {litter.LitterPictureWeek[0]?.title && (
+        {alternativeTitle && (
           <p className="text-center text-lg text-zinc-500">
-            {litter.LitterPictureWeek[0]?.title}
+            {alternativeTitle}
           </p>
         )}
         {Object.entries(groupedImages).map(([key, images], groupIdx) => (
@@ -124,6 +130,7 @@ export async function getStaticProps({
       litter,
       groupedImages,
       title: images.name,
+      alternativeTitle: images.title,
     },
   };
 }
