@@ -124,7 +124,9 @@ function SearchBarMobile({ className }: { className?: string }) {
       <input
         type="search"
         aria-label="Search"
-        minLength={2}
+        pattern=".{1,}"
+        required
+        title="1 characters minimum"
         autoComplete="off"
         name="q"
         placeholder="Search..."
@@ -148,7 +150,9 @@ function SearchBarDesktop({ className }: { className?: string }) {
     >
       <Search className="absolute left-0 ml-2 mt-2 h-5 w-5" />
       <input
-        minLength={2}
+        pattern=".{1,}"
+        required
+        title="1 characters minimum"
         type="search"
         aria-label="Search"
         autoComplete="off"

@@ -38,7 +38,9 @@ export default function Home({ searchResults }: Props) {
             aria-label="Search"
             autoComplete="off"
             name="q"
-            minLength={2}
+            pattern=".{1,}"
+            required
+            title="1 characters minimum"
             defaultValue={q}
             className="w-[90%] rounded-md bg-gray-200 py-2 pl-10 pr-4 text-base"
             placeholder="Search..."
@@ -126,11 +128,42 @@ export default function Home({ searchResults }: Props) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const q = context.query.q as string;
 
-  if (q.length < 2) {
+  if (q.length < 1) {
     return {
       redirect: {
         destination: "/",
         permanent: false,
+      },
+    };
+  }
+
+  if (q.length === 1 || q.length === 2) {
+    const litterResults = await db.litter.findMany({
+      where: {
+        OR: [{ name: { contains: q } }],
+      },
+    });
+
+    let catResults: CatWithImage[] = [];
+
+    if (q.length === 2) {
+      catResults = await db.cat.findMany({
+        where: {
+          OR: [{ name: { contains: q } }],
+        },
+        include: {
+          CatImage: true,
+        },
+      });
+    }
+
+    return {
+      props: {
+        searchResults: {
+          blogPosts: [],
+          litters: litterResults,
+          cats: catResults ?? [],
+        },
       },
     };
   }
