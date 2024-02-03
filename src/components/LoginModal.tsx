@@ -26,7 +26,9 @@ export default function LoginModal({ variant }: LoginModalProps) {
   const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<null | string>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingEmail, setIsLoadingEmail] = useState(false);
+  const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
+  const [isLoadingFacebook, setIsLoadingFacebook] = useState(false);
 
   const emailInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,11 +47,13 @@ export default function LoginModal({ variant }: LoginModalProps) {
     const emailSchema = z.string().email();
     try {
       emailSchema.parse(email);
-      setIsLoading(true);
+      setIsLoadingEmail(true);
       void signIn("email", { email: email });
     } catch (error) {
       setError("Please enter a valid email address");
       emailInputRef.current?.focus();
+    } finally {
+      setIsLoadingEmail(false);
     }
   }
 
@@ -87,14 +91,14 @@ export default function LoginModal({ variant }: LoginModalProps) {
           <FaCat className="text-6xl" />
           <div className="mt-4 flex flex-col gap-3">
             <button
-              disabled={isLoading}
+              disabled={isLoadingEmail || isLoadingGoogle || isLoadingFacebook}
               onClick={() => {
-                setIsLoading(true);
+                setIsLoadingGoogle(true);
                 void signIn("google");
               }}
               className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-14 py-2 font-normal text-[#3B4045] hover:bg-[#F9FAFA] hover:text-[#3b4045]"
             >
-              {isLoading ? (
+              {isLoadingGoogle ? (
                 <Loader2 size={20} className="animate-spin" />
               ) : (
                 <FcGoogle size={20} />
@@ -102,14 +106,14 @@ export default function LoginModal({ variant }: LoginModalProps) {
               Sign in with Google
             </button>
             <button
-              disabled={isLoading}
+              disabled={isLoadingEmail || isLoadingGoogle || isLoadingFacebook}
               onClick={() => {
-                setIsLoading(true);
+                setIsLoadingFacebook(true);
                 void signIn("facebook");
               }}
               className="flex items-center gap-2 rounded-md border border-gray-300 bg-[#385499] px-14 py-2 font-normal text-gray-100 hover:bg-[#2a4894] hover:text-gray-200"
             >
-              {isLoading ? (
+              {isLoadingFacebook ? (
                 <Loader2 size={20} className="animate-spin" />
               ) : (
                 <AiFillFacebook size={20} color={"white"} />
@@ -121,7 +125,9 @@ export default function LoginModal({ variant }: LoginModalProps) {
                 <BorderText text="or" />
                 {error && <p className="text-red-500">{error}</p>}
                 <Input
-                  disabled={isLoading}
+                  disabled={
+                    isLoadingEmail || isLoadingGoogle || isLoadingFacebook
+                  }
                   type="email"
                   onChange={handleEmailChange}
                   ref={emailInputRef}
@@ -129,11 +135,13 @@ export default function LoginModal({ variant }: LoginModalProps) {
                   placeholder="email@example.com"
                 ></Input>
                 <button
-                  disabled={isLoading}
+                  disabled={
+                    isLoadingEmail || isLoadingGoogle || isLoadingFacebook
+                  }
                   onClick={handleEmailSignIn}
                   className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-14 py-2 font-normal text-[#3B4045] hover:bg-[#F9FAFA] hover:text-[#3b4045]"
                 >
-                  {isLoading ? (
+                  {isLoadingEmail ? (
                     <Loader2 size={20} className="animate-spin" />
                   ) : (
                     <AiOutlineMail size={20} fill="blue" />
