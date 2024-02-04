@@ -419,7 +419,7 @@ export default function NewCat({
                   {isLoading && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Save
+                  Create
                 </Button>
               </div>
             </div>
