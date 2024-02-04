@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { Input } from "./ui/input";
 import { useUploadImages } from "~/hooks/use-upload-images";
@@ -14,22 +14,23 @@ interface FileUploadProps {
 export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
   const { isUploading, uploadImages } = useUploadImages();
 
-  const { mutate: deleteImage } = api.image.deleteImage.useMutation({
-    onSuccess: (deleted) => {
-      onChange(undefined);
-      console.log("success mutation", deleted);
-    },
-    onError: () => {
-      console.log("error deleting image");
-    },
-  });
+  const { mutate: deleteImage, isLoading: isDeleteImageLoading } =
+    api.image.deleteImage.useMutation({
+      onSuccess: (deleted) => {
+        onChange(undefined);
+        console.log("success mutation", deleted);
+      },
+      onError: () => {
+        console.log("error deleting image");
+      },
+    });
 
   if (value) {
     return (
       <div
         className={cn(
           "relative h-[200px] w-[200px] rounded-full",
-          postImage && "h-[140px] w-[200px] rounded-none"
+          postImage && "h-[140px] w-[200px] rounded-none",
         )}
         title={value}
       >
@@ -39,19 +40,24 @@ export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
           alt="Upload"
           className={cn(
             "rounded-full",
-            postImage && "rounded-none object-cover"
-          )} />
+            postImage && "rounded-none object-cover",
+          )}
+        />
         <button
-          onClick={() => deleteImage({
-            url: value,
-          })}
+          onClick={() =>
+            deleteImage({
+              url: value,
+            })
+          }
+          disabled={isDeleteImageLoading}
           className={cn(
-            "absolute right-4 top-1 rounded-full bg-rose-500 p-1 text-white shadow-sm hover:scale-105 transition duration-200 hover:bg-red-600",
-            postImage && "-right-4 -top-6"
+            "absolute right-4 top-1 rounded-full bg-rose-500 p-1 text-white shadow-sm transition duration-200 hover:scale-105 hover:bg-red-600",
+            postImage && "-right-4 -top-6",
           )}
           type="button"
         >
-          <X className="h-4 w-4" />
+          {!isDeleteImageLoading && <X className="h-4 w-4" />}
+          {isDeleteImageLoading && <Loader2 className="h-4 w-4 animate-spin" />}
         </button>
       </div>
     );
@@ -69,7 +75,8 @@ export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
         });
 
         onChange(imgurls?.[0] || undefined);
-      } }
-      accept="image/png, image/jpeg, image/jpg, image/webp" />
+      }}
+      accept="image/png, image/jpeg, image/jpg, image/webp"
+    />
   );
 }
