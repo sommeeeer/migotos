@@ -6,6 +6,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 import {
   BLURURL,
+  deleteImages,
   getImageDimensions,
   revalidateAndInvalidate,
 } from "~/server/helpers";
@@ -28,9 +29,23 @@ export const catRouter = createTRPCRouter({
         }
         const deletedCat = await db.cat.delete({
           where: {
-            id: input,
+            id: cat.id,
+          },
+          include: {
+            CatImage: {
+              select: {
+                src: true,
+              },
+            },
           },
         });
+        if (deletedCat?.CatImage) {
+          await deleteImages(
+            deletedCat?.CatImage.map((image) =>
+              decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
+            ),
+          );
+        }
         await revalidateAndInvalidate(ctx.res, [
           "/cats",
           "/",
@@ -311,6 +326,11 @@ export const catRouter = createTRPCRouter({
             message: "Cat not found",
           });
         }
+        await deleteImages([
+          decodeURI(
+            deletedCatImage.src.replace("https://cdn.migotos.com/", ""),
+          ),
+        ]);
         await revalidateAndInvalidate(ctx.res, [`/cats/${cat.slug}`]);
         return deletedCatImage;
       } catch (err) {

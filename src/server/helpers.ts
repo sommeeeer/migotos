@@ -41,8 +41,6 @@ export async function deleteImages(filenames: string[]) {
         Key: filename,
         Bucket: Bucket.bucketid.bucketName,
       });
-      console.log("filename: ", filename);
-      console.log(command);
       const client = new S3Client({
         region: "eu-north-1",
       });

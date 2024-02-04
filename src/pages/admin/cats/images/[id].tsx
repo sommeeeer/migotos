@@ -323,8 +323,9 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
               </DialogContent>
             </Dialog>
             <Button
-              className={cn(isFetching && "bg-gray-700")}
+              className={cn(isFetching && "bg-primary/80")}
               onClick={() => refetch()}
+              disabled={isFetching}
             >
               <RotateCcw
                 className={cn("h-5 w-5", isFetching && "animate-spin")}

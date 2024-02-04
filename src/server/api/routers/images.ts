@@ -7,12 +7,12 @@ import { deleteImages } from "~/server/helpers";
 export const imageRouter = createTRPCRouter({
   deleteImage: protectedProcedure
     .input(z.object({ url: z.string() }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       try {
         const deletedImages = await deleteImages([
           decodeURI(input.url.replace("https://cdn.migotos.com/", "")),
         ]);
-        console.log(deletedImages);
+        
         return deletedImages;
       } catch (err) {
         console.error(err);
