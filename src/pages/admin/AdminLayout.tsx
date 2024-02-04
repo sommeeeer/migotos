@@ -51,7 +51,7 @@ export default function AdminLayout({
               className={twMerge(
                 clsx(
                   "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname === "/admin/users" &&
+                  router.pathname.startsWith("/admin/users") &&
                     "bg-blue-800 text-white",
                 ),
               )}
@@ -66,7 +66,7 @@ export default function AdminLayout({
               className={twMerge(
                 clsx(
                   "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname === "/admin/messages" &&
+                  router.pathname.startsWith("/admin/messages") &&
                     "bg-blue-800 text-white",
                 ),
               )}
@@ -81,7 +81,8 @@ export default function AdminLayout({
               className={twMerge(
                 clsx(
                   "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname === "/admin/news" && "bg-blue-800 text-white",
+                  router.pathname.startsWith("/admin/news") &&
+                    "bg-blue-800 text-white",
                 ),
               )}
             >
@@ -95,7 +96,8 @@ export default function AdminLayout({
               className={twMerge(
                 clsx(
                   "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname === "/admin/cats" && "bg-blue-800 text-white",
+                  router.pathname.startsWith("/admin/cats") &&
+                    "bg-blue-800 text-white",
                 ),
               )}
             >
@@ -109,7 +111,7 @@ export default function AdminLayout({
               className={twMerge(
                 clsx(
                   "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname === "/admin/litters" &&
+                  router.pathname.startsWith("/admin/litters") &&
                     "bg-blue-800 text-white",
                 ),
               )}
