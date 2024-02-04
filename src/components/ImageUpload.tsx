@@ -16,12 +16,11 @@ export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
 
   const { mutate: deleteImage, isLoading: isDeleteImageLoading } =
     api.image.deleteImage.useMutation({
-      onSuccess: (deleted) => {
-        onChange(undefined);
-        console.log("success mutation", deleted);
+      onSuccess: () => {
+        onChange("");
       },
       onError: () => {
-        console.log("error deleting image");
+        console.error("error deleting image");
       },
     });
 
@@ -63,6 +62,10 @@ export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
     );
   }
 
+  if (isUploading) {
+    return <Loader2 className="h-8 w-8 animate-spin" />;
+  }
+
   return (
     <Input
       type="file"
@@ -70,11 +73,9 @@ export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
       disabled={isUploading}
       onChange={async (e) => {
         if (!e.target.files) return;
-        const imgurls = await uploadImages(e.target.files, (i) => {
-          console.log("uploading", i);
-        });
+        const imgurl = await uploadImages(e.target.files);
 
-        onChange(imgurls?.[0] || undefined);
+        onChange(imgurl?.[0] || undefined);
       }}
       accept="image/png, image/jpeg, image/jpg, image/webp"
     />

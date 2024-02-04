@@ -30,32 +30,19 @@ import { Calendar } from "~/components/ui/calendar";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { addHours } from "date-fns";
 import { cn } from "~/lib/utils";
-import Image from "next/image";
-import { Label } from "~/components/ui/label";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
 import { blogPostSchema } from "~/lib/validators/blogpost";
 import { type z } from "zod";
-import { checkAdminSession, getSignedURL } from "~/server/helpers";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { useImageUpload } from "~/hooks/use-image-upload";
-import { useEffect } from "react";
+import { checkAdminSession } from "~/server/helpers";
+import { ImageUpload } from "~/components/ImageUpload";
 
 type EditBlogPostProps = {
   blogpost: BlogPost;
-  uploadUrl: string;
   tags: BlogPostTag[];
 };
 
-export default function EditBlogPost({
-  blogpost,
-  uploadUrl,
-}: EditBlogPostProps) {
+export default function EditBlogPost({ blogpost }: EditBlogPostProps) {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof blogPostSchema>>({
@@ -69,9 +56,6 @@ export default function EditBlogPost({
   });
 
   const { isDirty } = form.formState;
-
-  const { handleUpload, isUploading, setFile, imageURL, imageKey } =
-    useImageUpload(uploadUrl);
 
   const { mutate, isLoading } = api.blogpost.updateBlogPost.useMutation({
     onSuccess: (data) => {
@@ -123,11 +107,6 @@ export default function EditBlogPost({
       post_date: addHours(post_date, 2),
     });
   }
-
-  useEffect(() => {
-    if (!imageURL) return;
-    form.setValue("image_url", imageURL, { shouldDirty: true });
-  }, [imageURL, form]);
 
   return (
     <AdminLayout>
@@ -209,79 +188,35 @@ export default function EditBlogPost({
                 </FormItem>
               )}
             />
-            <div className="flex flex-col items-start gap-4">
-              <Label>Current Image</Label>
-              {form.getValues("image_url") ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Image
-                        src={`${form.getValues(
-                          "image_url",
-                        )}?version=${imageKey}`}
-                        width={300}
-                        height={300}
-                        alt={`${blogpost.title} image`}
-                        quality={100}
-                        priority
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{form.getValues("image_url")}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : (
-                <>
-                  {form.formState.errors.image_url && (
-                    <p className="text-red-500">
-                      {form.formState.errors.image_url.message}
-                    </p>
-                  )}
-                  {!form.formState.errors.image_url?.message && (
-                    <span className="text-gray-600">
-                      No image uploaded yet.
-                    </span>
-                  )}
-                </>
+            <FormField
+              control={form.control}
+              name="image_url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image</FormLabel>
+                  <FormControl>
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      postImage
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              <Label>Select New Image</Label>
-              <Input
-                type="file"
-                className="cursor-pointer"
-                disabled={isUploading || isLoading}
-                onChange={(e) => {
-                  if (!e.target.files) return;
-                  setFile(e.target.files[0]);
-                }}
-                accept="image/png, image/jpeg, image/jpg"
-              />
+            />
+            <div className="mt-4 flex gap-1">
               <Button
-                disabled={isUploading || isLoading}
-                type="button"
                 variant="secondary"
-                onClick={handleUpload}
+                type="button"
+                onClick={() => router.back()}
               >
-                {isUploading && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Upload
+                Cancel
               </Button>
-              <div className="mt-4 flex gap-1">
-                <Button
-                  variant="secondary"
-                  type="button"
-                  onClick={() => router.back()}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Save
-                </Button>
-              </div>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Save
+              </Button>
             </div>
           </form>
         </Form>
@@ -323,12 +258,10 @@ export async function getServerSideProps(
       value: "desc",
     },
   });
-  const uploadUrl = await getSignedURL();
 
   return {
     props: {
       blogpost,
-      uploadUrl,
       tags,
     },
   };

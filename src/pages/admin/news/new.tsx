@@ -33,7 +33,7 @@ import { api } from "~/utils/api";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { checkAdminSession } from "~/server/helpers";
 import { blogPostSchema } from "~/lib/validators/blogpost";
-import { ImageUpload } from "~/components/FileUpload";
+import { ImageUpload } from "~/components/ImageUpload";
 
 export default function NewBlogPost() {
   const router = useRouter();
@@ -170,6 +170,7 @@ export default function NewBlogPost() {
                       postImage
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />

@@ -34,18 +34,22 @@ export async function checkAdminSession(ctx: GetServerSidePropsContext) {
 }
 
 export async function deleteImages(filenames: string[]) {
+  const deletedImages = [];
   try {
     for (const filename of filenames) {
       const command = new DeleteObjectCommand({
         Key: filename,
         Bucket: Bucket.bucketid.bucketName,
       });
+      console.log("filename: ", filename);
+      console.log(command);
       const client = new S3Client({
         region: "eu-north-1",
       });
       const deletedImage = await client.send(command);
-      return deletedImage;
+      deletedImages.push(deletedImage);
     }
+    return deletedImages;
   } catch (err) {
     console.error(err);
     throw new Error("Error deleting images");
