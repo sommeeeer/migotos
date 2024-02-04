@@ -38,12 +38,12 @@ export const litterSchema = z.object({
     .max(100, { message: "Father must be less than 100 characters long." }),
   mother_stamnavn: z
     .string()
-    .min(2, { message: "Fargekode must be atleast 2 characters long." })
-    .max(100, { message: "Fargekode must be less than 100 characters long." }),
+    .min(2, { message: "Must be atleast 2 characters long." })
+    .max(100, { message: "Must be less than 100 characters long." }),
   father_stamnavn: z
     .string()
-    .min(2, { message: "Fargekode must be atleast 2 characters long." })
-    .max(100, { message: "Fargekode must be less than 100 characters long." }),
+    .min(2, { message: "Must be atleast 2 characters long." })
+    .max(100, { message: "Must be less than 100 characters long." }),
   description: z
     .string()
     .min(5, {
@@ -58,13 +58,13 @@ export const litterSchema = z.object({
     message: "Date cannot be in the future.",
   }),
   mother_img: z
-    .string({ required_error: "Please upload an image." })
+    .string({ required_error: "Please upload a mother image." })
     .url({ message: "Image URL must be a valid URL." }),
   father_img: z
-    .string({ required_error: "Please upload an image." })
+    .string({ required_error: "Please upload a father image." })
     .url({ message: "Image URL must be a valid URL." }),
   post_image: z
-    .string({ required_error: "Please upload an image." })
+    .string({ required_error: "Please upload a post image." })
     .url({ message: "Image URL must be a valid URL." }),
   kittens: z
     .array(kittenSchema)

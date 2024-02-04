@@ -17,7 +17,7 @@ export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
   const { mutate: deleteImage, isLoading: isDeleteImageLoading } =
     api.image.deleteImage.useMutation({
       onSuccess: () => {
-        onChange("");
+        onChange(undefined);
       },
       onError: () => {
         console.error("error deleting image");
@@ -50,7 +50,7 @@ export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
           }
           disabled={isDeleteImageLoading}
           className={cn(
-            "absolute right-4 top-1 rounded-full bg-rose-500 p-1 text-white shadow-sm transition duration-200 hover:scale-105 hover:bg-red-600",
+            "absolute right-4 top-1 rounded-full bg-red-500 p-1 text-gray-600 shadow-sm transition duration-200 hover:scale-110 hover:bg-red-600",
             postImage && "-right-4 -top-6",
           )}
           type="button"

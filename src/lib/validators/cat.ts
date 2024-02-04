@@ -18,8 +18,8 @@ export const catSchema = z.object({
     .or(z.literal("")),
   stamnavn: z
     .string()
-    .min(3, { message: "Stamnavn must be atleast 3 characters long." })
-    .max(100, { message: "Stamnavn must be less than 100 characters long." }),
+    .min(3, { message: "Must be atleast 3 characters long." })
+    .max(100, { message: "Must be less than 100 characters long." }),
   birth: z.date().max(addHours(new Date(), 4), {
     message: "Date cannot be in the future.",
   }),

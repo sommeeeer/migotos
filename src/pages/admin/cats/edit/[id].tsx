@@ -37,19 +37,9 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/use-toast";
 import { Checkbox } from "~/components/ui/checkbox";
 import { api } from "~/utils/api";
-import { Label } from "~/components/ui/label";
-import Image from "next/image";
-import { checkAdminSession, getSignedURL } from "~/server/helpers";
-import { useImageUpload } from "~/hooks/use-image-upload";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { useEffect } from "react";
+import { checkAdminSession } from "~/server/helpers";
 import CreateableSelect from "react-select/creatable";
-import ImageUploader from "~/components/ImageUploader";
+import { ImageUpload } from "~/components/ImageUpload";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -59,14 +49,12 @@ type CatWithImage = Prisma.CatGetPayload<{
 
 type EditCatProps = {
   cat: CatWithImage;
-  uploadUrl: string;
   motherNames: { name: string }[];
   fatherNames: { name: string }[];
 };
 
 export default function EditCat({
   cat,
-  uploadUrl,
   motherNames,
   fatherNames,
 }: EditCatProps) {
@@ -93,8 +81,6 @@ export default function EditCat({
 
   const { isDirty } = form.formState;
 
-  const { handleUpload, isUploading, setFile, imageURL, imageKey } =
-    useImageUpload(uploadUrl);
   const { mutate, isLoading } = api.cat.updateCat.useMutation({
     onSuccess: () => {
       toast({
@@ -130,11 +116,6 @@ export default function EditCat({
     });
   }
 
-  useEffect(() => {
-    if (!imageURL) return;
-    form.setValue("image_url", imageURL, { shouldDirty: true });
-  }, [imageURL, form]);
-
   return (
     <AdminLayout>
       <div className="flex items-center gap-2">
@@ -149,32 +130,34 @@ export default function EditCat({
             onSubmit={form.handleSubmit(onSubmit)}
             className="max-w-2xl space-y-6"
           >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input disabled={isLoading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="stamnavn"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Fargekode</FormLabel>
-                  <FormControl>
-                    <Input disabled={isLoading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex items-center gap-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input disabled={isLoading} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="stamnavn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Fargekode</FormLabel>
+                    <FormControl>
+                      <Input disabled={isLoading} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="birth"
@@ -230,51 +213,54 @@ export default function EditCat({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="fertile"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormLabel>Fertile</FormLabel>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem className="">
-                  <FormLabel>Gender</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex gap-2 rounded border p-4"
-                    >
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Female" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Female</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Male" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Male</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex items-end gap-4">
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem className="">
+                    <FormLabel>Gender</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex gap-2 rounded border p-4"
+                      >
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Female" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Female</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Male" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Male</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="fertile"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        className="rounded-none"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel>Fertile</FormLabel>
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="description"
@@ -377,62 +363,28 @@ export default function EditCat({
                 </FormItem>
               )}
             />
-            <div className="flex flex-col items-start gap-4">
-              <Label>Current Profile Image</Label>
-              {form.getValues("image_url") ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Image
-                        src={`${form.getValues(
-                          "image_url",
-                        )}?version=${imageKey}}`}
-                        width={300}
-                        height={300}
-                        alt={`${form.getValues("name")}'s image`}
-                        quality={100}
-                        priority
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{form.getValues("image_url")}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : (
-                <>
-                  {form.formState.errors.image_url && (
-                    <p className="text-red-500">
-                      {form.formState.errors.image_url.message}
-                    </p>
-                  )}
-                  {!form.formState.errors.image_url?.message && (
-                    <span className="text-gray-600">
-                      No image uploaded yet.
-                    </span>
-                  )}
-                </>
+            <FormField
+              control={form.control}
+              name="image_url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Profile Image</FormLabel>
+                  <FormControl>
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              <ImageUploader
-                label="Select New Profile Image (300x300)"
-                isLoading={isLoading}
-                isUploading={isUploading}
-                setValue={setFile}
-              />
-              <Button
-                disabled={isUploading || isLoading}
-                type="button"
-                variant="secondary"
-                onClick={handleUpload}
-              >
-                {isUploading && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Upload
-              </Button>
-            </div>
+            />
             <div className="mt-4 flex gap-1">
-              <Button variant="secondary" type="button" onClick={() => router.back()}>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => router.back()}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isLoading}>
@@ -502,12 +454,9 @@ export async function getServerSideProps(
     },
   });
 
-  const uploadUrl = await getSignedURL();
-
   return {
     props: {
       cat,
-      uploadUrl,
       motherNames,
       fatherNames,
     },

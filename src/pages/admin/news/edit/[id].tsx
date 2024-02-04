@@ -51,7 +51,7 @@ export default function EditBlogPost({ blogpost }: EditBlogPostProps) {
       title: blogpost.title,
       body: blogpost.body,
       post_date: blogpost.post_date,
-      image_url: blogpost.image_url!,
+      image_url: blogpost.image_url ?? undefined,
     },
   });
 
@@ -91,13 +91,6 @@ export default function EditBlogPost({ blogpost }: EditBlogPostProps) {
       return;
     }
     const { title, body, post_date, image_url } = values;
-    if (!title || !body || !post_date || !image_url) {
-      toast({
-        variant: "destructive",
-        description: "Please fill out all fields.",
-      });
-      return;
-    }
 
     mutate({
       id: blogpost.id,
@@ -107,6 +100,8 @@ export default function EditBlogPost({ blogpost }: EditBlogPostProps) {
       post_date: addHours(post_date, 2),
     });
   }
+
+  const imageValue = form.watch("image_url");
 
   return (
     <AdminLayout>
@@ -196,7 +191,7 @@ export default function EditBlogPost({ blogpost }: EditBlogPostProps) {
                   <FormLabel>Image</FormLabel>
                   <FormControl>
                     <ImageUpload
-                      value={field.value}
+                      value={imageValue}
                       onChange={field.onChange}
                       postImage
                     />

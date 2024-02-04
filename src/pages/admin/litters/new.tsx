@@ -40,13 +40,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { Label } from "~/components/ui/label";
 import { api } from "~/utils/api";
-import ShowCurrentImages from "~/components/ShowCurrentImages";
 import CreateableSelect from "react-select/creatable";
 import { db } from "~/server/db";
-import ImageUploader from "~/components/ImageUploader";
-import { useUploadImages } from "~/hooks/use-upload-images";
+import { ImageUpload } from "~/components/ImageUpload";
 
 interface NewLitterProps {
   motherNames: { name: string; stamnavn: string }[];
@@ -58,10 +55,6 @@ export default function NewLitter({
   fatherNames,
 }: NewLitterProps) {
   const [isKittenDialogOpen, setIsKittenDialogOpen] = useState(false);
-  const [motherImage, setMotherImage] = useState<File | undefined>(undefined);
-  const [fatherImage, setFatherImage] = useState<File | undefined>(undefined);
-  const [postImage, setPostImage] = useState<File | undefined>(undefined);
-  const { isUploading, uploadImages } = useUploadImages();
 
   const litterForm = useForm<z.infer<typeof litterSchema>>({
     resolver: zodResolver(litterSchema),
@@ -112,35 +105,6 @@ export default function NewLitter({
       },
     });
 
-  async function handleUpload() {
-    const filesToUpload = [motherImage, fatherImage, postImage].filter(
-      (file) => file !== undefined,
-    ) as File[];
-
-    if (filesToUpload.length < 3) {
-      return toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select all images before uploading.",
-      });
-    }
-    try {
-      const imageUrls = await uploadImages(filesToUpload);
-      if (imageUrls?.length === 3) {
-        litterForm.setValue("mother_img", imageUrls[0]!);
-        litterForm.setValue("father_img", imageUrls[1]!);
-        litterForm.setValue("post_image", imageUrls[2]!);
-      }
-    } catch (err) {
-      console.error(err);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while uploading images.",
-      });
-    }
-  }
-
   function onSubmitLitter(values: z.infer<typeof litterSchema>) {
     mutateCreateLitter({
       ...values,
@@ -168,7 +132,7 @@ export default function NewLitter({
         <Form {...litterForm}>
           <form
             onSubmit={litterForm.handleSubmit(onSubmitLitter)}
-            className="max-w-2xl space-y-6"
+            className="max-w-3xl space-y-6"
           >
             <FormField
               control={litterForm.control}
@@ -179,6 +143,48 @@ export default function NewLitter({
                   <FormControl>
                     <Input disabled={isLoading} {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={litterForm.control}
+              name="born"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Born</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          disabled={isLoading}
+                          className={cn(
+                            "w-[240px] pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
@@ -196,114 +202,118 @@ export default function NewLitter({
                 </FormItem>
               )}
             />
-            <FormField
-              control={litterForm.control}
-              name="mother_name"
-              render={({ field: { onChange, onBlur, name, ref } }) => (
-                <FormItem>
-                  <FormLabel>Mother Name</FormLabel>
-                  <FormControl>
-                    <CreateableSelect
-                      isLoading={isLoading}
-                      onChange={(e) => {
-                        onChange(e?.value);
-                        if (!e?.value)
-                          return litterForm.setValue("mother_stamnavn", "");
-                        const motherName = motherNames.find(
-                          (name) => name.name === e?.value,
-                        );
-                        if (motherName) {
-                          litterForm.setValue(
-                            "mother_stamnavn",
-                            motherName.stamnavn,
-                            {
-                              shouldValidate: true,
-                            },
+            <div className="flex w-full items-end gap-4">
+              <FormField
+                control={litterForm.control}
+                name="mother_name"
+                render={({ field: { onChange, onBlur, name, ref } }) => (
+                  <FormItem className="w-2/3">
+                    <FormLabel>Mother Name</FormLabel>
+                    <FormControl>
+                      <CreateableSelect
+                        isLoading={isLoading}
+                        onChange={(e) => {
+                          onChange(e?.value);
+                          if (!e?.value)
+                            return litterForm.setValue("mother_stamnavn", "");
+                          const motherName = motherNames.find(
+                            (name) => name.name === e?.value,
                           );
-                        }
-                      }}
-                      onBlur={onBlur}
-                      name={name}
-                      ref={ref}
-                      isClearable
-                      options={motherNames.map((name) => ({
-                        value: name.name,
-                        label: name.name,
-                      }))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={litterForm.control}
-              name="mother_stamnavn"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex">
-                    Mother&apos;s Fargekode
-                  </FormLabel>
-                  <FormControl>
-                    <Input disabled={isLoading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={litterForm.control}
-              name="father_name"
-              render={({ field: { onChange, onBlur, name, ref } }) => (
-                <FormItem>
-                  <FormLabel>Father Name</FormLabel>
-                  <FormControl>
-                    <CreateableSelect
-                      isLoading={isLoading}
-                      onChange={(e) => {
-                        onChange(e?.value);
-                        if (!e?.value)
-                          return litterForm.setValue("father_stamnavn", "");
-                        const fatherName = fatherNames.find(
-                          (name) => name.name === e?.value,
-                        );
-                        if (fatherName) {
-                          litterForm.setValue(
-                            "father_stamnavn",
-                            fatherName.stamnavn,
-                            { shouldValidate: true },
+                          if (motherName) {
+                            litterForm.setValue(
+                              "mother_stamnavn",
+                              motherName.stamnavn,
+                              {
+                                shouldValidate: true,
+                              },
+                            );
+                          }
+                        }}
+                        onBlur={onBlur}
+                        name={name}
+                        ref={ref}
+                        isClearable
+                        options={motherNames.map((name) => ({
+                          value: name.name,
+                          label: name.name,
+                        }))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={litterForm.control}
+                name="mother_stamnavn"
+                render={({ field }) => (
+                  <FormItem className="w-1/3">
+                    <FormLabel className="flex">
+                      Mother&apos;s Fargekode
+                    </FormLabel>
+                    <FormControl>
+                      <Input disabled={isLoading} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex w-full items-end gap-4">
+              <FormField
+                control={litterForm.control}
+                name="father_name"
+                render={({ field: { onChange, onBlur, name, ref } }) => (
+                  <FormItem className="w-2/3">
+                    <FormLabel>Father Name</FormLabel>
+                    <FormControl>
+                      <CreateableSelect
+                        isLoading={isLoading}
+                        onChange={(e) => {
+                          onChange(e?.value);
+                          if (!e?.value)
+                            return litterForm.setValue("father_stamnavn", "");
+                          const fatherName = fatherNames.find(
+                            (name) => name.name === e?.value,
                           );
-                        }
-                      }}
-                      onBlur={onBlur}
-                      name={name}
-                      ref={ref}
-                      isClearable
-                      options={fatherNames.map((name) => ({
-                        value: name.name,
-                        label: name.name,
-                      }))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={litterForm.control}
-              name="father_stamnavn"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex">
-                    Father&apos;s Fargekode
-                  </FormLabel>
-                  <FormControl>
-                    <Input disabled={isLoading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                          if (fatherName) {
+                            litterForm.setValue(
+                              "father_stamnavn",
+                              fatherName.stamnavn,
+                              { shouldValidate: true },
+                            );
+                          }
+                        }}
+                        onBlur={onBlur}
+                        name={name}
+                        ref={ref}
+                        isClearable
+                        options={fatherNames.map((name) => ({
+                          value: name.name,
+                          label: name.name,
+                        }))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={litterForm.control}
+                name="father_stamnavn"
+                render={({ field }) => (
+                  <FormItem className="w-1/3">
+                    <FormLabel className="flex">
+                      Father&apos;s Fargekode
+                    </FormLabel>
+                    <FormControl>
+                      <Input disabled={isLoading} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={litterForm.control}
               name="description"
@@ -368,97 +378,67 @@ export default function NewLitter({
             />
             <FormField
               control={litterForm.control}
-              name="born"
+              name="post_image"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Born</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          disabled={isLoading}
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                <FormItem>
+                  <FormLabel>Post Image</FormLabel>
+                  <FormControl>
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      postImage
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="flex flex-col items-start gap-4">
-              <Label>Current Images</Label>
-              <ShowCurrentImages />
-              <div className="flex flex-col items-start gap-8">
-                <div className="flex gap-8">
-                  <ImageUploader
-                    label="Select New Mother Image (200x200)"
-                    isLoading={isLoading}
-                    isUploading={isUploading}
-                    setValue={setMotherImage}
-                  />
-                  <ImageUploader
-                    label="Select New Father Image (200x200)"
-                    isLoading={isLoading}
-                    isUploading={isUploading}
-                    setValue={setFatherImage}
-                  />
-                </div>
-                <ImageUploader
-                  label="Select New Post Image (650x400)"
-                  isLoading={isLoading}
-                  isUploading={isUploading}
-                  setValue={setPostImage}
-                />
-              </div>
-              <Button
-                disabled={isUploading || isLoading}
-                type="button"
-                variant="secondary"
-                onClick={handleUpload}
-              >
-                {isUploading && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <div className="!mb-10 flex gap-x-12">
+              <FormField
+                control={litterForm.control}
+                name="mother_img"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mother Image</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-                Upload
+              />
+              <FormField
+                control={litterForm.control}
+                name="father_img"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Father Image</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex gap-1">
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => router.back()}
+              >
+                Cancel
               </Button>
-              <div className="mt-4 flex gap-1">
-                <Button
-                  variant="secondary"
-                  type="button"
-                  onClick={() => router.back()}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Create
-                </Button>
-              </div>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create
+              </Button>
             </div>
           </form>
         </Form>
