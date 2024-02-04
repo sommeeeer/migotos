@@ -61,6 +61,9 @@ export const litterRouter = createTRPCRouter({
         return litter;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -101,6 +104,9 @@ export const litterRouter = createTRPCRouter({
         return deletedLitter;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -177,6 +183,9 @@ export const litterRouter = createTRPCRouter({
         return updatedLitter;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -234,6 +243,9 @@ export const litterRouter = createTRPCRouter({
         return week;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -284,6 +296,9 @@ export const litterRouter = createTRPCRouter({
         return updatedWeek;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -353,6 +368,9 @@ export const litterRouter = createTRPCRouter({
         ]);
         return deletedWeek;
       } catch (err) {
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         console.error(err);
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -433,6 +451,9 @@ export const litterRouter = createTRPCRouter({
         return kittenImages;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -472,6 +493,9 @@ export const litterRouter = createTRPCRouter({
         return deletedImage;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",

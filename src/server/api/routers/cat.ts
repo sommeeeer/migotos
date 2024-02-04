@@ -54,6 +54,9 @@ export const catRouter = createTRPCRouter({
         return deletedCat;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -130,6 +133,9 @@ export const catRouter = createTRPCRouter({
         return updatedCat;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -214,6 +220,9 @@ export const catRouter = createTRPCRouter({
         return updatedCatImages;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -300,6 +309,9 @@ export const catRouter = createTRPCRouter({
         return catImages;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
@@ -335,6 +347,9 @@ export const catRouter = createTRPCRouter({
         return deletedCatImage;
       } catch (err) {
         console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Invalid request",
