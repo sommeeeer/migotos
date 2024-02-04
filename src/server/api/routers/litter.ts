@@ -6,6 +6,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
 import {
   BLURURL,
+  deleteImages,
   getImageDimensions,
   revalidateAndInvalidate,
 } from "~/server/helpers";
@@ -92,7 +93,25 @@ export const litterRouter = createTRPCRouter({
           where: {
             id: input,
           },
+          include: {
+            LitterPictureWeek: {
+              include: {
+                KittenPictureImage: {
+                  select: {
+                    src: true,
+                  },
+                },
+              },
+            },
+          },
         });
+        await deleteImages(
+          deletedLitter?.LitterPictureWeek.flatMap((week) =>
+            week.KittenPictureImage.map((image) =>
+              decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
+            ),
+          ),
+        );
         await revalidateAndInvalidate(
           ctx.res,
           ["/kittens", "/", `/kittens/${deletedLitter.slug}`].concat(
@@ -361,7 +380,20 @@ export const litterRouter = createTRPCRouter({
           where: {
             id: input.week_id,
           },
+          include: {
+            KittenPictureImage: {
+              select: {
+                src: true,
+              },
+            },
+          },
         });
+        await deleteImages(
+          deletedWeek?.KittenPictureImage.map((image) =>
+            decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
+          ),
+        );
+        console.log(deletedWeek.KittenPictureImage);
         await revalidateAndInvalidate(ctx.res, [
           `/kittens/${litter.slug}`,
           `/kittens/${litter.slug}/pictures/${deletedWeek.name}`,
@@ -487,6 +519,9 @@ export const litterRouter = createTRPCRouter({
             id: input.image_id,
           },
         });
+        await deleteImages([
+          decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
+        ]);
         await revalidateAndInvalidate(ctx.res, [
           `/kittens/${image.LitterPictureWeek.Litter.slug}/pictures/${image.LitterPictureWeek.name}`,
         ]);

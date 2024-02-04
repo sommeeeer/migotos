@@ -70,6 +70,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useUploadImages } from "~/hooks/use-upload-images";
 import { Progress } from "~/components/ui/progress";
+import { IoMdFemale, IoMdMale } from "react-icons/io";
 
 type LitterWithImages = Prisma.LitterGetPayload<{
   include: {
@@ -310,6 +311,10 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
     const imageUrls = await uploadImages(filesToUpload, (i) => {
       const progress = (i / filesToUpload.length) * 100;
       setProgressValue(progress);
+      if (progress === 100) {
+        setIsAddPhotosOpen(false);
+        setProgressValue(0);
+      }
     });
     if (imageUrls) {
       mutateAddKittenImages({
@@ -459,7 +464,14 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                         <SelectGroup>
                           {currentLitter.Kitten.map((kitten) => (
                             <SelectItem key={kitten.id} value={kitten.name}>
-                              {kitten.name}
+                              <div className="flex items-center gap-2">
+                                {kitten.gender === "female" ? (
+                                  <IoMdFemale className="h-4 w-4 fill-pink-500" />
+                                ) : (
+                                  <IoMdMale className="h-4 w-4 fill-blue-500" />
+                                )}
+                                {kitten.name}
+                              </div>
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -532,9 +544,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Add week</DialogTitle>
-                  <DialogDescription>
-                    Add a new week to the litter.
-                  </DialogDescription>
+                  <DialogDescription>0 will be Newborn</DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center space-x-2">
                   <div className="grid flex-1 gap-4">
@@ -615,7 +625,12 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                       <Button
                         variant="destructive"
                         className="absolute right-4 top-4 flex items-center"
-                        disabled={isLoadingDeleteWeek}
+                        disabled={
+                          isLoadingDeleteWeek ||
+                          isLoadingAddWeek ||
+                          isLoadingAddKittenImages ||
+                          isLoadingSetWeekTitle
+                        }
                       >
                         {isLoadingDeleteWeek && (
                           <LoadingSpinner className="mr-2 h-4 w-4" />
