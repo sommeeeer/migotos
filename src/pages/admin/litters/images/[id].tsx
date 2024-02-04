@@ -14,7 +14,7 @@ import AdminLayout from "../../AdminLayout";
 import Image from "next/image";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { type ChangeEvent, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Card,
   CardContent,
