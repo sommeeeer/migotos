@@ -8,14 +8,14 @@ export function useUploadImages() {
   async function uploadImages(
     filesToUpload: FileList | File[],
     onUpload?: (index: number) => void,
-  ): Promise<string[] | undefined> {
+  ): Promise<string[] | null> {
     if (!filesToUpload) {
       toast({
         variant: "destructive",
         description: "Please select images to upload.",
         title: "Error",
       });
-      return;
+      return null;
     }
 
     setIsUploading(true);
@@ -57,6 +57,7 @@ export function useUploadImages() {
         title: "Error",
         description: "Something went wrong while uploading images.",
       });
+      return null;
     } finally {
       setIsUploading(false);
     }

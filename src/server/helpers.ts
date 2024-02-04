@@ -5,7 +5,12 @@ import {
 } from "next/types";
 import { getServerAuthSession } from "~/server/auth";
 import { Role } from "@prisma/client";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+  type DeleteObjectOutput,
+} from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
 import {
   CloudFrontClient,
@@ -26,6 +31,25 @@ export async function checkAdminSession(ctx: GetServerSidePropsContext) {
   }
 
   return session;
+}
+
+export async function deleteImages(filenames: string[]) {
+  try {
+    for (const filename of filenames) {
+      const command = new DeleteObjectCommand({
+        Key: filename,
+        Bucket: Bucket.bucketid.bucketName,
+      });
+      const client = new S3Client({
+        region: "eu-north-1",
+      });
+      const deletedImage = await client.send(command);
+      return deletedImage;
+    }
+  } catch (err) {
+    console.error(err);
+    throw new Error("Error deleting images");
+  }
 }
 
 export async function getSignedURL() {
