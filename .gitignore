@@ -47,7 +47,8 @@ yarn-error.log*
 cdk.context.json
 src/server/api/routers/test.ts
 
-#testing and seeding
+#testing, backup and seeding
 prisma/*.ts
 src/pages/api/test.ts
 src/pages/api/seed.ts
+backup.sql
