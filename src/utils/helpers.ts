@@ -7,7 +7,7 @@ export function formatDate(inputDate: string) {
   const day = format(date, "do");
   const monthYear = format(date, "MMMM yyyy");
   const formattedDay = day;
-  return `BORN ${formattedDay} OF ${monthYear.toUpperCase()}`;
+  return `born ${formattedDay} of ${monthYear}`;
 }
 
 export function findName(name: string) {

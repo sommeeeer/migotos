@@ -3,6 +3,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "~/lib/utils";
 import { FaArrowRight } from "react-icons/fa";
+import { formatDate } from "~/utils/helpers";
 
 interface LitterProfileProps {
   id: number;
@@ -11,6 +12,8 @@ interface LitterProfileProps {
   slug: string | null;
   tags: string[];
   className?: string;
+  frontPage?: boolean;
+  born?: Date;
 }
 
 export default function LitterProfile({
@@ -20,6 +23,8 @@ export default function LitterProfile({
   slug,
   tags,
   className,
+  frontPage,
+  born,
 }: LitterProfileProps) {
   return (
     <motion.div
@@ -44,10 +49,17 @@ export default function LitterProfile({
             style={{ height: "100%", objectFit: "cover" }}
           />
         )}
-        <div className="absolute bottom-0 z-10 p-4 font-playfair uppercase tracking-wider text-white">
-          <h3 className="text-sm">{tags.join(", ")}</h3>
-          <h1 className="text-lg">{name}</h1>
-        </div>
+        {!frontPage && (
+          <div className="absolute bottom-0 z-10 p-4 font-playfair uppercase tracking-wider text-white">
+            <h3 className="text-sm">{tags.join(", ")}</h3>
+            <h1 className="text-lg">{name}</h1>
+          </div>
+        )}
+        {frontPage && born && (
+          <div className="absolute bottom-0 z-10 p-4 font-playfair tracking-wider text-white">
+            <h3 className="font-medium">{`${name}-Litter ${formatDate(born?.toISOString())}`}</h3>
+          </div>
+        )}
         <div className="absolute inset-0 bg-black/40"></div>
       </Link>
     </motion.div>

@@ -43,6 +43,8 @@ export default function Home({ blogPosts, litters }: Props) {
                 >
                   <LitterProfile
                     key={litter.id}
+                    frontPage
+                    born={litter.born}
                     id={litter.id}
                     name={litter.name}
                     post_image={litter.post_image}

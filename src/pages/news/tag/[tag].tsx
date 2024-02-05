@@ -79,6 +79,9 @@ export async function getStaticProps({
         },
       },
     },
+    orderBy: {
+      post_date: "desc",
+    },
   });
 
   return {
