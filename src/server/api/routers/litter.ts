@@ -105,13 +105,22 @@ export const litterRouter = createTRPCRouter({
             },
           },
         });
+        
+        const profileImages = [
+          litter.post_image,
+          litter.mother_img,
+          litter.father_img,
+        ].map((img) =>
+          img ? decodeURI(img.replace("https://cdn.migotos.com/", "")) : "",
+        );
         await deleteImages(
           deletedLitter?.LitterPictureWeek.flatMap((week) =>
             week.KittenPictureImage.map((image) =>
               decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
             ),
-          ),
+          ).concat(profileImages.filter(Boolean)),
         );
+
         await revalidateAndInvalidate(
           ctx.res,
           ["/kittens", "/", `/kittens/${deletedLitter.slug}`].concat(
