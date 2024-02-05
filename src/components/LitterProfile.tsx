@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "~/lib/utils";
+import { FaArrowRight } from "react-icons/fa";
 
 interface LitterProfileProps {
   id: number;
@@ -32,6 +33,7 @@ export default function LitterProfile({
       layout
     >
       <Link href={`kittens/${slug}`} style={{ height: "100%" }}>
+        <FaArrowRight className="absolute right-0 top-0 z-10 m-4 text-3xl text-white" />
         {post_image && (
           <Image
             key={id}

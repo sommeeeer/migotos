@@ -26,15 +26,16 @@ export default function NewsCard({
       onClick={() => void router.push(`/news/${id}`)}
     >
       {image_src ? (
-        <Image
-          className="h-[200px] object-cover"
-          src={image_src ?? ""}
-          alt="Sunset in the mountains"
-          width={384}
-          height={167}
-          quality={100}
-          priority={priority}
-        />
+        <div className="h-[200px] relative">
+          <Image
+            className="object-cover"
+            src={image_src ?? ""}
+            alt="Sunset in the mountains"
+            fill
+            quality={100}
+            priority={priority}
+          />
+        </div>
       ) : (
         <div className="h-[200px] w-full bg-gray-300"></div>
       )}

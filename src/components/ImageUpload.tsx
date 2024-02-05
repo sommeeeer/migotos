@@ -29,7 +29,7 @@ export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
       <div
         className={cn(
           "relative h-[200px] w-[200px] rounded-full",
-          postImage && "h-[140px] w-[200px] rounded-none",
+          postImage && "h-[200px] w-[338px] rounded-none",
         )}
         title={value}
       >
