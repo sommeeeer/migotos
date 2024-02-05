@@ -9,7 +9,6 @@ import {
   DeleteObjectCommand,
   PutObjectCommand,
   S3Client,
-  type DeleteObjectOutput,
 } from "@aws-sdk/client-s3";
 import { Bucket } from "sst/node/bucket";
 import {

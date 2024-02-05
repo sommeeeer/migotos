@@ -65,6 +65,7 @@ export default function PaginationMenu({
               <PaginationLink
                 href={number === 1 ? "/news/" : `/news/page/${number}`}
                 isActive={currentPage === number}
+                className="text-sm sm:text-base md:text-lg lg:text-xl"
               >
                 {number}
               </PaginationLink>
