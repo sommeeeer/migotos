@@ -43,6 +43,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <PageHead />
       <div
+        suppressHydrationWarning
         className={`flex flex-col ${poppins.className} ${playfair.variable}`}
       >
         <Header>
