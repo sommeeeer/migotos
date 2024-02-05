@@ -64,7 +64,6 @@ export default function News({ blogposts }: NewsProps) {
   return (
     <AdminLayout>
       <div className="mb-4 flex flex-col items-start gap-4 rounded-lg bg-white p-4 shadow">
-        
         <Link className={twMerge(buttonVariants())} href={"/admin/news/new"}>
           <MdOutlinePostAdd className="mr-1 h-4 w-4" />
           New BlogPost
@@ -92,9 +91,9 @@ export default function News({ blogposts }: NewsProps) {
                     {blogpost.image_url ? (
                       <Image
                         src={blogpost.image_url}
+                        className="cover"
                         width={100}
                         height={100}
-                        objectFit="cover"
                         alt={`${blogpost.title} image`}
                         quality={100}
                       />

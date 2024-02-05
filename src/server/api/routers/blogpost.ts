@@ -4,7 +4,7 @@ import { blogPostSchema } from "~/lib/validators/blogpost";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
-import { revalidateAndInvalidate } from "~/server/helpers";
+import { deleteImages, revalidateAndInvalidate } from "~/server/helpers";
 
 export const blogpostRouter = createTRPCRouter({
   createBlogPost: protectedProcedure
@@ -56,6 +56,9 @@ export const blogpostRouter = createTRPCRouter({
             id: input,
           },
         });
+        if (blogpost.image_url) {
+          await deleteImages([blogpost.image_url]);
+        }
         await revalidateAndInvalidate(
           ctx.res,
           ["/news", "/"].concat(
