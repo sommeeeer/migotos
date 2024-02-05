@@ -194,7 +194,7 @@ function Cat({ cat, mother, father }: Props) {
               <p>{cat.owner}</p>
             </div>
           </div>
-          <h3 className="self-center font-playfair text-2xl" ref={picturesRef}>
+          <h3 className="self-center font-playfair text-2xl font-light" ref={picturesRef}>
             Pictures
           </h3>
           <section className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4">
@@ -206,7 +206,7 @@ function Cat({ cat, mother, father }: Props) {
                     setCarouselOpen(true);
                   }}
                   key={img.id}
-                  className="relative h-40 w-40 cursor-pointer sm:h-52 sm:w-52 xl:h-60 xl:w-60"
+                  className="relative h-40 w-40 cursor-pointer sm:h-52 sm:w-52 xl:h-60 xl:w-60 shadow-lg"
                 >
                   <CatImage
                     src={img.src}
