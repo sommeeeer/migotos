@@ -57,7 +57,7 @@ function KittenPictures({
               {images.map((image, idx) => (
                 <picture
                   key={image.id}
-                  className="relative h-40 w-40 cursor-pointer sm:h-52 sm:w-52 xl:h-60 xl:w-60"
+                  className="relative h-40 w-40 cursor-pointer shadow-lg sm:h-52 sm:w-52 xl:h-60 xl:w-60"
                   onClick={() => {
                     setCurrentImageIndex(
                       Object.values(groupedImages).slice(0, groupIdx).flat()
