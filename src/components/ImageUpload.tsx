@@ -5,13 +5,13 @@ import { useUploadImages } from "~/hooks/use-upload-images";
 import { cn } from "~/lib/utils";
 import { api } from "~/utils/api";
 
-interface FileUploadProps {
+interface ImageUploadProps {
   onChange: (url?: string) => void;
   value: string;
   postImage?: boolean;
 }
 
-export function ImageUpload({ onChange, value, postImage }: FileUploadProps) {
+export function ImageUpload({ onChange, value, postImage }: ImageUploadProps) {
   const { isUploading, uploadImages } = useUploadImages();
 
   const { mutate: deleteImage, isLoading: isDeleteImageLoading } =
