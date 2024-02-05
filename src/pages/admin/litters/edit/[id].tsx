@@ -156,9 +156,9 @@ export default function EditLitter({
 
   return (
     <AdminLayout>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mb-4 ">
         <h1 className="text-2xl">Edit Litter</h1>
-        <AiFillEdit className="mb-4 h-12 w-12" />
+        <AiFillEdit className="h-12 w-12" />
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
         <Form {...litterForm}>

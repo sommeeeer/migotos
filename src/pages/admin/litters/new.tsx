@@ -124,9 +124,9 @@ export default function NewLitter({
 
   return (
     <AdminLayout>
-      <div className="flex items-center gap-2">
+      <div className="mb-4 flex items-center gap-2">
         <h1 className="text-2xl">New Litter</h1>
-        <BiSolidCat className="mb-4 h-8 w-8" />
+        <BiSolidCat className="h-8 w-8" />
       </div>
       <div className="mb-4 rounded-lg bg-white p-8 shadow">
         <Form {...litterForm}>
