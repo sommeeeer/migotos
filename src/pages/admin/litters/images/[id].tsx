@@ -781,8 +781,7 @@ function KittenImage({
           placeholder="blur"
           blurDataURL={image.blururl}
           fill
-          objectFit="cover"
-          className="absolute"
+          className="absolute cover"
         />
       </picture>
       <AlertDialog>
