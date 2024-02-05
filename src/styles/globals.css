@@ -70,3 +70,7 @@
   top: -6px;
   left: 12px;
 }
+
+.rdp-vhidden {
+  @apply hidden;
+}
