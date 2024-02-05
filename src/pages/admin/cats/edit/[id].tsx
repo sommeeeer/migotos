@@ -295,6 +295,7 @@ export default function EditCat({
                   <FormLabel>Father</FormLabel>
                   <FormControl>
                     <CreateableSelect
+                      instanceId="father"
                       isLoading={isLoading}
                       onChange={(e) => onChange(e?.value)}
                       defaultValue={{ value: value, label: value }}
@@ -320,6 +321,7 @@ export default function EditCat({
                   <FormLabel>Mother</FormLabel>
                   <FormControl>
                     <CreateableSelect
+                      instanceId="mother"
                       isLoading={isLoading}
                       defaultValue={{ value: value, label: value }}
                       onChange={(e) => onChange(e?.value)}

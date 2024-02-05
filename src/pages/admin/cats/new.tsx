@@ -65,6 +65,7 @@ export default function NewCat({ motherNames, fatherNames }: NewCatProps) {
       image_url: undefined,
     },
   });
+
   const { mutate, isLoading } = api.cat.createCat.useMutation({
     onSuccess: () => {
       toast({
@@ -270,6 +271,7 @@ export default function NewCat({ motherNames, fatherNames }: NewCatProps) {
                   <FormLabel>Father</FormLabel>
                   <FormControl>
                     <CreateableSelect
+                      instanceId="father"
                       isLoading={isLoading}
                       onChange={(e) => onChange(e?.value)}
                       onBlur={onBlur}
@@ -294,6 +296,7 @@ export default function NewCat({ motherNames, fatherNames }: NewCatProps) {
                   <FormLabel>Mother</FormLabel>
                   <FormControl>
                     <CreateableSelect
+                      instanceId="mother"
                       isLoading={isLoading}
                       onChange={(e) => onChange(e?.value)}
                       onBlur={onBlur}

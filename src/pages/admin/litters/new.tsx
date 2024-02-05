@@ -211,6 +211,7 @@ export default function NewLitter({
                     <FormLabel>Mother Name</FormLabel>
                     <FormControl>
                       <CreateableSelect
+                        instanceId="mother_name"
                         isLoading={isLoading}
                         onChange={(e) => {
                           onChange(e?.value);
@@ -268,6 +269,7 @@ export default function NewLitter({
                     <FormLabel>Father Name</FormLabel>
                     <FormControl>
                       <CreateableSelect
+                        instanceId="father_name"
                         isLoading={isLoading}
                         onChange={(e) => {
                           onChange(e?.value);

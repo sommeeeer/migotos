@@ -156,7 +156,7 @@ export default function EditLitter({
 
   return (
     <AdminLayout>
-      <div className="flex items-center gap-2 mb-4 ">
+      <div className="mb-4 flex items-center gap-2 ">
         <h1 className="text-2xl">Edit Litter</h1>
         <AiFillEdit className="h-12 w-12" />
       </div>
@@ -243,6 +243,7 @@ export default function EditLitter({
                     <FormLabel>Mother Name</FormLabel>
                     <FormControl>
                       <CreateableSelect
+                        instanceId="mother_name"
                         isLoading={isLoading}
                         onChange={(e) => {
                           onChange(e?.value);
@@ -300,6 +301,7 @@ export default function EditLitter({
                     <FormLabel>Father Name</FormLabel>
                     <FormControl>
                       <CreateableSelect
+                        instanceId="father_name"
                         isLoading={isLoading}
                         onChange={(e) => {
                           onChange(e?.value);

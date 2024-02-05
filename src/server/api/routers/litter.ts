@@ -402,7 +402,6 @@ export const litterRouter = createTRPCRouter({
             decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
           ),
         );
-        console.log(deletedWeek.KittenPictureImage);
         await revalidateAndInvalidate(ctx.res, [
           `/kittens/${litter.slug}`,
           `/kittens/${litter.slug}/pictures/${deletedWeek.name}`,
