@@ -220,7 +220,7 @@ model Counter {
 }
 
 model Visitor {
-  id      Int    @id @default(autoincrement())
+  id Int    @id @default(autoincrement())
   ua String @db.VarChar(255)
 }
 
