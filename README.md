@@ -4,7 +4,7 @@ A site for my mothers cat breeding company: *Migoto’s Norwegian Forest Cat*, c
 
 The data for this site was originally scraped from an old Wordpress site using my own webscraper written in Python. There was a little over 25_000 images, 52 cat profiles, 83 litters and 67 blogposts. Then the data is inserted into a MySQL database The scraper source code can you find here: [migotos-webscraper](https://github.com/sommeeeer/migotos-webscraper)
 
-This project was built to make it easier for my mum to add new content to her site. Also migrating from a static blog site([old migotos](https://oldsite.migotos.com)) to a more dynamic web application.
+This project was built to make it easier for my mum to add new content to her site. Also migrating from a static blog site([old migotos](https://oldsite.migotos.com)) to a more dynamic web application, with an admin dashboard. 
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
