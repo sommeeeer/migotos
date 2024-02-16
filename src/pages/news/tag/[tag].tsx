@@ -84,6 +84,12 @@ export async function getStaticProps({
     },
   });
 
+  if (!blogPosts.length) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       blogPosts,
