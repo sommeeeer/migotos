@@ -128,7 +128,7 @@ export default function Home({ searchResults }: Props) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const q = context.query.q as string;
 
-  if (q.length < 1) {
+  if (!q || q.length < 1) {
     return {
       redirect: {
         destination: "/",
