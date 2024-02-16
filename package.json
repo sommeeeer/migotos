@@ -71,6 +71,7 @@
     "superjson": "^1.13.3",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
+    "ua-parser-js": "^1.0.37",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -80,6 +81,7 @@
     "@types/nodemailer": "^6.4.14",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
+    "@types/ua-parser-js": "^0.7.39",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "autoprefixer": "^10.4.17",

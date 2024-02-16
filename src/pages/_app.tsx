@@ -44,7 +44,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <PageHead />
       <div
         suppressHydrationWarning
-        className={`flex flex-col ${poppins.className} ${playfair.variable}`}
+        className={`flex flex-col ${poppins.className} ${playfair.variable} antialiased`}
       >
         <Header>
           <NextNProgress options={{ showSpinner: false }} />
