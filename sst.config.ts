@@ -31,9 +31,7 @@ export default {
           NEXTAUTH_URL:
             app.mode === "dev" ? "http://localhost:3000" : env.NEXTAUTH_URL,
           DATABASE_URL:
-            app.mode === "dev"
-              ? process.env.DATABASE_URL_DEV!
-              : env.DATABASE_URL,
+            app.mode === "dev" ? env.DATABASE_URL_DEV : env.DATABASE_URL,
         },
         bind: [bucket],
       });
