@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
-    "sst:deploy": "sst deploy --stage prod"
+    "sst:deploy": "sst deploy --stage prod",
+    "cleanuploads": "aws s3 rm s3://images.migotos.com/uploads/ --recursive"
   },
   "dependencies": {
     "@aws-sdk/client-cloudfront": "^3.496.0",
