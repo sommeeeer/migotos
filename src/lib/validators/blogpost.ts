@@ -17,5 +17,8 @@ export const blogPostSchema = z.object({
   post_date: z.date().max(addHours(new Date(), 4), {
     message: "Date cannot be in the future.",
   }),
-  image_url: z.string({required_error: 'Please upload an image.'}).url({ message: "Image URL must be a valid URL." }),
+  image_url: z
+    .string({ required_error: "Please upload an image." })
+    .url({ message: "Image URL must be a valid URL." }),
+  tags: z.array(z.object({ value: z.string(), label: z.string() })),
 });

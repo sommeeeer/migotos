@@ -34,8 +34,10 @@ import { MdOutlinePostAdd } from "react-icons/md";
 import { checkAdminSession } from "~/server/helpers";
 import { blogPostSchema } from "~/lib/validators/blogpost";
 import { ImageUpload } from "~/components/ImageUpload";
+import CreatableSelect from "react-select/creatable";
+import { db } from "~/server/db";
 
-export default function NewBlogPost() {
+export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof blogPostSchema>>({
@@ -45,6 +47,7 @@ export default function NewBlogPost() {
       post_date: new Date(),
       title: "",
       image_url: undefined,
+      tags: [],
     },
   });
 
@@ -68,13 +71,21 @@ export default function NewBlogPost() {
   });
 
   function onSubmit(values: z.infer<typeof blogPostSchema>) {
-    const { title, body, post_date, image_url } = values;
+    const { title, body, post_date, image_url, tags } = values;
     mutate({
       title,
       body,
       image_url,
+      tags,
       post_date: addHours(post_date, 2),
     });
+  }
+
+  function handleCreate(inputValue: string) {
+    form.setValue("tags", [
+      ...form.getValues("tags"),
+      { label: inputValue, value: inputValue },
+    ]);
   }
 
   return (
@@ -159,6 +170,34 @@ export default function NewBlogPost() {
             />
             <FormField
               control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <CreatableSelect
+                      name="tags"
+                      isMulti
+                      onBlur={field.onBlur}
+                      instanceId="tags"
+                      ref={field.ref}
+                      isClearable
+                      isDisabled={isLoading}
+                      isLoading={isLoading}
+                      onChange={field.onChange}
+                      onCreateOption={handleCreate}
+                      options={tags.map((tag) => {
+                        return { label: tag.value, value: tag.value };
+                      })}
+                      value={field.value}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="image_url"
               render={({ field }) => (
                 <FormItem>
@@ -204,6 +243,7 @@ export async function getServerSideProps(
 ): Promise<
   GetServerSidePropsResult<{
     notFound?: boolean;
+    tags: { value: string }[];
   }>
 > {
   const adminSession = await checkAdminSession(ctx);
@@ -213,7 +253,15 @@ export async function getServerSideProps(
       notFound: true,
     };
   }
+
+  const tags = await db.blogPostTag.findMany({
+    select: {
+      value: true,
+    },
+  });
   return {
-    props: {},
+    props: {
+      tags,
+    },
   };
 }

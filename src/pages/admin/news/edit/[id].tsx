@@ -1,4 +1,4 @@
-import { type BlogPost, type BlogPostTag } from "@prisma/client";
+import { type BlogPost, type BlogPostTag, type Prisma } from "@prisma/client";
 import AdminLayout from "../../AdminLayout";
 import { format } from "date-fns";
 import { db } from "~/server/db";
@@ -36,13 +36,18 @@ import { blogPostSchema } from "~/lib/validators/blogpost";
 import { type z } from "zod";
 import { checkAdminSession } from "~/server/helpers";
 import { ImageUpload } from "~/components/ImageUpload";
+import CreatableSelect from "react-select/creatable";
+
+type BlogPostWithTags = Prisma.BlogPostGetPayload<{
+  include: { tags: true };
+}>;
 
 type EditBlogPostProps = {
-  blogpost: BlogPost;
+  blogpost: BlogPostWithTags;
   tags: BlogPostTag[];
 };
 
-export default function EditBlogPost({ blogpost }: EditBlogPostProps) {
+export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof blogPostSchema>>({
@@ -52,6 +57,12 @@ export default function EditBlogPost({ blogpost }: EditBlogPostProps) {
       body: blogpost.body,
       post_date: blogpost.post_date,
       image_url: blogpost.image_url ?? undefined,
+      tags: [
+        ...blogpost.tags.map((tag) => ({
+          label: tags.find((t) => t.id === tag.blogposttag_id)?.value ?? "",
+          value: tags.find((t) => t.id === tag.blogposttag_id)?.value ?? "",
+        })),
+      ],
     },
   });
 
@@ -90,18 +101,29 @@ export default function EditBlogPost({ blogpost }: EditBlogPostProps) {
       });
       return;
     }
-    const { title, body, post_date, image_url } = values;
+    const { title, body, post_date, image_url, tags } = values;
 
     mutate({
       id: blogpost.id,
       title,
       body,
       image_url,
+      tags,
       post_date: addHours(post_date, 2),
     });
   }
 
   const imageValue = form.watch("image_url");
+
+  function handleCreate(inputValue: string) {
+    form.setValue(
+      "tags",
+      [...form.getValues("tags"), { label: inputValue, value: inputValue }],
+      {
+        shouldDirty: true,
+      },
+    );
+  }
 
   return (
     <AdminLayout>
@@ -185,6 +207,34 @@ export default function EditBlogPost({ blogpost }: EditBlogPostProps) {
             />
             <FormField
               control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <CreatableSelect
+                      name="tags"
+                      isMulti
+                      onBlur={field.onBlur}
+                      instanceId="tags"
+                      ref={field.ref}
+                      isClearable
+                      isDisabled={isLoading}
+                      isLoading={isLoading}
+                      onChange={field.onChange}
+                      onCreateOption={handleCreate}
+                      options={tags.map((tag) => {
+                        return { label: tag.value, value: tag.value };
+                      })}
+                      value={field.value}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="image_url"
               render={({ field }) => (
                 <FormItem>
@@ -240,6 +290,9 @@ export async function getServerSideProps(
   const blogpost = await db.blogPost.findFirst({
     where: {
       id: +ctx.query.id,
+    },
+    include: {
+      tags: true,
     },
   });
   if (!blogpost) {

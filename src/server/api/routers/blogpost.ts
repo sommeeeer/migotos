@@ -17,9 +17,35 @@ export const blogpostRouter = createTRPCRouter({
             body: input.body,
             post_date: input.post_date,
             image_url: input.image_url,
+            tags: {
+              create: input.tags.map((tag) => ({
+                blogposttag: {
+                  connectOrCreate: {
+                    where: {
+                      value: tag.value,
+                    },
+                    create: {
+                      value: tag.value,
+                    },
+                  },
+                },
+              })),
+            },
+          },
+          include: {
+            tags: {
+              include: {
+                blogposttag: true,
+              },
+            },
           },
         });
-        await revalidateAndInvalidate(ctx.res, ["/news", "/"]);
+        await revalidateAndInvalidate(
+          ctx.res,
+          ["/news", "/"].concat(
+            blogpost.tags.map((tag) => `/news/tags/${tag.blogposttag.value}`),
+          ),
+        );
         return blogpost;
       } catch (err) {
         console.error(err);
@@ -82,6 +108,9 @@ export const blogpostRouter = createTRPCRouter({
           where: {
             id: input.id,
           },
+          select: {
+            id: true,
+          },
         });
         if (!blogpost) {
           throw new TRPCError({
@@ -89,15 +118,31 @@ export const blogpostRouter = createTRPCRouter({
             message: "Blogpost not found",
           });
         }
+
         const updatedBlogPost = await db.blogPost.update({
           where: {
-            id: input.id,
+            id: blogpost.id,
           },
           data: {
             title: input.title,
             body: input.body,
             post_date: input.post_date,
             image_url: input.image_url,
+            tags: {
+              create: input.tags.map((tag) => ({
+                blogposttag: {
+                  connectOrCreate: {
+                    where: {
+                      value: tag.value,
+                    },
+                    create: {
+                      value: tag.value,
+                    },
+
+                  },
+                },
+              })),
+            },
           },
           include: {
             tags: {
@@ -107,6 +152,7 @@ export const blogpostRouter = createTRPCRouter({
             },
           },
         });
+
         await revalidateAndInvalidate(
           ctx.res,
           ["/news", "/"].concat(
