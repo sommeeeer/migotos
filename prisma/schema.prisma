@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model Cat {
@@ -220,8 +220,9 @@ model Counter {
 }
 
 model Visitor {
-  id Int    @id @default(autoincrement())
-  ua String @db.VarChar(255)
+  id  Int     @id @default(autoincrement())
+  ua  String  @db.VarChar(255)
+  bot Boolean @default(false)
 }
 
 enum Role {

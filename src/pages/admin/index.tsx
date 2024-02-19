@@ -1,11 +1,13 @@
-import AdminLayout from "./AdminLayout";
-import { db } from "~/server/db";
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
 } from "next/types";
+import { UAParser } from "ua-parser-js";
+
+import AdminLayout from "./AdminLayout";
 import StatsCard from "~/components/StatsCard";
 import { checkAdminSession } from "~/server/helpers";
+import { db } from "~/server/db";
 
 export type AdminProps = {
   counts: {
@@ -18,6 +20,8 @@ export type AdminProps = {
     messageCount: number;
     commentsCount: number;
     visitsCount: number;
+    mobilePercentage: number;
+    desktopPercentage: number;
   };
 };
 
@@ -50,6 +54,7 @@ export async function getServerSideProps(
     messageCount,
     commentsCount,
     visitsCount,
+    visitors,
   ] = await Promise.all([
     db.user.count(),
     db.cat.count(),
@@ -64,7 +69,25 @@ export async function getServerSideProps(
         count: true,
       },
     }),
+    db.visitor.findMany({
+      select: {
+        ua: true,
+      },
+      where: {
+        bot: false,
+      },
+    }),
   ]);
+
+  const mobileCount = visitors.filter((v) => {
+    return UAParser(v.ua).device.type === "mobile";
+  }).length;
+  const desktopCount = visitors.filter((v) => {
+    return UAParser(v.ua).device.type !== "mobile";
+  }).length;
+
+  const mobilePercentage = (3122 / 6700) * 100;
+  const desktopPercentage = (3578 / 6700) * 100;
 
   const counts = {
     usersCount,
@@ -76,6 +99,8 @@ export async function getServerSideProps(
     messageCount,
     commentsCount,
     visitsCount: visitsCount?.count ?? 0,
+    mobilePercentage,
+    desktopPercentage,
   };
 
   return {
