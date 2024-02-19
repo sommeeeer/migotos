@@ -79,15 +79,17 @@ export async function getServerSideProps(
     }),
   ]);
 
+  const isDesktop = (ua: string) => {
+    return UAParser(ua).device.type === undefined;
+  };
+
   const mobileCount = visitors.filter((v) => {
     return UAParser(v.ua).device.type === "mobile";
   }).length;
-  const desktopCount = visitors.filter((v) => {
-    return UAParser(v.ua).device.type !== "mobile";
-  }).length;
+  const desktopCount = visitors.filter((v) => isDesktop(v.ua)).length;
 
-  const mobilePercentage = (3122 / 6700) * 100;
-  const desktopPercentage = (3578 / 6700) * 100;
+  const mobilePercentage = (mobileCount / visitors.length) * 100;
+  const desktopPercentage = (desktopCount / visitors.length) * 100;
 
   const counts = {
     usersCount,
