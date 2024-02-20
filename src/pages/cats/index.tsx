@@ -62,51 +62,53 @@ function Cats({
 export default Cats;
 
 export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
-  const fertileMaleCats = await db.cat.findMany({
-    where: {
-      fertile: true,
-      gender: "Male",
-    },
-    include: {
-      CatImage: {
-        take: 1,
-      },
-    },
-  });
-  const fertileFemaleCats = await db.cat.findMany({
-    where: {
-      fertile: true,
-      gender: "Female",
-    },
-    include: {
-      CatImage: {
-        take: 1,
-      },
-    },
-  });
-
-  const formerMaleCats = await db.cat.findMany({
-    where: {
-      fertile: false,
-      gender: "Male",
-    },
-    include: {
-      CatImage: {
-        take: 1,
-      },
-    },
-  });
-  const formerFemaleCats = await db.cat.findMany({
-    where: {
-      fertile: false,
-      gender: "Female",
-    },
-    include: {
-      CatImage: {
-        take: 1,
-      },
-    },
-  });
+  const [fertileMaleCats, fertileFemaleCats, formerMaleCats, formerFemaleCats] =
+    await Promise.all([
+      db.cat.findMany({
+        where: {
+          fertile: true,
+          gender: "Male",
+        },
+        include: {
+          CatImage: {
+            take: 1,
+          },
+        },
+      }),
+      db.cat.findMany({
+        where: {
+          fertile: true,
+          gender: "Female",
+        },
+        include: {
+          CatImage: {
+            take: 1,
+          },
+        },
+      }),
+      db.cat.findMany({
+        where: {
+          fertile: false,
+          gender: "Male",
+        },
+        include: {
+          CatImage: {
+            take: 1,
+          },
+        },
+      }),
+      db.cat.findMany({
+        where: {
+          fertile: false,
+          gender: "Female",
+        },
+        include: {
+          CatImage: {
+            take: 1,
+          },
+        },
+      }),
+    ]);
 
   return {
     props: {
