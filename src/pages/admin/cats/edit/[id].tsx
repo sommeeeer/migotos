@@ -1,15 +1,20 @@
-import type { Prisma } from "@prisma/client";
-
-import AdminLayout from "../../AdminLayout";
-import { format } from "date-fns";
-import { db } from "~/server/db";
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
 } from "next/types";
+import CreateableSelect from "react-select/creatable";
+import { useRouter } from "next/router";
+import { format } from "date-fns";
+import type { Prisma } from "@prisma/client";
 import { AiFillEdit } from "react-icons/ai";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { addHours } from "date-fns";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { type z } from "zod";
+
+import AdminLayout from "../../AdminLayout";
+import { db } from "~/server/db";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -20,7 +25,6 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { useRouter } from "next/router";
 import { Textarea } from "~/components/ui/textarea";
 import {
   Popover,
@@ -28,17 +32,13 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Calendar } from "~/components/ui/calendar";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { addHours } from "date-fns";
 import { cn } from "~/lib/utils";
-import { type z } from "zod";
 import { catSchema } from "~/lib/validators/cat";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/use-toast";
 import { Checkbox } from "~/components/ui/checkbox";
 import { api } from "~/utils/api";
 import { checkAdminSession } from "~/server/helpers";
-import CreateableSelect from "react-select/creatable";
 import { ImageUpload } from "~/components/ImageUpload";
 
 type CatWithImage = Prisma.CatGetPayload<{
@@ -426,35 +426,37 @@ export async function getServerSideProps(
       CatImage: true,
     },
   });
+
   if (!cat) {
     return {
       notFound: true,
     };
   }
 
-  const motherNames = await db.cat.findMany({
-    select: {
-      name: true,
-    },
-    where: {
-      gender: "Female",
-    },
-    orderBy: {
-      name: "asc",
-    },
-  });
-
-  const fatherNames = await db.cat.findMany({
-    select: {
-      name: true,
-    },
-    where: {
-      gender: "Male",
-    },
-    orderBy: {
-      name: "asc",
-    },
-  });
+  const [motherNames, fatherNames] = await Promise.all([
+    db.cat.findMany({
+      select: {
+        name: true,
+      },
+      where: {
+        gender: "Female",
+      },
+      orderBy: {
+        name: "asc",
+      },
+    }),
+    db.cat.findMany({
+      select: {
+        name: true,
+      },
+      where: {
+        gender: "Male",
+      },
+      orderBy: {
+        name: "asc",
+      },
+    }),
+  ]);
 
   return {
     props: {

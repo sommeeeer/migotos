@@ -1,12 +1,20 @@
-import AdminLayout from "../AdminLayout";
+import { useRouter } from "next/router";
+import { FaCat } from "react-icons/fa";
+import CreateableSelect from "react-select/creatable";
 import { format } from "date-fns";
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
 } from "next/types";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "~/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CalendarIcon, Loader2 } from "lucide-react";
+import { addHours } from "date-fns";
+import { type z } from "zod";
+
+import { Calendar } from "~/components/ui/calendar";
+import { cn } from "~/lib/utils";
+import { Input } from "~/components/ui/input";
 import {
   Form,
   FormControl,
@@ -15,28 +23,20 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { useRouter } from "next/router";
 import { Textarea } from "~/components/ui/textarea";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { Calendar } from "~/components/ui/calendar";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { addHours } from "date-fns";
-import { cn } from "~/lib/utils";
-import { type z } from "zod";
-import { catSchema } from "~/lib/validators/cat";
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { toast } from "~/components/ui/use-toast";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Checkbox } from "~/components/ui/checkbox";
+import { catSchema } from "~/lib/validators/cat";
 import { api } from "~/utils/api";
 import { checkAdminSession } from "~/server/helpers";
-import { FaCat } from "react-icons/fa";
-import CreateableSelect from "react-select/creatable";
-
+import { Button } from "~/components/ui/button";
+import AdminLayout from "../AdminLayout";
 import { db } from "~/server/db";
 import { ImageUpload } from "~/components/ImageUpload";
 
@@ -387,29 +387,30 @@ export async function getServerSideProps(
     };
   }
 
-  const motherNames = await db.cat.findMany({
-    select: {
-      name: true,
-    },
-    where: {
-      gender: "Female",
-    },
-    orderBy: {
-      name: "asc",
-    },
-  });
-
-  const fatherNames = await db.cat.findMany({
-    select: {
-      name: true,
-    },
-    where: {
-      gender: "Male",
-    },
-    orderBy: {
-      name: "asc",
-    },
-  });
+  const [motherNames, fatherNames] = await Promise.all([
+    db.cat.findMany({
+      select: {
+        name: true,
+      },
+      where: {
+        gender: "Female",
+      },
+      orderBy: {
+        name: "asc",
+      },
+    }),
+    db.cat.findMany({
+      select: {
+        name: true,
+      },
+      where: {
+        gender: "Male",
+      },
+      orderBy: {
+        name: "asc",
+      },
+    }),
+  ]);
 
   return {
     props: {

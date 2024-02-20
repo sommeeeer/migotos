@@ -1,10 +1,19 @@
-import AdminLayout from "../AdminLayout";
+import { addHours, format } from "date-fns";
+import { BiSolidCat } from "react-icons/bi";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { IoMdFemale, IoMdMale } from "react-icons/io";
+import CreateableSelect from "react-select/creatable";
+import { CalendarIcon, Loader2, Trash2 } from "lucide-react";
 import {
   type GetServerSidePropsResult,
   type GetServerSidePropsContext,
 } from "next/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { type z } from "zod";
+
+import AdminLayout from "../AdminLayout";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -15,13 +24,10 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { useRouter } from "next/router";
 import { Textarea } from "~/components/ui/textarea";
-import { type z } from "zod";
 import { toast } from "~/components/ui/use-toast";
 import { checkAdminSession } from "~/server/helpers";
 import { litterSchema } from "~/lib/validators/litter";
-import { CalendarIcon, Loader2, Trash2 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import {
   Popover,
@@ -29,21 +35,16 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Calendar } from "~/components/ui/calendar";
-import { addHours, format } from "date-fns";
-import { BiSolidCat } from "react-icons/bi";
-import { useState } from "react";
 import AddKittenModal from "~/components/AddKittenModal";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { api } from "~/utils/api";
-import CreateableSelect from "react-select/creatable";
-import { db } from "~/server/db";
 import { ImageUpload } from "~/components/ImageUpload";
+import { api } from "~/utils/api";
+import { db } from "~/server/db";
 
 interface NewLitterProps {
   motherNames: { name: string; stamnavn: string }[];
@@ -459,31 +460,33 @@ export async function getServerSideProps(
       notFound: true,
     };
   }
-  const motherNames = await db.cat.findMany({
-    select: {
-      name: true,
-      stamnavn: true,
-    },
-    where: {
-      gender: "Female",
-    },
-    orderBy: {
-      name: "asc",
-    },
-  });
 
-  const fatherNames = await db.cat.findMany({
-    select: {
-      name: true,
-      stamnavn: true,
-    },
-    where: {
-      gender: "Male",
-    },
-    orderBy: {
-      name: "asc",
-    },
-  });
+  const [motherNames, fatherNames] = await Promise.all([
+    db.cat.findMany({
+      select: {
+        name: true,
+        stamnavn: true,
+      },
+      where: {
+        gender: "Female",
+      },
+      orderBy: {
+        name: "asc",
+      },
+    }),
+    db.cat.findMany({
+      select: {
+        name: true,
+        stamnavn: true,
+      },
+      where: {
+        gender: "Male",
+      },
+      orderBy: {
+        name: "asc",
+      },
+    }),
+  ]);
 
   return {
     props: {
