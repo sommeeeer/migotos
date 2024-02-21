@@ -88,7 +88,9 @@ export const blogpostRouter = createTRPCRouter({
         await revalidateAndInvalidate(
           ctx.res,
           ["/news", "/"].concat(
-            blogpost.tags.map((tag) => `/news/tags/${tag.blogposttag.value}`),
+            blogpost.tags.map(
+              (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`,
+            ),
           ),
         );
         return deletedBlogPost;
@@ -157,7 +159,7 @@ export const blogpostRouter = createTRPCRouter({
           ctx.res,
           ["/news", "/"].concat(
             updatedBlogPost.tags.map(
-              (tag) => `/news/tags/${tag.blogposttag.value}`,
+              (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`,
             ),
           ),
         );

@@ -1,4 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next/types";
+import { isbot } from "isbot";
+
 import { db } from "~/server/db";
 
 async function incrementCounter(userAgent: string | undefined) {
@@ -13,7 +15,7 @@ async function incrementCounter(userAgent: string | undefined) {
   }
   if (userAgent) {
     await db.visitor.create({
-      data: { ua: userAgent },
+      data: { ua: userAgent, bot: isbot(userAgent) },
     });
   }
 }

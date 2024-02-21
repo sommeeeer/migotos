@@ -1,7 +1,11 @@
+import { useRef } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { type Cat, type Prisma } from "@prisma/client";
 import { AnimatePresence } from "framer-motion";
 import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
-import Link from "next/link";
+
 import CatProfile from "~/components/CatProfile";
 import Footer from "~/components/Footer";
 import KittenProfile from "~/components/KittenProfile";
@@ -11,11 +15,8 @@ import CommentForm from "~/components/CommentForm";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { db } from "~/server/db";
 import { findName, formatDate } from "~/utils/helpers";
-import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import LoginButton from "~/components/LoginButton";
-import Head from "next/head";
-import { useRef } from "react";
 import CommentsIconButton from "~/components/CommentsIconButton";
 import PicturesIconButton from "~/components/PicturesIconButton";
 
@@ -29,8 +30,8 @@ type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
 
 type Props = {
   litter: LitterWithKittensAndTagsAndPictures;
-  mother: Cat | null;
-  father: Cat | null;
+  mother: Pick<Cat, "slug" | "name"> | null;
+  father: Pick<Cat, "slug" | "name"> | null;
 };
 
 function LitterPage({ litter, mother, father }: Props) {
@@ -219,23 +220,35 @@ export async function getStaticProps({
     },
   }));
 
-  const mother = await db.cat.findFirst({
-    where: {
-      OR: searchFiltersMother,
-    },
-  });
-
   const searchFiltersFather = fatherSearchStr.map((partialName) => ({
     name: {
       contains: partialName,
     },
   }));
 
-  let father = await db.cat.findFirst({
-    where: {
-      OR: searchFiltersFather,
-    },
-  });
+  const results = await Promise.all([
+    db.cat.findFirst({
+      where: {
+        OR: searchFiltersMother,
+      },
+      select: {
+        name: true,
+        slug: true,
+      },
+    }),
+    db.cat.findFirst({
+      where: {
+        OR: searchFiltersFather,
+      },
+      select: {
+        name: true,
+        slug: true,
+      },
+    }),
+  ]);
+
+  const mother = results[0];
+  let father = results[1];
 
   if (father?.name.toLowerCase().includes("georg")) {
     father = null;

@@ -30,9 +30,12 @@ export default {
         environment: {
           NEXTAUTH_URL:
             app.mode === "dev" ? "http://localhost:3000" : env.NEXTAUTH_URL,
+          DATABASE_URL:
+            app.mode === "dev" ? env.DATABASE_URL_DEV : env.DATABASE_URL,
         },
         bind: [bucket],
       });
+
       stack.addOutputs({
         SiteUrl: site.customDomainUrl ?? site.url,
       });

@@ -1,6 +1,16 @@
+import { useRouter } from "next/router";
+import { FaCat } from "react-icons/fa";
+import { GrGallery } from "react-icons/gr";
+import Link from "next/link";
+import { twMerge } from "tailwind-merge";
+import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+import { format } from "date-fns";
 import { type Cat } from "@prisma/client";
+import type {
+  GetServerSidePropsContext,
+  GetServerSidePropsResult,
+} from "next/types";
 
-import AdminLayout from "../AdminLayout";
 import {
   Table,
   TableBody,
@@ -11,14 +21,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { db } from "~/server/db";
-import type {
-  GetServerSidePropsContext,
-  GetServerSidePropsResult,
-} from "next/types";
-import { AiFillDelete, AiFillEdit } from "react-icons/ai";
-import Link from "next/link";
 import { buttonVariants } from "~/components/ui/button";
-import { twMerge } from "tailwind-merge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,15 +34,23 @@ import {
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
 import { api } from "~/utils/api";
-import { useRouter } from "next/router";
-import { FaCat } from "react-icons/fa";
-import { GrGallery } from "react-icons/gr";
-import { format } from "date-fns";
 import { toast } from "~/components/ui/use-toast";
+import AdminLayout from "../AdminLayout";
 import { checkAdminSession } from "~/server/helpers";
 
 type CatsProps = {
-  cats: Cat[];
+  cats: Pick<
+    Cat,
+    | "id"
+    | "name"
+    | "nickname"
+    | "stamnavn"
+    | "pedigreeurl"
+    | "birth"
+    | "gender"
+    | "fertile"
+    | "breeder"
+  >[];
 };
 
 export default function Cats({ cats }: CatsProps) {
@@ -172,6 +183,17 @@ export async function getServerSideProps(
   const cats = await db.cat.findMany({
     orderBy: {
       birth: "desc",
+    },
+    select: {
+      id: true,
+      name: true,
+      nickname: true,
+      stamnavn: true,
+      pedigreeurl: true,
+      birth: true,
+      gender: true,
+      fertile: true,
+      breeder: true,
     },
   });
 

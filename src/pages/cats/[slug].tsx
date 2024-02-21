@@ -194,7 +194,10 @@ function Cat({ cat, mother, father }: Props) {
               <p>{cat.owner}</p>
             </div>
           </div>
-          <h3 className="self-center font-playfair text-2xl font-light" ref={picturesRef}>
+          <h3
+            className="self-center font-playfair text-2xl font-light"
+            ref={picturesRef}
+          >
             Pictures
           </h3>
           <section className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4">
@@ -206,7 +209,7 @@ function Cat({ cat, mother, father }: Props) {
                     setCarouselOpen(true);
                   }}
                   key={img.id}
-                  className="relative h-40 w-40 cursor-pointer sm:h-52 sm:w-52 xl:h-60 xl:w-60 shadow-lg"
+                  className="relative h-40 w-40 cursor-pointer shadow-lg sm:h-52 sm:w-52 xl:h-60 xl:w-60"
                 >
                   <CatImage
                     src={img.src}
@@ -299,11 +302,24 @@ export async function getStaticProps({
     },
   }));
 
-  let mother = await db.cat.findFirst({
-    where: {
-      OR: searchFiltersMother,
+  const searchFiltersFather = fatherSearchStr.map((partialName) => ({
+    name: {
+      contains: partialName,
     },
-  });
+  }));
+
+  let [mother, father] = await Promise.all([
+    db.cat.findFirst({
+      where: {
+        OR: searchFiltersMother,
+      },
+    }),
+    db.cat.findFirst({
+      where: {
+        OR: searchFiltersFather,
+      },
+    }),
+  ]);
 
   if (
     cat.mother.includes("Je Suis Belle") &&
@@ -311,18 +327,6 @@ export async function getStaticProps({
   ) {
     mother = null;
   }
-
-  const searchFiltersFather = fatherSearchStr.map((partialName) => ({
-    name: {
-      contains: partialName,
-    },
-  }));
-
-  let father = await db.cat.findFirst({
-    where: {
-      OR: searchFiltersFather,
-    },
-  });
 
   if (father?.name.toLowerCase().includes("georg")) {
     father = null;
