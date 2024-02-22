@@ -17,7 +17,7 @@ export function ImageUpload({ onChange, value, postImage }: ImageUploadProps) {
   const { mutate: deleteImage, isLoading: isDeleteImageLoading } =
     api.image.deleteImage.useMutation({
       onSuccess: () => {
-        onChange(undefined);
+        onChange("");
       },
       onError: () => {
         console.error("error deleting image");
