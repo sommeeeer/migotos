@@ -1,14 +1,20 @@
-import { type BlogPost, type BlogPostTag, type Prisma } from "@prisma/client";
-import AdminLayout from "../../AdminLayout";
-import { format } from "date-fns";
-import { db } from "~/server/db";
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
 } from "next/types";
-import { AiFillEdit } from "react-icons/ai";
+import { useRouter } from "next/router";
+import { type z } from "zod";
+import CreatableSelect from "react-select/creatable";
+import { CalendarIcon, Loader2 } from "lucide-react";
+import { addHours } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import { useForm } from "react-hook-form";
+import { AiFillEdit } from "react-icons/ai";
+import { type BlogPostTag, type Prisma } from "@prisma/client";
+
+import AdminLayout from "~/pages/admin/AdminLayout";
+import { db } from "~/server/db";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -19,7 +25,6 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { useRouter } from "next/router";
 import { Textarea } from "~/components/ui/textarea";
 import {
   Popover,
@@ -27,16 +32,12 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Calendar } from "~/components/ui/calendar";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { addHours } from "date-fns";
 import { cn } from "~/lib/utils";
 import { toast } from "~/components/ui/use-toast";
 import { api } from "~/utils/api";
 import { blogPostSchema } from "~/lib/validators/blogpost";
-import { type z } from "zod";
 import { checkAdminSession } from "~/server/helpers";
 import { ImageUpload } from "~/components/ImageUpload";
-import CreatableSelect from "react-select/creatable";
 
 type BlogPostWithTags = Prisma.BlogPostGetPayload<{
   include: { tags: true };
@@ -70,12 +71,6 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
 
   const { mutate, isLoading } = api.blogpost.updateBlogPost.useMutation({
     onSuccess: (data) => {
-      form.reset({
-        title: data.title,
-        body: data.body,
-        post_date: data.post_date,
-        image_url: data.image_url!,
-      });
       toast({
         variant: "default",
         title: "Success",

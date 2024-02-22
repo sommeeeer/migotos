@@ -59,7 +59,7 @@ export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
         color: "green",
         description: "Blogpost successfully added.",
       });
-      void router.back();
+      void router.push("/admin/news");
     },
     onError: () => {
       toast({

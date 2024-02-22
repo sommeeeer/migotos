@@ -130,21 +130,6 @@ export const blogpostRouter = createTRPCRouter({
             body: input.body,
             post_date: input.post_date,
             image_url: input.image_url,
-            tags: {
-              create: input.tags.map((tag) => ({
-                blogposttag: {
-                  connectOrCreate: {
-                    where: {
-                      value: tag.value,
-                    },
-                    create: {
-                      value: tag.value,
-                    },
-
-                  },
-                },
-              })),
-            },
           },
           include: {
             tags: {
@@ -154,6 +139,55 @@ export const blogpostRouter = createTRPCRouter({
             },
           },
         });
+
+        // find tags to delete and create
+        const tagsToDelete = updatedBlogPost.tags.filter(
+          (tag) => !input.tags.some((t) => t.value === tag.blogposttag.value),
+        );
+
+        const tagsToCreate = input.tags.filter(
+          (tag) =>
+            !updatedBlogPost.tags.some(
+              (t) => t.blogposttag.value === tag.value,
+            ),
+        );
+
+        const deleteTags = await Promise.all(
+          tagsToDelete.map((tag) =>
+            db.blogPostToBlogPostTag.delete({
+              where: {
+                blogpost_id_blogposttag_id: {
+                  blogpost_id: updatedBlogPost.id,
+                  blogposttag_id: tag.blogposttag.id,
+                },
+              },
+            }),
+          ),
+        );
+
+        const createTags = await Promise.all(
+          tagsToCreate.map((tag) =>
+            db.blogPostToBlogPostTag.create({
+              data: {
+                blogpost: {
+                  connect: {
+                    id: updatedBlogPost.id,
+                  },
+                },
+                blogposttag: {
+                  connectOrCreate: {
+                    where: {
+                      value: tag.value,
+                    },
+                    create: {
+                      value: tag.value,
+                    },
+                  },
+                },
+              },
+            }),
+          ),
+        );
 
         await revalidateAndInvalidate(
           ctx.res,
