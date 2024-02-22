@@ -74,7 +74,9 @@ type EditCatImagesProps = {
 
 export default function EditCatImages({ cat }: EditCatImagesProps) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [filesToUpload, setFilesToUpload] = useState<File[]>();
+  const [filesToUpload, setFilesToUpload] = useState<
+    File[] | undefined | null
+  >();
   const [size, setSize] = useState<number | undefined>();
   const [items, setItems] = useState<CatImage[]>(cat.CatImage);
   const [open, setOpen] = useState(false);

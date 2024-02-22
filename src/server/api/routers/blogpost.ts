@@ -152,7 +152,7 @@ export const blogpostRouter = createTRPCRouter({
             ),
         );
 
-        const deleteTags = await Promise.all(
+        await Promise.all(
           tagsToDelete.map((tag) =>
             db.blogPostToBlogPostTag.delete({
               where: {
@@ -165,7 +165,7 @@ export const blogpostRouter = createTRPCRouter({
           ),
         );
 
-        const createTags = await Promise.all(
+        await Promise.all(
           tagsToCreate.map((tag) =>
             db.blogPostToBlogPostTag.create({
               data: {

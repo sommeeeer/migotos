@@ -45,9 +45,9 @@ export default function ImageDropzone({ onDrop }: ImageDropzoneProps) {
           {isDragActive ? (
             <p>Drop the files here ...</p>
           ) : (
-            <p className="text-blue-700">
+            <p className="text-blue-800">
               Drag n drop some images here, or click to select files
-              <span className="mt-2 block text-xs text-blue-600">
+              <span className="mt-2 block text-xs text-gray-500">
                 (Only .png, .jpg, .jpeg and .webp allowed)
               </span>
             </p>
