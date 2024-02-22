@@ -1,5 +1,6 @@
-import { on } from "events";
 import Dropzone from "react-dropzone";
+import { IoCloudUploadOutline } from "react-icons/io5";
+
 import { Input } from "~/components/ui/input";
 import { toast } from "./ui/use-toast";
 import { cn } from "~/lib/utils";
@@ -29,15 +30,16 @@ export default function ImageDropzone({ onDrop }: ImageDropzoneProps) {
         <div
           {...getRootProps()}
           className={cn(
-            "mt-2 flex h-32 flex-col items-center justify-center rounded-lg border border-dashed border-gray-900/25 text-center transition",
-            isDragActive && "bg-gray-100/40",
+            "mt-2 flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-900/25 text-center transition",
+            isDragActive && "border-4 bg-gray-100/40",
           )}
         >
+          <IoCloudUploadOutline className="h-6 w-6 text-blue-700" />
+
           <Input
             {...getInputProps()}
             type="file"
             multiple
-            className="cursor-pointer"
             accept="image/png, image/jpeg, image/jpg, image/webp"
           />
           {isDragActive ? (
@@ -46,7 +48,7 @@ export default function ImageDropzone({ onDrop }: ImageDropzoneProps) {
             <p className="text-blue-700">
               Drag n drop some images here, or click to select files
               <span className="mt-2 block text-xs text-blue-600">
-                Only .png, .jpg, .jpeg and .webp allowed
+                (Only .png, .jpg, .jpeg and .webp allowed)
               </span>
             </p>
           )}

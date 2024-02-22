@@ -70,7 +70,7 @@ export function capitalizeString(str: string) {
 
 export function handleImageChange(
   files: File[],
-  setFilesToUpload: Dispatch<SetStateAction<File[] | undefined>>,
+  setFilesToUpload: Dispatch<SetStateAction<File[] | undefined | null>>,
   setSelectedImages: Dispatch<SetStateAction<string[]>>,
   setSize: Dispatch<SetStateAction<number | undefined>>,
 ) {

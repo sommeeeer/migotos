@@ -1,28 +1,9 @@
-import type {
-  KittenPictureImage,
-  LitterPictureWeek,
-  Prisma,
-} from "@prisma/client";
-
-import { db } from "~/server/db";
+import Image from "next/image";
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
 } from "next/types";
-import { checkAdminSession } from "~/server/helpers";
-import AdminLayout from "../../AdminLayout";
-import Image from "next/image";
-import { Button } from "~/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useMemo, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import BorderText from "~/components/BorderText";
 import {
   CalendarPlus,
   HardDriveIcon,
@@ -31,6 +12,27 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
+import { IoMdFemale, IoMdMale } from "react-icons/io";
+import { AnimatePresence, motion } from "framer-motion";
+import type {
+  KittenPictureImage,
+  LitterPictureWeek,
+  Prisma,
+} from "@prisma/client";
+
+import { db } from "~/server/db";
+import { checkAdminSession } from "~/server/helpers";
+import AdminLayout from "../../AdminLayout";
+import { Button } from "~/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import BorderText from "~/components/BorderText";
 import {
   Dialog,
   DialogClose,
@@ -67,10 +69,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import { AnimatePresence, motion } from "framer-motion";
 import { useUploadImages } from "~/hooks/use-upload-images";
 import { Progress } from "~/components/ui/progress";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
+import ImageDropzone from "~/components/ImageDropzone";
 
 type LitterWithImages = Prisma.LitterGetPayload<{
   include: {
@@ -104,7 +105,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
   );
   const [size, setSize] = useState<number | undefined>();
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
+  const [filesToUpload, setFilesToUpload] = useState<File[] | null>();
   const [kittenSelectValue, setKittenSelectValue] = useState<string>("");
   const [weekTitle, setWeekTitle] = useState<string>(
     currentWeekSelected?.title ?? "",
@@ -417,14 +418,10 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                     <Label htmlFor="link" className="sr-only">
                       Link
                     </Label>
-                    <Input
-                      type="file"
-                      multiple
-                      className="cursor-pointer"
-                      accept="image/png, image/jpeg, image/jpg"
-                      onChange={(e) =>
+                    <ImageDropzone
+                      onDrop={(files) =>
                         handleImageChange(
-                          e,
+                          files,
                           setFilesToUpload,
                           setSelectedImages,
                           setSize,
@@ -781,7 +778,7 @@ function KittenImage({
           placeholder="blur"
           blurDataURL={image.blururl}
           fill
-          className="absolute cover"
+          className="cover absolute"
         />
       </picture>
       <AlertDialog>
