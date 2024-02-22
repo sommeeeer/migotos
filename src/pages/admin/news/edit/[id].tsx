@@ -70,7 +70,7 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
   const { isDirty } = form.formState;
 
   const { mutate, isLoading } = api.blogpost.updateBlogPost.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         variant: "default",
         title: "Success",

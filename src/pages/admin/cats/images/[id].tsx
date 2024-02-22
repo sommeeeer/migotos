@@ -1,29 +1,8 @@
-import type { Cat, CatImage, Prisma } from "@prisma/client";
-
-import { db } from "~/server/db";
-import {
-  type GetServerSidePropsContext,
-  type GetServerSidePropsResult,
-} from "next/types";
-import { checkAdminSession } from "~/server/helpers";
-import AdminLayout from "../../AdminLayout";
+import { AiFillDelete } from "react-icons/ai";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { Button } from "~/components/ui/button";
-
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from "lucide-react";
 import { useState, useId } from "react";
+import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from "lucide-react";
 import {
   DndContext,
   useSensors,
@@ -41,6 +20,28 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import type { Cat, CatImage, Prisma } from "@prisma/client";
+
+import { db } from "~/server/db";
+import {
+  type GetServerSidePropsContext,
+  type GetServerSidePropsResult,
+} from "next/types";
+import { checkAdminSession } from "~/server/helpers";
+import AdminLayout from "../../AdminLayout";
+import { Button } from "~/components/ui/button";
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { Label } from "~/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,10 +58,9 @@ import { toast } from "~/components/ui/use-toast";
 import { bytesToMB, handleImageChange } from "~/utils/helpers";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
 import { cn } from "~/lib/utils";
-import { AiFillDelete } from "react-icons/ai";
-import { AnimatePresence, motion } from "framer-motion";
 import { useUploadImages } from "~/hooks/use-upload-images";
 import { Progress } from "~/components/ui/progress";
+import ImageDropzone from "~/components/ImageDropzone";
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -74,7 +74,7 @@ type EditCatImagesProps = {
 
 export default function EditCatImages({ cat }: EditCatImagesProps) {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [filesToUpload, setFilesToUpload] = useState<FileList | null>();
+  const [filesToUpload, setFilesToUpload] = useState<File[]>();
   const [size, setSize] = useState<number | undefined>();
   const [items, setItems] = useState<CatImage[]>(cat.CatImage);
   const [open, setOpen] = useState(false);
@@ -147,9 +147,6 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
       });
       void refetch();
     },
-    onSettled: () => {
-      setOpen(false);
-    },
   });
 
   function handleDragEnd(event: DragEndEvent) {
@@ -190,6 +187,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
       setProgressValue(progress);
     });
     if (imageUrls) {
+      setOpen(false);
       mutateAddCatImages({
         cat_id: cat.id,
         imageUrls,
@@ -245,7 +243,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                 onClick={() => {
                   setSelectedImages([]);
                   setSize(undefined);
-                  setFilesToUpload(null);
+                  setFilesToUpload([]);
                 }}
                 asChild
               >
@@ -265,14 +263,10 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                     <Label htmlFor="link" className="sr-only">
                       Link
                     </Label>
-                    <Input
-                      type="file"
-                      multiple
-                      className="cursor-pointer"
-                      accept="image/png, image/jpeg, image/jpg"
-                      onChange={(e) =>
+                    <ImageDropzone
+                      onDrop={(files) =>
                         handleImageChange(
-                          e,
+                          files,
                           setFilesToUpload,
                           setSelectedImages,
                           setSize,
@@ -349,7 +343,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
           >
             <SortableContext items={items} strategy={rectSortingStrategy}>
               <section className="w-full max-w-7xl">
-                <ul className="grid-cols-responsive grid place-items-center gap-1 gap-x-2">
+                <ul className="grid grid-cols-responsive place-items-center gap-1 gap-x-2">
                   <AnimatePresence>
                     {items.map((catimage) => (
                       <SortableItem
@@ -424,7 +418,7 @@ function SortableItem({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1, transition: { duration: 0.3 } }}
       exit={{ opacity: 0, transition: { duration: 0.3 } }}
-      className="flex h-[150px] w-[220px] gap-4 rounded border-2 border-slate-500 p-2 cursor-default"
+      className="flex h-[150px] w-[220px] cursor-default gap-4 rounded border-2 border-slate-500 p-2"
     >
       <div className="overflow-hidden">
         <Image

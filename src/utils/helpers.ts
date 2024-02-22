@@ -69,12 +69,11 @@ export function capitalizeString(str: string) {
 }
 
 export function handleImageChange(
-  event: ChangeEvent<HTMLInputElement>,
-  setFilesToUpload: Dispatch<SetStateAction<FileList | null | undefined>>,
+  files: File[],
+  setFilesToUpload: Dispatch<SetStateAction<File[] | undefined>>,
   setSelectedImages: Dispatch<SetStateAction<string[]>>,
   setSize: Dispatch<SetStateAction<number | undefined>>,
 ) {
-  const files = event.target.files;
   const imagesArray: string[] = [];
 
   if (files) {
