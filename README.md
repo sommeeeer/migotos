@@ -6,8 +6,7 @@ The data for this site was originally scraped from an old Wordpress site using m
 
 This project was built to make it easier for my mum to add new content to her site. Also migrating from a static blog site([old migotos](https://oldsite.migotos.com)) to a more dynamic web application, with an admin dashboard:
 
-![image](https://github.com/sommeeeer/migotos/assets/91796856/c52c07ed-2dd1-4f9b-b746-42fb0f6e2193)
-
+![image](https://github.com/sommeeeer/migotos/assets/91796856/ed6501eb-f6bd-4dd7-af2d-5d0a26e3ad0d)
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
