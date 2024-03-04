@@ -185,10 +185,10 @@ export async function sendEmail({
     await transporter.sendMail({
       from: env.EMAIL_FROM,
       to: env.EMAIL_TO_LIST,
-      subject: subject,
+      subject: `Message from ${name} on migotos.com`,
       html: `
       <div style="font-family: Arial, sans-serif;">
-        <h1 style="color: #444;">${`Mail from ${name}`}</h1>
+        <h1 style="color: #444;">${`Message from ${name}`}</h1>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Subject:</strong> ${subject}</p>
         <p><strong>Body:</strong></p>
