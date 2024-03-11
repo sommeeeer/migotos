@@ -48,7 +48,7 @@ function Litters({ litters, yearsArray }: LittersProps) {
           years={yearsArray}
           filterByYear={filterByYear}
         />
-        <section className="mb-8 grid max-w-6xl auto-rows-fr gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">
+        <section className="mb-24 grid max-w-6xl auto-rows-fr gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">
           {littersArray.map((litter) => (
             <LitterProfile
               key={litter.id}

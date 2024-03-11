@@ -27,7 +27,7 @@ function Cats({
     <>
       <PageHead />
       <div className="flex w-full flex-col items-center bg-zinc-100">
-        <section className="mt-16 flex max-w-6xl flex-col gap-4 px-4 text-center">
+        <section className="mt-16 mb-24 flex max-w-6xl flex-col gap-4 px-4 text-center">
           <h1 className="font-playfair text-4xl">
             <em>Breeding Cats</em>
           </h1>
