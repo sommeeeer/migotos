@@ -111,16 +111,30 @@ export async function invalidateCFPaths(paths: string[]) {
   );
 }
 
+const maxRetries = 3;
+
 export async function revalidateAndInvalidate(
   res: NextApiResponse,
   paths: string[],
 ) {
   if (process.env.NODE_ENV !== "development") {
     for (const path of paths) {
-      try {
-        await res.revalidate(path);
-      } catch (err) {
-        console.error(`Error res.validate(${path}): ${path} Error: \n`, err);
+      let retries = 0;
+
+      while (retries < maxRetries) {
+        try {
+          await res.revalidate(path);
+          break;
+        } catch (err) {
+          console.error(`Error res.validate(${path}): ${path} Error: \n`, err);
+          retries++;
+
+          if (retries === maxRetries) {
+            console.error(
+              `Failed to revalidate ${path} after ${maxRetries} attempts`,
+            );
+          }
+        }
       }
     }
     try {
