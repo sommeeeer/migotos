@@ -44,7 +44,7 @@ function KittenPictures({
           name={title}
         />
       )}
-      <div className="flex flex-col gap-4 px-2">
+      <div className="flex flex-col gap-4 px-2 mb-28">
         {alternativeTitle && (
           <p className="text-center text-lg text-zinc-500">
             {alternativeTitle}
