@@ -124,6 +124,7 @@ export default function ImageCarousel({
                 width={image.width}
                 height={image.height}
                 quality={100}
+                className="max-w-5xl"
               />
             </CarouselItem>
           ))}

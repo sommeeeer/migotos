@@ -47,6 +47,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^2.30.0",
+    "embla-carousel-auto-height": "^8.0.0",
     "embla-carousel-react": "8.0.0-rc19",
     "framer-motion": "^10.18.0",
     "hamburger-react": "^2.5.0",

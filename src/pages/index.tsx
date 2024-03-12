@@ -13,6 +13,8 @@ import {
 import { cn } from "~/lib/utils";
 import { db } from "~/server/db";
 import type { BlogPostWithTags, LitterWithTags } from "~/utils/types";
+import Autoheight from 'embla-carousel-auto-height'
+
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -34,7 +36,10 @@ export default function Home({ blogPosts, litters }: Props) {
           <em>Latest</em> Litters
         </h1>
         <section className="mb-12">
-          <Carousel className={cn("relative w-full max-w-[352px] md:max-w-96")}>
+          <Carousel
+            plugins={[Autoheight()]}
+            className={cn("relative w-full max-w-[352px] md:max-w-96")}
+          >
             <CarouselContent>
               {litters.map((litter) => (
                 <CarouselItem
@@ -62,7 +67,7 @@ export default function Home({ blogPosts, litters }: Props) {
         <h1 className="mt-4 font-playfair text-2xl">
           <em>Latest</em> Stories
         </h1>
-        <section className="flex flex-col gap-5 text-ellipsis underline mb-8">
+        <section className="mb-8 flex flex-col gap-5 text-ellipsis underline">
           {blogPosts.map((blogPost) => (
             <Link
               className="flex items-center gap-1 px-3"
