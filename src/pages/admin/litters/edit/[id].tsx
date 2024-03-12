@@ -238,7 +238,7 @@ export default function EditLitter({
               <FormField
                 control={litterForm.control}
                 name="mother_name"
-                render={({ field: { onChange, onBlur, name, ref } }) => (
+                render={({ field: { onChange, onBlur, name, ref, value } }) => (
                   <FormItem className="w-2/3">
                     <FormLabel>Mother Name</FormLabel>
                     <FormControl>
@@ -265,6 +265,10 @@ export default function EditLitter({
                         onBlur={onBlur}
                         name={name}
                         ref={ref}
+                        defaultValue={{
+                          value: value,
+                          label: value,
+                        }}
                         isClearable
                         options={motherNames.map((name) => ({
                           value: name.name,
@@ -296,7 +300,7 @@ export default function EditLitter({
               <FormField
                 control={litterForm.control}
                 name="father_name"
-                render={({ field: { onChange, onBlur, name, ref } }) => (
+                render={({ field: { onChange, onBlur, name, ref, value } }) => (
                   <FormItem className="w-2/3">
                     <FormLabel>Father Name</FormLabel>
                     <FormControl>
@@ -322,6 +326,10 @@ export default function EditLitter({
                         name={name}
                         ref={ref}
                         isClearable
+                        defaultValue={{
+                          value: value,
+                          label: value,
+                        }}
                         options={fatherNames.map((name) => ({
                           value: name.name,
                           label: name.name,
