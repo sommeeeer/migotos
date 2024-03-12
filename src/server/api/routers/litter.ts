@@ -58,7 +58,8 @@ export const litterRouter = createTRPCRouter({
             },
           },
         });
-        await revalidateAndInvalidate(ctx.res, ["/kittens", "/"]);
+        await ctx.res.revalidate("/");
+        await revalidateAndInvalidate(ctx.res, ["/", "/kittens"]);
         return litter;
       } catch (err) {
         console.error(err);
@@ -105,7 +106,7 @@ export const litterRouter = createTRPCRouter({
             },
           },
         });
-        
+
         const profileImages = [
           litter.post_image,
           litter.mother_img,
@@ -121,11 +122,13 @@ export const litterRouter = createTRPCRouter({
           ).concat(profileImages.filter(Boolean)),
         );
 
+        await ctx.res.revalidate("/");
         await revalidateAndInvalidate(
           ctx.res,
-          ["/kittens", "/", `/kittens/${deletedLitter.slug}`].concat(
+          ["/", "/kittens", `/kittens/${deletedLitter.slug}`].concat(
             litter.LitterPictureWeek.map(
-              (week) => `/kittens/${deletedLitter.slug}/pictures/${week.name}`,
+              (week) =>
+                `/kittens/${deletedLitter.slug}/pictures/${week.name.toLowerCase()}`,
             ),
           ),
         );
@@ -203,10 +206,11 @@ export const litterRouter = createTRPCRouter({
             },
           },
         });
+        await ctx.res.revalidate("/");
         await revalidateAndInvalidate(ctx.res, [
-          "/kittens",
           "/",
-          `/kittens/${updatedLitter.slug}`,
+          "/kittens",
+          `/kittens/${updatedLitter.slug.toLowerCase()}`,
         ]);
         return updatedLitter;
       } catch (err) {
@@ -267,7 +271,9 @@ export const litterRouter = createTRPCRouter({
             },
           },
         });
-        await revalidateAndInvalidate(ctx.res, [`/kittens/${litter.slug}`]);
+        await revalidateAndInvalidate(ctx.res, [
+          `/kittens/${litter.slug.toLowerCase()}`,
+        ]);
         return week;
       } catch (err) {
         console.error(err);
@@ -319,7 +325,7 @@ export const litterRouter = createTRPCRouter({
         });
 
         await revalidateAndInvalidate(ctx.res, [
-          `/kittens/${litter.slug}/pictures/${updatedWeek.name}`,
+          `/kittens/${litter.slug}/pictures/${updatedWeek.name.toLowerCase()}`,
         ]);
         return updatedWeek;
       } catch (err) {
@@ -403,8 +409,8 @@ export const litterRouter = createTRPCRouter({
           ),
         );
         await revalidateAndInvalidate(ctx.res, [
-          `/kittens/${litter.slug}`,
-          `/kittens/${litter.slug}/pictures/${deletedWeek.name}`,
+          `/kittens/${litter.slug.toLowerCase()}`,
+          `/kittens/${litter.slug}/pictures/${deletedWeek.name.toLowerCase()}`,
         ]);
         return deletedWeek;
       } catch (err) {
@@ -486,7 +492,7 @@ export const litterRouter = createTRPCRouter({
           }),
         );
         await revalidateAndInvalidate(ctx.res, [
-          `/kittens/${litter?.slug}/pictures/${litterPictureWeek.name}`,
+          `/kittens/${litter?.slug}/pictures/${litterPictureWeek.name.toLowerCase()}`,
         ]);
         return kittenImages;
       } catch (err) {
@@ -531,7 +537,7 @@ export const litterRouter = createTRPCRouter({
           decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
         ]);
         await revalidateAndInvalidate(ctx.res, [
-          `/kittens/${image.LitterPictureWeek.Litter.slug}/pictures/${image.LitterPictureWeek.name}`,
+          `/kittens/${image.LitterPictureWeek.Litter.slug}/pictures/${image.LitterPictureWeek.name.toLowerCase()}`,
         ]);
         return deletedImage;
       } catch (err) {

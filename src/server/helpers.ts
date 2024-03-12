@@ -119,6 +119,9 @@ export async function revalidateAndInvalidate(
 ) {
   if (process.env.NODE_ENV !== "development") {
     for (const path of paths) {
+      if (path === "/") {
+        continue;
+      }
       let retries = 0;
 
       while (retries < maxRetries) {
@@ -161,6 +164,23 @@ export async function revalidateAndInvalidate(
           .join("\n")}\n\n\nError:\n\n\n`,
         err,
       );
+    }
+  }
+  if (process.env.NODE_ENV === "development") {
+    for (const path of paths) {
+      console.log(`res.validate(${path}`);
+    }
+
+    const pathsArr = paths
+      .map((path) => {
+        if (path === "/") {
+          return `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`;
+        }
+        return `/_next/data/${process.env.NEXT_BUILD_ID}${path}.json*`;
+      })
+      .concat(paths);
+    for (const path of pathsArr) {
+      console.log(`invalidateCFPaths(${path}`);
     }
   }
 }

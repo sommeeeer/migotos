@@ -40,10 +40,13 @@ export const blogpostRouter = createTRPCRouter({
             },
           },
         });
+        await ctx.res.revalidate("/");
         await revalidateAndInvalidate(
           ctx.res,
-          ["/news", "/"].concat(
-            blogpost.tags.map((tag) => `/news/tags/${tag.blogposttag.value}`),
+          ["/", "/news"].concat(
+            blogpost.tags.map(
+              (tag) => `/news/tags/${tag.blogposttag.value.toLowerCase()}`,
+            ),
           ),
         );
         return blogpost;
@@ -85,9 +88,10 @@ export const blogpostRouter = createTRPCRouter({
         if (blogpost.image_url) {
           await deleteImages([blogpost.image_url]);
         }
+        await ctx.res.revalidate("/");
         await revalidateAndInvalidate(
           ctx.res,
-          ["/news", "/"].concat(
+          ["/", "/news"].concat(
             blogpost.tags.map(
               (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`,
             ),
@@ -191,7 +195,7 @@ export const blogpostRouter = createTRPCRouter({
 
         await revalidateAndInvalidate(
           ctx.res,
-          ["/news", "/"].concat(
+          ["/", "/news"].concat(
             updatedBlogPost.tags.map(
               (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`,
             ),
