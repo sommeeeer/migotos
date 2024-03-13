@@ -46,7 +46,11 @@ export const catRouter = createTRPCRouter({
             ),
           );
         }
-        await ctx.res.revalidate("/");
+        try {
+          await ctx.res.revalidate("/");
+        } catch (err) {
+          console.error("[RES_VALIDATE_ERROR_DELET_CAT]: ", err);
+        }
         await revalidateAndInvalidate(ctx.res, [
           "/",
           "/cats",
@@ -126,7 +130,11 @@ export const catRouter = createTRPCRouter({
             },
           },
         });
-        await ctx.res.revalidate("/");
+        try {
+          await ctx.res.revalidate("/");
+        } catch (err) {
+          console.error("[RES_VALIDATE_ERROR_UPDATE_CAT]: ", err);
+        }
         await revalidateAndInvalidate(ctx.res, [
           "/",
           "/cats",
@@ -174,7 +182,11 @@ export const catRouter = createTRPCRouter({
             },
           },
         });
-        await ctx.res.revalidate("/");
+        try {
+          await ctx.res.revalidate("/");
+        } catch (err) {
+          console.error("[RES_VALIDATE_ERROR_CREATE_CAT]: ", err);
+        }
         await revalidateAndInvalidate(ctx.res, ["/", "/cats"]);
         return newCat;
       } catch (err) {
