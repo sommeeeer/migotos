@@ -13,8 +13,7 @@ import {
 import { cn } from "~/lib/utils";
 import { db } from "~/server/db";
 import type { BlogPostWithTags, LitterWithTags } from "~/utils/types";
-import Autoheight from 'embla-carousel-auto-height'
-
+import Autoheight from "embla-carousel-auto-height";
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -44,7 +43,7 @@ export default function Home({ blogPosts, litters }: Props) {
               {litters.map((litter) => (
                 <CarouselItem
                   key={litter.id}
-                  className="overflow-hidden rounded-md"
+                  className="max-h-[250px] overflow-hidden rounded-md"
                 >
                   <LitterProfile
                     key={litter.id}
