@@ -157,6 +157,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       });
     }
 
+    if (q.length === 1) {
+      catResults = await db.cat.findMany({
+        where: {
+          nickname: {
+            startsWith: q,
+          },
+        },
+        include: {
+          CatImage: true,
+        },
+      });
+    }
+
     return {
       props: {
         searchResults: {
