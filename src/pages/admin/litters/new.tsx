@@ -45,15 +45,18 @@ import {
 import { ImageUpload } from "~/components/ImageUpload";
 import { api } from "~/utils/api";
 import { db } from "~/server/db";
+import CreatableSelect from "react-select/creatable";
 
 interface NewLitterProps {
   motherNames: { name: string; stamnavn: string }[];
   fatherNames: { name: string; stamnavn: string }[];
+  tags: { value: string }[];
 }
 
 export default function NewLitter({
   motherNames,
   fatherNames,
+  tags,
 }: NewLitterProps) {
   const [isKittenDialogOpen, setIsKittenDialogOpen] = useState(false);
 
@@ -72,6 +75,12 @@ export default function NewLitter({
       mother_img: undefined,
       post_image: undefined,
       kittens: [],
+      tags: [
+        {
+          label: new Date().getFullYear().toString(),
+          value: new Date().getFullYear().toString(),
+        },
+      ],
     },
   });
   const kittens = litterForm.watch("kittens");
@@ -123,6 +132,19 @@ export default function NewLitter({
     );
   }
 
+  function handleCreate(inputValue: string) {
+    litterForm.setValue(
+      "tags",
+      [
+        ...litterForm.getValues("tags"),
+        { label: inputValue, value: inputValue },
+      ],
+      {
+        shouldDirty: true,
+      },
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="mb-4 flex items-center gap-2">
@@ -143,6 +165,34 @@ export default function NewLitter({
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input disabled={isLoading} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={litterForm.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <CreatableSelect
+                      name="tags"
+                      isMulti
+                      onBlur={field.onBlur}
+                      instanceId="tags"
+                      ref={field.ref}
+                      isClearable
+                      isDisabled={isLoading}
+                      isLoading={isLoading}
+                      onChange={field.onChange}
+                      onCreateOption={handleCreate}
+                      options={tags.map((tag) => {
+                        return { label: tag.value, value: tag.value };
+                      })}
+                      value={field.value}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -488,10 +538,23 @@ export async function getServerSideProps(
     }),
   ]);
 
+  const tags = (
+    await db.tag.findMany({
+      select: {
+        value: true,
+      },
+      distinct: ["value"],
+      orderBy: {
+        value: "asc",
+      },
+    })
+  ).filter((tag) => isNaN(Number(tag.value)) && tag.value !== "");
+
   return {
     props: {
       motherNames,
       fatherNames,
+      tags,
     },
   };
 }

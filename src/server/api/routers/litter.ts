@@ -52,8 +52,10 @@ export const litterRouter = createTRPCRouter({
               })),
             },
             Tag: {
-              create: {
-                value: input.born.getFullYear().toString(),
+              createMany: {
+                data: input.tags.map((tag) => ({
+                  value: tag.value,
+                })),
               },
             },
           },
@@ -213,7 +215,34 @@ export const litterRouter = createTRPCRouter({
               })),
             },
           },
+          include: {
+            Tag: true,
+          },
         });
+
+        const tagsToDelete = updatedLitter.Tag.filter(
+          (tag) => !input.tags.some((t) => t.value === tag.value),
+        );
+
+        const tagsToCreate = input.tags.filter(
+          (tag) => !updatedLitter.Tag.some((t) => t.value === tag.value),
+        );
+
+        await db.tag.deleteMany({
+          where: {
+            id: {
+              in: tagsToDelete.map((tag) => tag.id),
+            },
+          },
+        });
+
+        await db.tag.createMany({
+          data: tagsToCreate.map((tag) => ({
+            value: tag.value,
+            litter_id: updatedLitter.id,
+          })),
+        });
+
         try {
           await ctx.res.revalidate("/");
         } catch (err) {

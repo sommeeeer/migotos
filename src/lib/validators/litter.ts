@@ -69,4 +69,5 @@ export const litterSchema = z.object({
   kittens: z
     .array(kittenSchema)
     .min(1, { message: "Must have atleast 1 kitten." }),
+  tags: z.array(z.object({ value: z.string(), label: z.string() })),
 });

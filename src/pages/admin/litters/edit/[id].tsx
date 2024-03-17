@@ -45,10 +45,12 @@ import { db } from "~/server/db";
 import type { Prisma } from "@prisma/client";
 import { AiFillEdit } from "react-icons/ai";
 import { ImageUpload } from "~/components/ImageUpload";
+import CreatableSelect from "react-select/creatable";
 
 type LitterWithKittens = Prisma.LitterGetPayload<{
   include: {
     Kitten: true;
+    Tag: true;
   };
 }>;
 
@@ -56,12 +58,14 @@ interface EditLitterProps {
   litter: LitterWithKittens;
   motherNames: { name: string; stamnavn: string }[];
   fatherNames: { name: string; stamnavn: string }[];
+  tags: { value: string }[];
 }
 
 export default function EditLitter({
   litter,
   motherNames,
   fatherNames,
+  tags,
 }: EditLitterProps) {
   const [isKittenDialogOpen, setIsKittenDialogOpen] = useState(false);
 
@@ -85,6 +89,7 @@ export default function EditLitter({
         info: kitten.info ?? "",
         stamnavn: kitten.stamnavn ?? "",
       })),
+      tags: litter.Tag.map((tag) => ({ value: tag.value, label: tag.value })),
     },
   });
   const { isDirty } = litterForm.formState;
@@ -154,6 +159,19 @@ export default function EditLitter({
     );
   }
 
+  function handleCreate(inputValue: string) {
+    litterForm.setValue(
+      "tags",
+      [
+        ...litterForm.getValues("tags"),
+        { label: inputValue, value: inputValue },
+      ],
+      {
+        shouldDirty: true,
+      },
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="mb-4 flex items-center gap-2 ">
@@ -174,6 +192,34 @@ export default function EditLitter({
                   <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input disabled={isLoading} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={litterForm.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <CreatableSelect
+                      name="tags"
+                      isMulti
+                      onBlur={field.onBlur}
+                      instanceId="tags"
+                      ref={field.ref}
+                      isClearable
+                      isDisabled={isLoading}
+                      isLoading={isLoading}
+                      onChange={field.onChange}
+                      onCreateOption={handleCreate}
+                      options={tags.map((tag) => {
+                        return { label: tag.value, value: tag.value };
+                      })}
+                      value={field.value}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -511,6 +557,7 @@ export async function getServerSideProps(
     },
     include: {
       Kitten: true,
+      Tag: true,
     },
   });
 
@@ -546,11 +593,24 @@ export async function getServerSideProps(
     },
   });
 
+  const tags = (
+    await db.tag.findMany({
+      select: {
+        value: true,
+      },
+      distinct: ["value"],
+      orderBy: {
+        value: "asc",
+      },
+    })
+  ).filter((tag) => isNaN(Number(tag.value)) && tag.value !== "");
+
   return {
     props: {
       litter,
       motherNames,
       fatherNames,
+      tags,
     },
   };
 }

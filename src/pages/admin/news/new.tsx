@@ -82,10 +82,11 @@ export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
   }
 
   function handleCreate(inputValue: string) {
-    form.setValue("tags", [
-      ...form.getValues("tags"),
-      { label: inputValue, value: inputValue },
-    ]);
+    form.setValue(
+      "tags",
+      [...form.getValues("tags"), { label: inputValue, value: inputValue }],
+      { shouldDirty: true },
+    );
   }
 
   return (
