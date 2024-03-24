@@ -28,7 +28,7 @@ function News({ blogPosts, pagination }: Props) {
             <em>All Blog Posts</em>
           </h1>
           <p className="text-xs text-gray-500">
-            Showing page {pagination.currentPage + 1} of {pagination.totalPages}
+            Showing page {pagination.currentPage} of {pagination.totalPages}
           </p>
           <p className="text-base leading-loose text-zinc-500">
             Click on the card to read more.
