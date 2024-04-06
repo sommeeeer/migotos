@@ -123,6 +123,7 @@ export default function ImageCarousel({
                 alt={`Profile image of ${name}`}
                 width={image.width}
                 height={image.height}
+                className="max-w-7xl"
                 quality={100}
               />
             </CarouselItem>
