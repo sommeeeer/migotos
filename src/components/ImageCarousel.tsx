@@ -114,7 +114,7 @@ export default function ImageCarousel({
         <CarouselContent>
           {images.map((image) => (
             <CarouselItem
-              className="flex items-center justify-center"
+              className="flex items-center justify-center pl-0"
               key={image.id}
             >
               <Image
@@ -123,7 +123,7 @@ export default function ImageCarousel({
                 alt={`Profile image of ${name}`}
                 width={image.width}
                 height={image.height}
-                className="max-w-7xl"
+                className="md:max-w-3xl lg:max-w-4xl xl:max-w-5xl"
                 quality={100}
               />
             </CarouselItem>
