@@ -44,12 +44,15 @@ function KittenPictures({
           name={title}
         />
       )}
-      <div className="flex flex-col gap-4 px-2 mb-28">
+      <div className="mb-28 flex flex-col gap-4 px-2">
         {alternativeTitle && (
           <p className="text-center text-lg text-zinc-500">
             {alternativeTitle}
           </p>
         )}
+        <span className="self-center font-playfair text-sm font-light italic text-gray-700">
+          Click on a photo to view gallery
+        </span>
         {Object.entries(groupedImages).map(([key, images], groupIdx) => (
           <div key={key}>
             <BorderText text={key !== "" ? key : title} />
