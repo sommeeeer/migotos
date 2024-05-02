@@ -24,7 +24,7 @@ export default function Footer() {
         !showButton && "mb-6",
       )}
     >
-      <div className="mt-8 flex flex-col items-center justify-between gap-6 text-center">
+      <div className="mt-8 flex flex-col items-center justify-between gap-12 text-center">
         <div>
           <Button
             variant="link"
