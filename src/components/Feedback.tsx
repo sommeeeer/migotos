@@ -205,6 +205,7 @@ export default function Feedback() {
                   </div>
 
                   <button
+                    disabled={formState === "loading"}
                     type="submit"
                     className="feedback-submit-btn relative ml-auto flex h-6 w-[104px] items-center justify-center overflow-hidden rounded-[6px] text-xs font-semibold shadow-sm"
                   >

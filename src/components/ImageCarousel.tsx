@@ -112,13 +112,13 @@ export default function ImageCarousel({
           </a>
         )}
         <CarouselContent>
-          {images.map((image) => (
+          {images.map((image, index) => (
             <CarouselItem
               className="flex items-center justify-center pl-0"
               key={image.id}
             >
               <Image
-                priority
+                priority={imageIndex === index}
                 src={image.src}
                 alt={`Profile image of ${name}`}
                 width={image.width}
