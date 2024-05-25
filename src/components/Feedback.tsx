@@ -1,15 +1,21 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
 import { api } from "~/utils/api";
+import { useOnClickOutside } from "~/hooks/use-on-click-outside";
 
 export default function Feedback() {
+  const ref = useRef(null);
   const [open, setOpen] = useState(false);
   const [formState, setFormState] = useState("idle");
   const [feedback, setFeedback] = useState("");
 
   const { mutate, isLoading } = api.contact.feedback.useMutation();
+
+  const handleClickOutside = () => {
+    setOpen(false);
+  };
 
   const submit = useCallback(() => {
     setFormState("loading");
@@ -43,8 +49,10 @@ export default function Feedback() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [open, formState, submit]);
 
+  useOnClickOutside(ref, handleClickOutside);
+
   return (
-    <div className="flex w-full items-center justify-center">
+    <div className="flex w-full items-center justify-center" ref={ref}>
       <motion.button
         layoutId="wrapper"
         onClick={() => {
@@ -123,6 +131,9 @@ export default function Feedback() {
                 <textarea
                   autoFocus
                   placeholder="Feedback"
+                  required
+                  minLength={5}
+                  maxLength={500}
                   onChange={(e) => setFeedback(e.target.value)}
                   className="h-32 resize-none rounded-[8px_0] p-3 text-sm outline-none placeholder:opacity-0"
                 />
