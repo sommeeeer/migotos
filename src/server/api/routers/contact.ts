@@ -98,4 +98,32 @@ export const contactRouter = createTRPCRouter({
         });
       }
     }),
+  feedback: publicProcedure
+    .input(
+      z.object({
+        message: z
+          .string()
+          .min(5, {
+            message: "Message must be at least 5 characters",
+          })
+          .max(500, {
+            message: "Message must be less than 500 characters",
+          }),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const feedback = await db.feedback.create({
+        data: {
+          message: input.message,
+        },
+      });
+
+      if (!feedback) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create message",
+        });
+      }
+      return { success: true };
+    }),
 });

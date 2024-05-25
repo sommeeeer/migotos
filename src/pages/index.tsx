@@ -1,19 +1,20 @@
+import Autoheight from "embla-carousel-auto-height";
 import Head from "next/head";
 import Link from "next/link";
 import type { GetStaticPropsResult } from "next/types";
+import Feedback from "~/components/Feedback";
 import Footer from "~/components/Footer";
 import LitterProfile from "~/components/LitterProfile";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselPrevious,
   CarouselNext,
+  CarouselPrevious,
 } from "~/components/ui/carousel";
 import { cn } from "~/lib/utils";
 import { db } from "~/server/db";
 import type { BlogPostWithTags, LitterWithTags } from "~/utils/types";
-import Autoheight from "embla-carousel-auto-height";
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -79,6 +80,12 @@ export default function Home({ blogPosts, litters }: Props) {
             </Link>
           ))}
         </section>
+        <div className="mt-8 flex flex-col gap-3 px-4">
+          <span className="text-sm text-gray-800">
+            Have any questions or want something changed on our site?
+          </span>
+          <Feedback />
+        </div>
         <Footer />
       </div>
     </>

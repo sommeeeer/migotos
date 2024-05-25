@@ -225,6 +225,12 @@ model Visitor {
   bot Boolean @default(false)
 }
 
+model Feedback {
+  id        Int      @id @default(autoincrement())
+  message   String   @db.VarChar(500)
+  createdAt DateTime @default(now())
+}
+
 enum Role {
   USER
   ADMIN
