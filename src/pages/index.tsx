@@ -82,7 +82,7 @@ export default function Home({ blogPosts, litters }: Props) {
         </section>
         <div className="mt-8 flex flex-col gap-3 px-4">
           <span className="text-sm text-gray-800">
-            Have any questions or improvements for our website?
+            Got any questions or improvements for our website?
           </span>
           <Feedback />
         </div>
