@@ -15,7 +15,9 @@ export default function FilterLitters({
     <div className="mb-6 mt-4 flex flex-wrap gap-x-5 gap-y-3 px-6 font-normal">
       {["All", ...years].map((year) => (
         <YearButton
-          className={currentYear === year ? "text-hoverbg font-semibold" : ""}
+          className={
+            currentYear === String(year) ? "font-semibold text-hoverbg" : ""
+          }
           key={year}
           year={year}
           filterByYear={filterByYear}
