@@ -187,52 +187,52 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const catResults = await db.cat.findMany({
-    where: {
-      OR: [
-        { name: { contains: q } },
-        { stamnavn: { contains: q } },
-        { description: { contains: q } },
-        { nickname: { contains: q } },
-        { breeder: { contains: q } },
-      ],
-    },
-    include: {
-      CatImage: true,
-    },
-  });
+  const [catResults, blogPostResults, litterResults, kittenResults] = await Promise.all([
+    db.cat.findMany({
+      where: {
+        OR: [
+          { name: { contains: q } },
+          { stamnavn: { contains: q } },
+          { description: { contains: q } },
+          { nickname: { contains: q } },
+          { breeder: { contains: q } },
+        ],
+      },
+      include: {
+        CatImage: true,
+      },
+    }),
+    db.blogPost.findMany({
+      where: {
+        OR: [{ title: { contains: q } }, { body: { contains: q } }],
+      },
+    }),
+    db.litter.findMany({
+      where: {
+        OR: [
+          { name: { contains: q } },
+          { mother_name: { contains: q } },
+          { father_name: { contains: q } },
+          { mother_stamnavn: { contains: q } },
+          { father_stamnavn: { contains: q } },
+          { description: { contains: q } },
+        ],
+      },
+    }),
+    db.kitten.findMany({
+      where: {
+        OR: [
+          { name: { contains: q } },
+          { stamnavn: { contains: q } },
+          { info: { contains: q } },
+        ],
+      },
+      include: {
+        Litter: true,
+      },
+    }),
+  ]);
 
-  const blogPostResults = await db.blogPost.findMany({
-    where: {
-      OR: [{ title: { contains: q } }, { body: { contains: q } }],
-    },
-  });
-
-  const litterResults = await db.litter.findMany({
-    where: {
-      OR: [
-        { name: { contains: q } },
-        { mother_name: { contains: q } },
-        { father_name: { contains: q } },
-        { mother_stamnavn: { contains: q } },
-        { father_stamnavn: { contains: q } },
-        { description: { contains: q } },
-      ],
-    },
-  });
-
-  const kittenResults = await db.kitten.findMany({
-    where: {
-      OR: [
-        { name: { contains: q } },
-        { stamnavn: { contains: q } },
-        { info: { contains: q } },
-      ],
-    },
-    include: {
-      Litter: true,
-    },
-  });
   const combinedLitters = [
     ...litterResults,
     ...kittenResults.map((kitten) => kitten.Litter),
