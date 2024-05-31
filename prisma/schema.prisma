@@ -231,6 +231,12 @@ model Feedback {
   createdAt DateTime @default(now())
 }
 
+model SearchLog {
+  id        Int      @id @default(autoincrement())
+  query     String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+}
+
 enum Role {
   USER
   ADMIN

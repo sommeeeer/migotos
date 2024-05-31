@@ -137,6 +137,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  await db.searchLog.create({
+    data: {
+      query: q,
+    },
+  });
+
   if (q.length === 1 || q.length === 2) {
     const litterResults = await db.litter.findMany({
       where: {
