@@ -1,5 +1,5 @@
 import type { SSTConfig } from "sst";
-import { Bucket, NextjsSite } from "sst/constructs";
+import { Bucket, Config, NextjsSite } from "sst/constructs";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import { env } from "~/env.mjs";
 
@@ -24,16 +24,30 @@ export default {
 
       const site = new NextjsSite(stack, "site", {
         customDomain: {
-          domainName: "migotos.com",
-          domainAlias: "www.migotos.com",
+          domainName:
+            stack.stage === "prod"
+              ? "migotos.com"
+              : `${stack.stage}.migotos.com`,
+          domainAlias: stack.stage === "prod" ? "www.migotos.com" : undefined,
+          hostedZone: "migotos.com",
         },
         environment: {
           NEXTAUTH_URL:
-            app.mode === "dev" ? "http://localhost:3000" : env.NEXTAUTH_URL,
+            app.mode === "dev"
+              ? "http://localhost:3000"
+              : app.stage === "prod"
+                ? env.NEXTAUTH_URL
+                : env.NEXTAUTH_URL_STAGING,
           DATABASE_URL:
-            app.mode === "dev" ? env.DATABASE_URL_DEV : env.DATABASE_URL,
+            app.stage === "prod" ? env.DATABASE_URL : env.DATABASE_URL_DEV,
         },
         bind: [bucket],
+        openNextVersion: "3.0.5",
+        permissions: ["ssm"],
+      });
+
+      new Config.Parameter(stack, "FRONTEND_DISTRIBUTION_ID", {
+        value: site.cdk?.distribution?.distributionId ?? "localhost",
       });
 
       stack.addOutputs({

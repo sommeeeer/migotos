@@ -36,6 +36,7 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { checkAdminSession } from "~/server/helpers";
 import { toast } from "~/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
 
 type NewsProps = {
   blogposts: BlogPost[];
@@ -43,19 +44,22 @@ type NewsProps = {
 
 export default function News({ blogposts }: NewsProps) {
   const router = useRouter();
-  const { mutate: mutateDeleteBlogPost } =
-    api.blogpost.deleteBlogPost.useMutation({
-      onSuccess: () => {
-        void router.replace(router.asPath);
-      },
-      onError: () => {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Something went wrong while deleting comment.",
-        });
-      },
-    });
+  const {
+    mutate: mutateDeleteBlogPost,
+    isLoading: isLoadingDeleteBlogPost,
+    variables: mutateBlogPostId,
+  } = api.blogpost.deleteBlogPost.useMutation({
+    onSuccess: () => {
+      void router.replace(router.asPath);
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong while deleting comment.",
+      });
+    },
+  });
 
   function deleteBlog(id: number) {
     mutateDeleteBlogPost(id);
@@ -113,7 +117,12 @@ export default function News({ blogposts }: NewsProps) {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="hover:-slate-300">
-                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
+                          {isLoadingDeleteBlogPost &&
+                          mutateBlogPostId === blogpost.id ? (
+                            <Loader2 className="size-8 animate-spin" />
+                          ) : (
+                            <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
+                          )}
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>

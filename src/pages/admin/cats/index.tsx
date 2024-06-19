@@ -37,6 +37,7 @@ import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
 import AdminLayout from "../AdminLayout";
 import { checkAdminSession } from "~/server/helpers";
+import { Loader2 } from "lucide-react";
 
 type CatsProps = {
   cats: Pick<
@@ -55,7 +56,11 @@ type CatsProps = {
 
 export default function Cats({ cats }: CatsProps) {
   const router = useRouter();
-  const { mutate: mutateDeleteCat } = api.cat.deleteCat.useMutation({
+  const {
+    mutate: mutateDeleteCat,
+    isLoading: isLoadingDeleteCat,
+    variables: mutateCatId,
+  } = api.cat.deleteCat.useMutation({
     onSuccess: () => {
       toast({
         variant: "default",
@@ -73,7 +78,6 @@ export default function Cats({ cats }: CatsProps) {
       });
     },
   });
-
   function deleteCat(id: number) {
     mutateDeleteCat(id);
   }
@@ -135,7 +139,11 @@ export default function Cats({ cats }: CatsProps) {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="hover:-slate-300">
-                          <AiFillDelete className="h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
+                          {isLoadingDeleteCat && cat.id === mutateCatId ? (
+                            <Loader2 className="size-8 animate-spin" />
+                          ) : (
+                            <AiFillDelete className="size-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
+                          )}
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
