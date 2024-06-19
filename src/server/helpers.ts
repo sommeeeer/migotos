@@ -18,6 +18,7 @@ import {
 import { env } from "~/env.mjs";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { createTransport } from "nodemailer";
+import { GetParametersCommand, SSMClient } from "@aws-sdk/client-ssm";
 
 export const BLURURL =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC";
@@ -95,20 +96,41 @@ export async function getSignedURLS(filenames: string[]) {
 }
 
 const cloudFront = new CloudFrontClient({});
+const ssm = new SSMClient({});
 
-export async function invalidateCFPaths(paths: string[]) {
-  await cloudFront.send(
-    new CreateInvalidationCommand({
-      DistributionId: env.CLOUDFRONT_DISTRIBUTION_ID,
-      InvalidationBatch: {
-        CallerReference: `${Date.now()}`,
-        Paths: {
-          Quantity: paths.length,
-          Items: paths,
-        },
-      },
+async function getDistributionId() {
+  const domain = await ssm.send(
+    new GetParametersCommand({
+      Names: [
+        `${process.env.SST_SSM_PREFIX}Parameter/FRONTEND_DISTRIBUTION_ID/value`,
+      ],
+      WithDecryption: false,
     }),
   );
+  return domain.Parameters?.[0]?.Value ?? null;
+}
+
+export async function invalidateCFPaths(paths: string[]) {
+  try {
+    const distributionId = await getDistributionId();
+    if (!distributionId) {
+      throw new Error("Distribution ID not found");
+    }
+    await cloudFront.send(
+      new CreateInvalidationCommand({
+        DistributionId: distributionId,
+        InvalidationBatch: {
+          CallerReference: `${Date.now()}`,
+          Paths: {
+            Quantity: paths.length,
+            Items: paths,
+          },
+        },
+      }),
+    );
+  } catch (err) {
+    console.error("[INVALIDATE_CLOUDFRONT_PATHS_ERROR]", err);
+  }
 }
 
 const maxRetries = 3;

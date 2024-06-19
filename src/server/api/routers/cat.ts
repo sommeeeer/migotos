@@ -49,7 +49,7 @@ export const catRouter = createTRPCRouter({
         try {
           await ctx.res.revalidate("/");
         } catch (err) {
-          console.error("[RES_VALIDATE_ERROR_DELET_CAT]: ", err);
+          console.error("[RES_VALIDATE_ERROR_DELETE_CAT]: ", err);
         }
         await revalidateAndInvalidate(ctx.res, [
           "/",
@@ -320,7 +320,9 @@ export const catRouter = createTRPCRouter({
             message: "Cat not found",
           });
         }
-        await revalidateAndInvalidate(ctx.res, [`/cats/${cat.slug.toLowerCase()}`]);
+        await revalidateAndInvalidate(ctx.res, [
+          `/cats/${cat.slug.toLowerCase()}`,
+        ]);
         return catImages;
       } catch (err) {
         console.error(err);
@@ -358,7 +360,9 @@ export const catRouter = createTRPCRouter({
             deletedCatImage.src.replace("https://cdn.migotos.com/", ""),
           ),
         ]);
-        await revalidateAndInvalidate(ctx.res, [`/cats/${cat.slug.toLowerCase()}`]);
+        await revalidateAndInvalidate(ctx.res, [
+          `/cats/${cat.slug.toLowerCase()}`,
+        ]);
         return deletedCatImage;
       } catch (err) {
         console.error(err);

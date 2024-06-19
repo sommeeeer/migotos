@@ -109,7 +109,6 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
         },
       }),
     ]);
-
   return {
     props: {
       fertileMaleCats: fertileMaleCats,
