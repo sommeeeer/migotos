@@ -37,6 +37,7 @@ import { BiSolidCat } from "react-icons/bi";
 import { api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
 import { useRouter } from "next/router";
+import { Loader2 } from "lucide-react";
 
 type LittersProps = {
   litters: Litter[];
@@ -44,7 +45,11 @@ type LittersProps = {
 
 export default function Litters({ litters }: LittersProps) {
   const router = useRouter();
-  const { mutate: mutateDeleteLitter } = api.litter.deleteLitter.useMutation({
+  const {
+    mutate: mutateDeleteLitter,
+    isLoading: isLoadingDeleteLitter,
+    variables: mutateLitterId,
+  } = api.litter.deleteLitter.useMutation({
     onSuccess: () => {
       toast({
         variant: "default",
@@ -122,7 +127,12 @@ export default function Litters({ litters }: LittersProps) {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <button className="hover:-slate-300">
-                          <AiFillDelete className="relative h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
+                          {isLoadingDeleteLitter &&
+                          mutateLitterId === litter.id ? (
+                            <Loader2 className="size-8 animate-spin" />
+                          ) : (
+                            <AiFillDelete className="relative h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
+                          )}
                         </button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>

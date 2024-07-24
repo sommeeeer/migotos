@@ -49,7 +49,7 @@ export const blogpostRouter = createTRPCRouter({
           ctx.res,
           ["/", "/news"].concat(
             blogpost.tags.map(
-              (tag) => `/news/tags/${tag.blogposttag.value.toLowerCase()}`,
+              (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`,
             ),
           ),
         );
