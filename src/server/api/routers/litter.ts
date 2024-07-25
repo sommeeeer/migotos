@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { litterSchema } from "~/lib/validators/litter";
+import { editLitterSchema, litterSchema } from "~/lib/validators/litter";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
@@ -156,7 +156,7 @@ export const litterRouter = createTRPCRouter({
       }
     }),
   updateLitter: protectedProcedure
-    .input(litterSchema.extend({ id: z.number() }))
+    .input(editLitterSchema.extend({ id: z.number() }))
     .mutation(async ({ input, ctx }) => {
       try {
         const litter = await db.litter.findFirst({

@@ -7,7 +7,7 @@ import { api } from "~/utils/api";
 
 interface ImageUploadProps {
   onChange: (url?: string) => void;
-  value: string;
+  value?: string;
   postImage?: boolean;
 }
 

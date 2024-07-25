@@ -76,3 +76,10 @@ export const litterSchema = z.object({
     .min(1, { message: "Must have atleast 1 kitten." }),
   tags: z.array(z.object({ value: z.string(), label: z.string() })),
 });
+
+export const editLitterSchema = litterSchema.extend({
+  post_image: z
+    .string({ required_error: "Please upload a post image." })
+    .url({ message: "Image URL must be a valid URL." })
+    .optional(),
+});

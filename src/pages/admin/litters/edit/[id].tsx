@@ -20,7 +20,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { type z } from "zod";
 import { toast } from "~/components/ui/use-toast";
 import { checkAdminSession } from "~/server/helpers";
-import { litterSchema } from "~/lib/validators/litter";
+import { editLitterSchema } from "~/lib/validators/litter";
 import { CalendarIcon, Edit, Loader2, Trash2 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import {
@@ -73,8 +73,8 @@ export default function EditLitter({
   const [isEditKittenDialogOpen, setIsEditKittenDialogOpen] = useState(false);
   const [editingKitten, setEditingKitten] = useState<EditKittenType>(undefined);
 
-  const litterForm = useForm<z.infer<typeof litterSchema>>({
-    resolver: zodResolver(litterSchema),
+  const litterForm = useForm<z.infer<typeof editLitterSchema>>({
+    resolver: zodResolver(editLitterSchema),
     defaultValues: {
       name: litter.name.replace(" LITTER", ""),
       pedigreeurl: litter.pedigreeurl ?? "",
@@ -139,7 +139,7 @@ export default function EditLitter({
       },
     });
 
-  function onSubmitLitter(values: z.infer<typeof litterSchema>) {
+  function onSubmitLitter(values: z.infer<typeof editLitterSchema>) {
     if (!isDirty) {
       toast({
         variant: "destructive",
