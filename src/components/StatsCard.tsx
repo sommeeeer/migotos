@@ -30,6 +30,11 @@ export default function StatsCard({ counts }: AdminProps) {
               <span>Litters</span>
               <BiSolidCat className="ml-auto" />
             </div>
+            <span className="text-blue-500">{counts.kittensCount}</span>
+            <div className="flex items-center gap-2">
+              <span>Kittens</span>
+              <BiSolidCat className="ml-auto" />
+            </div>
             <span className="text-blue-500">{counts.blogCount}</span>
             <div className="flex items-center gap-2">
               <span>Blogposts</span>

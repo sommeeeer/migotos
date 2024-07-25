@@ -14,6 +14,7 @@ export type AdminProps = {
     usersCount: number;
     catsCount: number;
     litterCount: number;
+    kittensCount: number;
     blogCount: number;
     catImagesCount: number;
     litterImagesCount: number;
@@ -48,6 +49,7 @@ export async function getServerSideProps(
     usersCount,
     catsCount,
     litterCount,
+    kittensCount,
     blogCount,
     catImagesCount,
     litterImagesCount,
@@ -59,6 +61,7 @@ export async function getServerSideProps(
     db.user.count(),
     db.cat.count(),
     db.litter.count(),
+    db.kitten.count(),
     db.blogPost.count(),
     db.catImage.count(),
     db.kittenPictureImage.count(),
@@ -95,6 +98,7 @@ export async function getServerSideProps(
     usersCount,
     catsCount,
     litterCount,
+    kittensCount,
     blogCount,
     catImagesCount,
     litterImagesCount,
