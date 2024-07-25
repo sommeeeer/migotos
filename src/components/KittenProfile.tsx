@@ -33,7 +33,7 @@ export default function KittenProfile({
         <br />
         {!info.toLowerCase().includes("week") && info}
         {info && <br />}
-        {orderStatus && orderStatus}
+        {orderStatus && <span className="italic">{orderStatus}</span>}
       </p>
     </div>
   );
