@@ -12,7 +12,7 @@ export default function AddImagesButton({ link, className }: Props) {
   const router = useRouter();
   return (
     <button
-      title="Edit"
+      title="Add Images"
       onClick={() => {
         void router.push(`/admin/${link}`);
       }}
