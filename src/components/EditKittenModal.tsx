@@ -81,7 +81,6 @@ export default function EditKittenModal({
   }
 
   useEffect(() => {
-    console.log(kitten);
     reset(kitten);
   }, [kitten, reset]);
 
