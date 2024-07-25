@@ -1,4 +1,8 @@
-import { type CatImage as CatImageType, type Cat as Cat } from "@prisma/client";
+import {
+  type CatImage as CatImageType,
+  type Cat as Cat,
+  Role,
+} from "@prisma/client";
 import { db } from "~/server/db";
 import Footer from "~/components/Footer";
 import CatImage from "~/components/CatImage";
@@ -20,6 +24,8 @@ import Head from "next/head";
 import ImageCarousel from "~/components/ImageCarousel";
 import CommentsIconButton from "~/components/CommentsIconButton";
 import PicturesIconButton from "~/components/PicturesIconButton";
+import EditIconButton from "~/components/EditIconButton";
+import AddImagesButton from "~/components/AddImagesButton";
 
 type Props = {
   cat: Cat & { CatImage: CatImageType[] };
@@ -99,6 +105,12 @@ function Cat({ cat, mother, father }: Props) {
           <div className="flex items-center">
             <CommentsIconButton commentsRef={commentsRef} />
             <PicturesIconButton picturesRef={picturesRef} />
+            {session?.user.role === Role.ADMIN && (
+              <>
+                <EditIconButton link={`cats/edit/${cat.id}`} />
+                <AddImagesButton link={`cats/images/${cat.id}`} />
+              </>
+            )}
           </div>
           <CatImage
             src={profileImg.src}

@@ -2,7 +2,7 @@ import { useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { type Cat, type Prisma } from "@prisma/client";
+import { Role, type Cat, type Prisma } from "@prisma/client";
 import { AnimatePresence } from "framer-motion";
 import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
 
@@ -19,6 +19,8 @@ import { api } from "~/utils/api";
 import LoginButton from "~/components/LoginButton";
 import CommentsIconButton from "~/components/CommentsIconButton";
 import PicturesIconButton from "~/components/PicturesIconButton";
+import EditIconButton from "~/components/EditIconButton";
+import AddImagesButton from "~/components/AddImagesButton";
 
 type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
   include: {
@@ -86,6 +88,12 @@ function LitterPage({ litter, mother, father }: Props) {
           <div className="flex items-center">
             <CommentsIconButton commentsRef={commentsRef} />
             <PicturesIconButton picturesRef={picturesRef} />
+            {session?.user.role === Role.ADMIN && (
+              <>
+                <EditIconButton link={`litters/edit/${litter.id}`} />
+                <AddImagesButton link={`litters/images/${litter.id}`} />
+              </>
+            )}
           </div>
           {litter.pedigreeurl && (
             <Link
