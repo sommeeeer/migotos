@@ -131,6 +131,7 @@ function LitterPage({ litter, mother, father }: Props) {
               info={k.info ?? ""}
               stamnavn={k.stamnavn}
               gender={k.gender}
+              orderStatus={k.orderStatus}
             />
           ))}
         </section>

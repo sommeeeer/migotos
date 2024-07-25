@@ -1,12 +1,14 @@
 import Image from "next/image";
 import femaleImg from "/public/static/female-50x50.png";
 import maleImg from "/public/static/male-50x50.png";
+import type { KittenOrderStatus } from "@prisma/client";
 
 export interface KittenProfileProps {
   name: string;
   info: string;
   stamnavn: string;
   gender: string;
+  orderStatus: KittenOrderStatus | null;
 }
 
 export default function KittenProfile({
@@ -14,6 +16,7 @@ export default function KittenProfile({
   info,
   stamnavn,
   gender,
+  orderStatus,
 }: KittenProfileProps) {
   return (
     <div className="mb-4 flex flex-col items-center gap-4 font-playfair">
@@ -29,6 +32,8 @@ export default function KittenProfile({
         {stamnavn.toUpperCase()}
         <br />
         {!info.toLowerCase().includes("week") && info}
+        {info && <br />}
+        {orderStatus && orderStatus}
       </p>
     </div>
   );

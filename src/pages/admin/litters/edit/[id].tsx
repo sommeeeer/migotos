@@ -21,7 +21,7 @@ import { type z } from "zod";
 import { toast } from "~/components/ui/use-toast";
 import { checkAdminSession } from "~/server/helpers";
 import { litterSchema } from "~/lib/validators/litter";
-import { CalendarIcon, Delete, Loader2 } from "lucide-react";
+import { CalendarIcon, Edit, Loader2, Trash2 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import {
   Popover,
@@ -46,6 +46,8 @@ import type { Prisma } from "@prisma/client";
 import { AiFillEdit } from "react-icons/ai";
 import { ImageUpload } from "~/components/ImageUpload";
 import CreatableSelect from "react-select/creatable";
+import type { EditKittenType } from "~/utils/types";
+import EditKittenModal from "~/components/EditKittenModal";
 
 type LitterWithKittens = Prisma.LitterGetPayload<{
   include: {
@@ -68,6 +70,8 @@ export default function EditLitter({
   tags,
 }: EditLitterProps) {
   const [isKittenDialogOpen, setIsKittenDialogOpen] = useState(false);
+  const [isEditKittenDialogOpen, setIsEditKittenDialogOpen] = useState(false);
+  const [editingKitten, setEditingKitten] = useState<EditKittenType>(undefined);
 
   const litterForm = useForm<z.infer<typeof litterSchema>>({
     resolver: zodResolver(litterSchema),
@@ -88,6 +92,7 @@ export default function EditLitter({
         gender: kitten.gender === "man" ? "man" : "female",
         info: kitten.info ?? "",
         stamnavn: kitten.stamnavn ?? "",
+        orderStatus: kitten.orderStatus ?? undefined,
       })),
       tags: litter.Tag.map((tag) => ({ value: tag.value, label: tag.value })),
     },
@@ -157,6 +162,14 @@ export default function EditLitter({
       "kittens",
       kittens.filter((kitten) => kitten.name !== name),
     );
+  }
+
+  function handleEditKitten(name: string) {
+    const kittenToEdit = kittens.find((kitten) => kitten.name === name);
+    if (kittenToEdit) {
+      setEditingKitten(kittenToEdit);
+      setIsEditKittenDialogOpen(true);
+    }
   }
 
   function handleCreate(inputValue: string) {
@@ -423,12 +436,24 @@ export default function EditLitter({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <div className="flex flex-row-reverse items-center gap-2 rounded-xl bg-zinc-200 px-4 py-2">
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveKitten(kitten.name)}
-                          >
-                            <Delete className="h-5 w-5" />
-                          </button>
+                          <div className="flex gap-1">
+                            <button
+                              type="button"
+                              className="transform rounded-full transition-all duration-200 ease-in-out hover:scale-110 hover:bg-gray-300"
+                              onClick={() => {
+                                handleEditKitten(kitten.name);
+                              }}
+                            >
+                              <Edit className="size-5" />
+                            </button>
+                            <button
+                              type="button"
+                              className="transform rounded-full transition-all duration-200 ease-in-out hover:scale-110 hover:bg-gray-300"
+                              onClick={() => handleRemoveKitten(kitten.name)}
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </button>
+                          </div>
                           <p>{kitten.name}</p>
                           {kitten.gender === "female" ? (
                             <IoMdFemale className="fill-pink-500" />
@@ -441,6 +466,7 @@ export default function EditLitter({
                         <div>
                           <p>{kitten.info}</p>
                           {kitten.stamnavn && <p>{kitten.stamnavn}</p>}
+                          {kitten.orderStatus && <p>{kitten.orderStatus}</p>}
                         </div>
                       </TooltipContent>
                     </Tooltip>
@@ -463,6 +489,14 @@ export default function EditLitter({
               isKittenDialogOpen={isKittenDialogOpen}
               setIsKittenDialogOpen={setIsKittenDialogOpen}
             />
+            {editingKitten && (
+              <EditKittenModal
+                kitten={editingKitten}
+                handleEditKitten={handleEditKitten}
+                isEditKittenDialogOpen={isEditKittenDialogOpen}
+                setIsEditKittenDialogOpen={setIsEditKittenDialogOpen}
+              />
+            )}
             <FormField
               control={litterForm.control}
               name="post_image"

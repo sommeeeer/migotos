@@ -1,10 +1,9 @@
-import { type SetStateAction, type Dispatch } from "react";
+import { type SetStateAction, type Dispatch, useEffect } from "react";
 import { Button } from "./ui/button";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -17,17 +16,22 @@ import { Controller, useForm, useFormContext } from "react-hook-form";
 import { kittenSchema, type litterSchema } from "~/lib/validators/litter";
 import { type z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
+import { Edit } from "lucide-react";
+import type { EditKittenType } from "~/utils/types";
 
-interface AddKittenModalProps {
-  isKittenDialogOpen: boolean;
-  setIsKittenDialogOpen: Dispatch<SetStateAction<boolean>>;
+interface EditKittenModalProps {
+  isEditKittenDialogOpen: boolean;
+  setIsEditKittenDialogOpen: Dispatch<SetStateAction<boolean>>;
+  kitten: NonNullable<EditKittenType>;
+  handleEditKitten: (name: string) => void;
 }
 
-export default function AddKittenModal({
-  isKittenDialogOpen,
-  setIsKittenDialogOpen,
-}: AddKittenModalProps) {
+export default function EditKittenModal({
+  isEditKittenDialogOpen: isKittenDialogOpen,
+  setIsEditKittenDialogOpen: setIsKittenDialogOpen,
+  handleEditKitten,
+  kitten,
+}: EditKittenModalProps) {
   const {
     register,
     handleSubmit,
@@ -37,13 +41,7 @@ export default function AddKittenModal({
     formState: { errors },
   } = useForm<z.infer<typeof kittenSchema>>({
     resolver: zodResolver(kittenSchema),
-    defaultValues: {
-      name: "",
-      gender: "female",
-      info: "",
-      stamnavn: "",
-      orderStatus: "AVAILABLE",
-    },
+    defaultValues: kitten,
   });
   const litterForm = useFormContext<z.infer<typeof litterSchema>>();
 
@@ -52,7 +50,9 @@ export default function AddKittenModal({
       litterForm
         .getValues("kittens")
         .find(
-          (kitten) => kitten.name.toLowerCase() === values.name.toLowerCase(),
+          (k) =>
+            k.name.toLowerCase() === values.name.toLowerCase() &&
+            k.name !== kitten?.name,
         )
     ) {
       setError(
@@ -66,7 +66,9 @@ export default function AddKittenModal({
     } else {
       litterForm.setValue(
         "kittens",
-        [...litterForm.getValues("kittens"), values],
+        litterForm
+          .getValues("kittens")
+          .map((k) => (k.name === kitten.name ? values : k)),
         { shouldValidate: true, shouldDirty: true },
       );
       closeModal();
@@ -78,20 +80,16 @@ export default function AddKittenModal({
     reset();
   }
 
+  useEffect(() => {
+    console.log(kitten);
+    reset(kitten);
+  }, [kitten, reset]);
+
   return (
     <Dialog open={isKittenDialogOpen} onOpenChange={closeModal}>
-      <DialogTrigger asChild>
-        <Button type="button" className="self-start" variant={"secondary"}>
-          <Plus className="mr-1" size={16} />
-          Add kitten
-        </Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>New Kitten</DialogTitle>
-          <DialogDescription>
-            Create a new kitten for this litter.
-          </DialogDescription>
+          <DialogTitle>Edit Kitten</DialogTitle>
         </DialogHeader>
         <div className="grid w-full max-w-sm items-center gap-3">
           <Label htmlFor="name">Name</Label>
@@ -156,7 +154,6 @@ export default function AddKittenModal({
               <Controller
                 control={control}
                 name="orderStatus"
-                defaultValue="AVAILABLE"
                 render={({ field: { onChange, value } }) => (
                   <RadioGroup value={value} onValueChange={onChange}>
                     <div className="flex items-center space-x-2">
@@ -184,7 +181,7 @@ export default function AddKittenModal({
             </Button>
           </DialogClose>
           <Button type="submit" onClick={handleSubmit(onSubmitKitten)}>
-            Add new kitten
+            Save
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -49,6 +49,7 @@ export const litterRouter = createTRPCRouter({
                 gender: kitten.gender,
                 info: kitten.info,
                 stamnavn: kitten.stamnavn ?? "",
+                orderStatus: kitten.orderStatus,
               })),
             },
             Tag: {
@@ -212,6 +213,7 @@ export const litterRouter = createTRPCRouter({
                 gender: kitten.gender,
                 info: kitten.info,
                 stamnavn: kitten.stamnavn ?? "",
+                orderStatus: kitten.orderStatus,
               })),
             },
           },
