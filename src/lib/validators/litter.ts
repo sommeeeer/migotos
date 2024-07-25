@@ -81,5 +81,6 @@ export const editLitterSchema = litterSchema.extend({
   post_image: z
     .string({ required_error: "Please upload a post image." })
     .url({ message: "Image URL must be a valid URL." })
-    .optional(),
+    .optional()
+    .or(z.literal("")),
 });
