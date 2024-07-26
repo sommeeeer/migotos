@@ -1,20 +1,24 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { addHours, format } from "date-fns";
-import { BiSolidCat } from "react-icons/bi";
-import { useState } from "react";
+import { CalendarIcon, Edit, Loader2, Trash2 } from "lucide-react";
 import { useRouter } from "next/router";
+import {
+  type GetServerSidePropsContext,
+  type GetServerSidePropsResult,
+} from "next/types";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { BiSolidCat } from "react-icons/bi";
 import { IoMdFemale, IoMdMale } from "react-icons/io";
 import CreateableSelect from "react-select/creatable";
-import { CalendarIcon, Edit, Loader2, Trash2 } from "lucide-react";
-import {
-  type GetServerSidePropsResult,
-  type GetServerSidePropsContext,
-} from "next/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { type z } from "zod";
 
-import AdminLayout from "../AdminLayout";
+import CreatableSelect from "react-select/creatable";
+import AddKittenModal from "~/components/AddKittenModal";
+import EditKittenModal from "~/components/EditKittenModal";
+import { ImageUpload } from "~/components/ImageUpload";
 import { Button } from "~/components/ui/button";
+import { Calendar } from "~/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -24,30 +28,26 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
-import { toast } from "~/components/ui/use-toast";
-import { checkAdminSession } from "~/server/helpers";
-import { litterSchema } from "~/lib/validators/litter";
-import { cn } from "~/lib/utils";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { Calendar } from "~/components/ui/calendar";
-import AddKittenModal from "~/components/AddKittenModal";
-import EditKittenModal from "~/components/EditKittenModal";
+import { Textarea } from "~/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { ImageUpload } from "~/components/ImageUpload";
-import { api } from "~/utils/api";
+import { toast } from "~/components/ui/use-toast";
+import { cn } from "~/lib/utils";
+import { litterSchema } from "~/lib/validators/litter";
 import { db } from "~/server/db";
-import CreatableSelect from "react-select/creatable";
+import { checkAdminSession } from "~/server/helpers";
+import { api } from "~/utils/api";
 import type { EditKittenType } from "~/utils/types";
+import AdminLayout from "../AdminLayout";
 
 interface NewLitterProps {
   motherNames: { name: string; stamnavn: string }[];
@@ -456,7 +456,6 @@ export default function NewLitter({
             {editingKitten && (
               <EditKittenModal
                 kitten={editingKitten}
-                handleEditKitten={handleEditKitten}
                 isEditKittenDialogOpen={isEditKittenDialogOpen}
                 setIsEditKittenDialogOpen={setIsEditKittenDialogOpen}
               />

@@ -1,4 +1,10 @@
-import { type SetStateAction, type Dispatch, useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type Dispatch, type SetStateAction, useEffect } from "react";
+import { Controller, useForm, useFormContext } from "react-hook-form";
+import { type z } from "zod";
+
+import { kittenSchema, type litterSchema } from "~/lib/validators/litter";
+import type { EditKittenType } from "~/utils/types";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -7,29 +13,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
-import { Label } from "./ui/label";
 import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Controller, useForm, useFormContext } from "react-hook-form";
-import { kittenSchema, type litterSchema } from "~/lib/validators/litter";
-import { type z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit } from "lucide-react";
-import type { EditKittenType } from "~/utils/types";
 
 interface EditKittenModalProps {
   isEditKittenDialogOpen: boolean;
   setIsEditKittenDialogOpen: Dispatch<SetStateAction<boolean>>;
   kitten: NonNullable<EditKittenType>;
-  handleEditKitten: (name: string) => void;
 }
 
 export default function EditKittenModal({
   isEditKittenDialogOpen: isKittenDialogOpen,
   setIsEditKittenDialogOpen: setIsKittenDialogOpen,
-  handleEditKitten,
   kitten,
 }: EditKittenModalProps) {
   const {
