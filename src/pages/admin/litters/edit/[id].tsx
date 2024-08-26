@@ -492,7 +492,6 @@ export default function EditLitter({
             {editingKitten && (
               <EditKittenModal
                 kitten={editingKitten}
-                handleEditKitten={handleEditKitten}
                 isEditKittenDialogOpen={isEditKittenDialogOpen}
                 setIsEditKittenDialogOpen={setIsEditKittenDialogOpen}
               />
