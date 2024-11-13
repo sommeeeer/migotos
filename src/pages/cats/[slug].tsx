@@ -26,6 +26,7 @@ import CommentsIconButton from "~/components/CommentsIconButton";
 import PicturesIconButton from "~/components/PicturesIconButton";
 import EditIconButton from "~/components/EditIconButton";
 import AddImagesButton from "~/components/AddImagesButton";
+import { IMAGE_QUALITY } from "~/lib/utils";
 
 type Props = {
   cat: Cat & { CatImage: CatImageType[] };
@@ -118,7 +119,7 @@ function Cat({ cat, mother, father }: Props) {
             width={profileImg.width}
             height={profileImg.height}
             className="my-2 rounded-full"
-            quality={100}
+            quality={IMAGE_QUALITY}
             {...(profileImg.blururl
               ? { placeholder: "blur", blurDataURL: profileImg.blururl }
               : {})}

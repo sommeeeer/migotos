@@ -2,6 +2,7 @@ import Image from "next/image";
 import router from "next/router";
 import { format } from "date-fns";
 import Tag from "./Tag";
+import { IMAGE_QUALITY } from "~/lib/utils";
 
 interface Props {
   title: string;
@@ -32,7 +33,7 @@ export default function NewsCard({
             src={image_src ?? ""}
             alt="Sunset in the mountains"
             fill
-            quality={100}
+            quality={IMAGE_QUALITY}
             priority={priority}
           />
         </div>

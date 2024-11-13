@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
+import { IMAGE_QUALITY } from "~/lib/utils";
 
 interface CatProfileProps {
   imageSrc: string | undefined;
@@ -34,7 +35,7 @@ export default function CatProfile({
             width={200}
             height={200}
             className="rounded-full shadow-md"
-            quality={100}
+            quality={IMAGE_QUALITY}
             placeholder="blur"
             blurDataURL={blurData}
           />
@@ -45,7 +46,7 @@ export default function CatProfile({
             width={200}
             height={200}
             className="rounded-full shadow-md"
-            quality={100}
+            quality={IMAGE_QUALITY}
           />
         )}
         <h3 className="font-playfair text-2xl">{name}</h3>
@@ -63,7 +64,7 @@ export default function CatProfile({
           width={200}
           height={200}
           className="rounded-full shadow-md"
-          quality={100}
+          quality={IMAGE_QUALITY}
           placeholder="blur"
           blurDataURL={blurData}
         />
@@ -74,7 +75,7 @@ export default function CatProfile({
           width={200}
           height={200}
           className="rounded-full shadow-md"
-          quality={100}
+          quality={IMAGE_QUALITY}
         />
       )}
       <h3 className="font-playfair text-2xl">{name}</h3>

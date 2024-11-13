@@ -7,6 +7,7 @@ import Hamburger from "hamburger-react";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import noScroll from "no-scroll";
+import { IMAGE_QUALITY } from "~/lib/utils";
 
 interface LayoutProps {
   children: ReactNode; // ReactNode allows rendering any type of React component or JSX
@@ -32,7 +33,7 @@ export default function Header({ children }: LayoutProps) {
             src={migotosLogo}
             alt="Migotos logo"
             width={130}
-            quality={100}
+            quality={IMAGE_QUALITY}
           />
         </Link>
         <div

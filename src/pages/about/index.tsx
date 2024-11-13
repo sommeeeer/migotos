@@ -7,6 +7,7 @@ import evaImgTwo from "../../../public/static/IMG_7581-600x400.jpg";
 import evaImgThree from "../../../public/static/IMG_6350-463x400.jpg";
 import evaImgFour from "../../../public/static/IMG_7361-rotated-480x400.jpg";
 import evaImgFive from "../../../public/static/IMG_7362-rotated-480x400.jpg";
+import { IMAGE_QUALITY } from "~/lib/utils";
 
 export default function About() {
   return (
@@ -78,7 +79,7 @@ export default function About() {
         <Image
           className="my-4 rounded-full"
           src={evaImgOne}
-          quality={100}
+          quality={IMAGE_QUALITY}
           alt={"Eva picture"}
           placeholder="blur"
         />

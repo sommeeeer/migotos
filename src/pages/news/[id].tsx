@@ -16,6 +16,7 @@ import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import CommentsIconButton from "~/components/CommentsIconButton";
 import { useRef } from "react";
+import { IMAGE_QUALITY } from "~/lib/utils";
 
 type Props = {
   blogPost: BlogPostWithTags;
@@ -72,7 +73,7 @@ function BlogPost({ blogPost }: Props) {
             sizes="100vw"
             className="h-auto w-full"
             alt={`${blogPost.title} image`}
-            quality={100}
+            quality={IMAGE_QUALITY}
           />
         )}
         <div className="mb-4 w-full border-t border-zinc-200" />

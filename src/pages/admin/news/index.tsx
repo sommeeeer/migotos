@@ -37,6 +37,7 @@ import { useRouter } from "next/router";
 import { checkAdminSession } from "~/server/helpers";
 import { toast } from "~/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import { IMAGE_QUALITY } from "~/lib/utils";
 
 type NewsProps = {
   blogposts: BlogPost[];
@@ -99,7 +100,7 @@ export default function News({ blogposts }: NewsProps) {
                         width={100}
                         height={100}
                         alt={`${blogpost.title} image`}
-                        quality={100}
+                        quality={IMAGE_QUALITY}
                       />
                     ) : (
                       <span className="text-lg">NULL</span>

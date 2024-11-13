@@ -12,7 +12,7 @@ import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import { motion } from "framer-motion";
 import noScroll from "no-scroll";
 import { X } from "lucide-react";
-import { cn } from "~/lib/utils";
+import { cn, IMAGE_QUALITY } from "~/lib/utils";
 
 interface Props {
   name?: string;
@@ -124,7 +124,7 @@ export default function ImageCarousel({
                 width={image.width}
                 height={image.height}
                 className="md:max-w-3xl lg:max-w-4xl xl:max-w-5xl"
-                quality={100}
+                quality={IMAGE_QUALITY}
               />
             </CarouselItem>
           ))}
