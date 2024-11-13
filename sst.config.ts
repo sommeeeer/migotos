@@ -42,7 +42,7 @@ export default {
             app.stage === "prod" ? env.DATABASE_URL : env.DATABASE_URL_DEV,
         },
         bind: [bucket],
-        openNextVersion: "3.0.5",
+        buildCommand: 'npx @opennextjs/aws@latest build',
         permissions: ["ssm"],
       });
 
