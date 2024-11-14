@@ -17,7 +17,7 @@ import Comment from "~/components/Comment";
 import LoginButton from "~/components/LoginButton";
 import { AnimatePresence } from "framer-motion";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoMdFemale, IoMdMale } from "react-icons/io";
 import { FaLeaf } from "react-icons/fa";
 import Head from "next/head";
@@ -64,6 +64,13 @@ function Cat({ cat, mother, father }: Props) {
 
   const fertileText = cat.fertile ? "Yes" : "No";
   const birthFormatted = cat.birth.toLocaleDateString("no-NO");
+
+  useEffect(() => {
+    async function touchCat() {
+      await fetch("/api/touchcat?id=" + cat.id);
+    }
+    void touchCat();
+  }, [cat.id]);
 
   return (
     <>

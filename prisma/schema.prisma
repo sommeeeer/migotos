@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model Cat {
@@ -23,6 +23,7 @@ model Cat {
   slug        String     @unique @db.VarChar(255)
   nickname    String     @db.VarChar(50)
   birth       DateTime   @db.Date
+  visited     Int        @default(0)
   CatImage    CatImage[]
   comments    Comment[]
 }
