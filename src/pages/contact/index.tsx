@@ -65,65 +65,69 @@ export default function Contact() {
           </div>
         </section>
         {status && <StatusMessage status={status} />}
-        <section className="mt-10 flex w-full max-w-2xl flex-col p-4">
-          <p className="text-lg text-[#7d7d7d]">YOU CAN DROP A LINE</p>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mb-14 flex flex-col gap-4"
-          >
-            <input
-              className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-              {...register("name")}
-              placeholder="Name"
-            />
-            {errors?.name?.message && (
-              <ErrorParagraph message={errors.name?.message} />
-            )}
-            <input
-              className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-              {...register("email")}
-              placeholder="Email"
-            />
-            {errors.email?.message && (
-              <ErrorParagraph message={errors.email?.message} />
-            )}
-            <input
-              className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-              {...register("subject")}
-              placeholder="Subject"
-            />
-            {errors.subject?.message && (
-              <ErrorParagraph message={errors.subject?.message} />
-            )}
-
-            <TextareaAutosize
-              className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-              {...register("message")}
-              placeholder="Message"
-              minRows={4}
-            />
-            {errors.message?.message && (
-              <ErrorParagraph message={errors.message?.message} />
-            )}
-
-            <button
-              className="h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 px-5 py-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
-              type="submit"
-              disabled={isLoading}
+        <section className="mt-10 flex w-full max-w-4xl flex-col p-4 md:basis-[400px] md:flex-row md:justify-between">
+          <div className="md:w-[400px]">
+            <p className="text-lg text-[#7d7d7d]">YOU CAN DROP A LINE</p>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="mb-14 flex flex-col gap-4"
             >
-              {isLoading ? (
-                <>
-                  <LoadingSpinner className="mr-3" />
-                  Loading...
-                </>
-              ) : (
-                "Send Message"
+              <input
+                className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+                {...register("name")}
+                autoComplete="name"
+                placeholder="Name"
+              />
+              {errors?.name?.message && (
+                <ErrorParagraph message={errors.name?.message} />
               )}
-            </button>
-          </form>
+              <input
+                className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+                {...register("email")}
+                placeholder="Email"
+                autoComplete="email"
+              />
+              {errors.email?.message && (
+                <ErrorParagraph message={errors.email?.message} />
+              )}
+              <input
+                className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+                {...register("subject")}
+                placeholder="Subject"
+              />
+              {errors.subject?.message && (
+                <ErrorParagraph message={errors.subject?.message} />
+              )}
+
+              <TextareaAutosize
+                className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
+                {...register("message")}
+                placeholder="Message"
+                minRows={4}
+              />
+              {errors.message?.message && (
+                <ErrorParagraph message={errors.message?.message} />
+              )}
+
+              <button
+                className="h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 px-5 py-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <LoadingSpinner className="mr-3" />
+                    Loading...
+                  </>
+                ) : (
+                  "Send Message"
+                )}
+              </button>
+            </form>
+          </div>
           <ContactInfo />
-          <Footer />
         </section>
+        <Footer />
       </div>
     </>
   );
