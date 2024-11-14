@@ -19,10 +19,10 @@ import Tag from "~/components/ui/Tag";
 import { IMAGE_QUALITY } from "~/lib/utils";
 import { db } from "~/server/db";
 import { api } from "~/utils/api";
-import type { BlogPostWithTags } from "~/utils/types";
+import type { BlogPostWithTagsAndImages } from "~/utils/types";
 
 type Props = {
-  blogPost: BlogPostWithTags;
+  blogPost: BlogPostWithTagsAndImages;
 };
 
 function BlogPost({ blogPost }: Props) {
