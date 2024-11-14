@@ -1,3 +1,4 @@
+import { isbot } from "isbot";
 import type { NextApiRequest, NextApiResponse } from "next/types";
 import { db } from "~/server/db";
 
@@ -8,16 +9,19 @@ export default async function handler(
   if (req.method === "GET") {
     try {
       // if (process.env.NODE_ENV !== "development") {
-        const catId = req.query.id;
-        if (!catId) {
-          return res.status(400).json({ message: "Missing catId" });
-        }
-        await db.cat.update({
-          where: { id: Number(catId) },
-          data: { visited: { increment: 1 } },
-        });
+      const catId = req.query.id;
+      if (!catId) {
+        return res.status(400).json({ message: "Missing catId" });
+      }
+      if (isbot(req.headers["user-agent"])) {
+        return res.status(406).json({ message: "Not Acceptable" });
+      }
+      await db.cat.update({
+        where: { id: Number(catId) },
+        data: { visited: { increment: 1 } },
+      });
       // }
-      res.status(200).json({ message: "Counter incremented successfully" });
+      res.status(200).json({ message: "ok" });
     } catch (err) {
       res
         .status(500)
