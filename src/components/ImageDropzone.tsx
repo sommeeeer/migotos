@@ -7,12 +7,17 @@ import { cn } from "~/lib/utils";
 
 interface ImageDropzoneProps {
   onDrop: (acceptedFiles: File[]) => void;
+  isLoading?: boolean;
 }
 
-export default function ImageDropzone({ onDrop }: ImageDropzoneProps) {
+export default function ImageDropzone({
+  onDrop,
+  isLoading,
+}: ImageDropzoneProps) {
   return (
     <Dropzone
       onDropAccepted={onDrop}
+      disabled={isLoading}
       accept={{
         "image/png": [".png"],
         "image/jpeg": [".jpeg", ".jpg"],
@@ -32,6 +37,7 @@ export default function ImageDropzone({ onDrop }: ImageDropzoneProps) {
           className={cn(
             "mt-2 flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-900/25 text-center transition",
             isDragActive && "border-4 bg-gray-100/40",
+            isLoading && "bg-gray-100 animate-pulse",
           )}
         >
           <IoCloudUploadOutline className="h-6 w-6 text-blue-700" />

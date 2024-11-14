@@ -1,24 +1,15 @@
 import { type BlogPost } from "@prisma/client";
-import AdminLayout from "../AdminLayout";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
 import { format } from "date-fns";
-import { db } from "~/server/db";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
 } from "next/types";
-import Image from "next/image";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
-import Link from "next/link";
-import { buttonVariants } from "~/components/ui/button";
+import { GrGallery } from "react-icons/gr";
 import { MdOutlinePostAdd } from "react-icons/md";
 import { twMerge } from "tailwind-merge";
 import {
@@ -32,12 +23,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/ui/alert-dialog";
-import { api } from "~/utils/api";
-import { useRouter } from "next/router";
-import { checkAdminSession } from "~/server/helpers";
+import { buttonVariants } from "~/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "~/components/ui/table";
 import { toast } from "~/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
 import { IMAGE_QUALITY } from "~/lib/utils";
+import { db } from "~/server/db";
+import { checkAdminSession } from "~/server/helpers";
+import { api } from "~/utils/api";
+import AdminLayout from "../AdminLayout";
 
 type NewsProps = {
   blogposts: BlogPost[];
@@ -114,6 +115,9 @@ export default function News({ blogposts }: NewsProps) {
                   <div className="flex gap-2">
                     <Link href={`/admin/news/edit/${blogpost.id}`}>
                       <AiFillEdit className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
+                    </Link>
+                    <Link href={`/admin/news/images/${blogpost.id}`}>
+                      <GrGallery className="h-8 w-8 cursor-pointer transition-colors duration-200 hover:scale-105 hover:text-zinc-600" />
                     </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>

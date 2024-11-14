@@ -4,7 +4,11 @@ import { blogPostSchema } from "~/lib/validators/blogpost";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { db } from "~/server/db";
-import { deleteImages, revalidateAndInvalidate } from "~/server/helpers";
+import {
+  deleteImages,
+  getImageDimensions,
+  revalidateAndInvalidate,
+} from "~/server/helpers";
 
 export const blogpostRouter = createTRPCRouter({
   createBlogPost: protectedProcedure
@@ -122,9 +126,6 @@ export const blogpostRouter = createTRPCRouter({
           where: {
             id: input.id,
           },
-          select: {
-            id: true,
-          },
         });
         if (!blogpost) {
           throw new TRPCError({
@@ -215,6 +216,182 @@ export const blogpostRouter = createTRPCRouter({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
+        });
+      }
+    }),
+  getBlogPostImages: protectedProcedure
+    .input(z.object({ blogpost_id: z.number() }))
+    .query(async ({ input }) => {
+      try {
+        const blogPostImages = await db.blogPostImage.findMany({
+          where: {
+            blogpost_id: input.blogpost_id,
+            priority: {
+              gt: 1,
+            },
+          },
+          orderBy: {
+            priority: "asc",
+          },
+        });
+        return blogPostImages;
+      } catch (err) {
+        console.error(err);
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
+  updateBlogPostImagesOrder: protectedProcedure
+    .input(
+      z.object({
+        blogpost_id: z.number(),
+        order: z.array(z.object({ id: z.number(), priority: z.number() })),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const updatedBlogPostImages = await Promise.all(
+          input.order.map(async (image) => {
+            const updatedBlogImage = await db.blogPostImage.update({
+              where: {
+                id: image.id,
+                blogpost_id: input.blogpost_id,
+              },
+              data: {
+                priority: image.priority + 1,
+              },
+            });
+            return updatedBlogImage;
+          }),
+        );
+        const cat = await db.blogPost.findFirst({
+          where: {
+            id: input.blogpost_id,
+          },
+        });
+        if (!cat) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "BLogpost not found",
+          });
+        }
+        await revalidateAndInvalidate(ctx.res, [`/news/${cat.id}`]);
+        return updatedBlogPostImages;
+      } catch (err) {
+        console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
+  addBlogPostImages: protectedProcedure
+    .input(
+      z.object({ blogpost_id: z.number(), imageUrls: z.array(z.string()) }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const highestBlogPostImage = await db.blogPostImage.findFirst({
+          where: {
+            blogpost_id: input.blogpost_id,
+          },
+          orderBy: {
+            priority: "desc",
+          },
+          take: 1,
+        });
+
+        let newPriority = highestBlogPostImage?.priority ?? 1;
+        const blogPostImages = await Promise.all(
+          input.imageUrls.map(async (image) => {
+            newPriority = newPriority + 1;
+            const dimensions = await getImageDimensions(image);
+            if (!dimensions) {
+              console.error("Error getting image dimensions");
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Invalid request",
+              });
+            }
+            const newBlogPostImage = await db.blogPostImage.create({
+              data: {
+                src: image,
+                height: dimensions.height,
+                width: dimensions.width,
+                priority: newPriority,
+                blogpost_id: input.blogpost_id,
+              },
+            });
+            return newBlogPostImage;
+          }),
+        );
+        const blogpost = await db.blogPost.findFirst({
+          where: {
+            id: input.blogpost_id,
+          },
+          select: {
+            id: true,
+          },
+        });
+        if (!blogpost) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Blogpost not found",
+          });
+        }
+        await revalidateAndInvalidate(ctx.res, [`/news/${blogpost.id}`]);
+        return blogPostImages;
+      } catch (err) {
+        console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
+        });
+      }
+    }),
+  deleteBlogPostImage: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const deletedBlogPostImage = await db.blogPostImage.delete({
+          where: {
+            id: input.id,
+          },
+        });
+        const blogpost = await db.blogPost.findFirst({
+          where: {
+            id: deletedBlogPostImage.blogpost_id,
+          },
+        });
+        if (!blogpost) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Blogpost not found",
+          });
+        }
+        await deleteImages([
+          decodeURI(
+            deletedBlogPostImage.src.replace("https://cdn.migotos.com/", ""),
+          ),
+        ]);
+        await revalidateAndInvalidate(ctx.res, [`/news/${blogpost.id}`]);
+        return deletedBlogPostImage;
+      } catch (err) {
+        console.error(err);
+        if (err instanceof TRPCError) {
+          throw err;
+        }
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid request",
         });
       }
     }),

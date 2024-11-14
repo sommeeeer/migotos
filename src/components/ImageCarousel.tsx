@@ -1,22 +1,29 @@
+import type {
+  BlogPostImage,
+  CatImage,
+  KittenPictureImage,
+} from "@prisma/client";
+import { motion } from "framer-motion";
+import { X } from "lucide-react";
 import Image from "next/image";
+import noScroll from "no-scroll";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  type CarouselApi,
   CarouselNext,
   CarouselPrevious,
+  type CarouselApi,
 } from "~/components/ui/carousel";
-import type { CatImage, KittenPictureImage } from "@prisma/client";
-import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
-import { motion } from "framer-motion";
-import noScroll from "no-scroll";
-import { X } from "lucide-react";
 import { cn, IMAGE_QUALITY } from "~/lib/utils";
 
 interface Props {
   name?: string;
-  images: CatImage[] | KittenPictureImage[];
+  images:
+    | CatImage[]
+    | KittenPictureImage[]
+    | Pick<BlogPostImage, "id" | "src" | "height" | "width" | "blururl">[];
   setOpen: Dispatch<SetStateAction<boolean>>;
   imageIndex: number;
 }

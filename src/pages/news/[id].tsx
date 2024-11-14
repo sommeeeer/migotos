@@ -1,28 +1,33 @@
-import { type BlogPost } from "@prisma/client";
+import { Role, type BlogPost } from "@prisma/client";
 import { format } from "date-fns";
+import { AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
+import Head from "next/head";
 import Image from "next/image";
 import type { GetStaticPropsContext, GetStaticPropsResult } from "next/types";
-import Footer from "~/components/Footer";
+import { useRef, useState } from "react";
+import AddImagesButton from "~/components/AddImagesButton";
 import Comment from "~/components/Comment";
 import CommentForm from "~/components/CommentForm";
-import Tag from "~/components/ui/Tag";
-import { db } from "~/server/db";
-import type { BlogPostWithTags } from "~/utils/types";
-import { api } from "~/utils/api";
-import { useSession } from "next-auth/react";
+import CommentsIconButton from "~/components/CommentsIconButton";
+import EditIconButton from "~/components/EditIconButton";
+import Footer from "~/components/Footer";
+import ImageCarousel from "~/components/ImageCarousel";
 import LoginButton from "~/components/LoginButton";
 import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { AnimatePresence } from "framer-motion";
-import Head from "next/head";
-import CommentsIconButton from "~/components/CommentsIconButton";
-import { useRef } from "react";
+import Tag from "~/components/ui/Tag";
 import { IMAGE_QUALITY } from "~/lib/utils";
+import { db } from "~/server/db";
+import { api } from "~/utils/api";
+import type { BlogPostWithTags } from "~/utils/types";
 
 type Props = {
   blogPost: BlogPostWithTags;
 };
 
 function BlogPost({ blogPost }: Props) {
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
   const { data: session } = useSession();
   const {
     isLoading,
@@ -34,9 +39,25 @@ function BlogPost({ blogPost }: Props) {
   });
   const commentsRef = useRef<HTMLDivElement>(null);
 
+  const convertMarkdownLinks = (text: string) => {
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    return text.replace(
+      linkRegex,
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">$1</a>',
+    );
+  };
+
   return (
     <>
       <PageHead blogPost={blogPost} />
+      {carouselOpen && (
+        <ImageCarousel
+          imageIndex={currentImageIndex}
+          images={blogPost.images}
+          setOpen={setCarouselOpen}
+          name={blogPost.title}
+        />
+      )}
       <div className="flex max-w-3xl flex-col items-center gap-8 px-3 py-4">
         <header className="flex flex-col items-center gap-4">
           <h1 className="text-center text-xl sm:text-2xl">{blogPost.title}</h1>
@@ -56,25 +77,63 @@ function BlogPost({ blogPost }: Props) {
               <span>•</span>
               <CommentsIconButton
                 commentsLength={comments?.length}
-                className="h-5 w-5 ml-2 text-[#777777]"
+                className="ml-2 h-5 w-5 text-[#777777]"
                 commentsRef={commentsRef}
               />
             </div>
+            {session?.user.role === Role.ADMIN && (
+              <div className="flex">
+                <EditIconButton
+                  className=""
+                  link={`news/edit/${blogPost.id}`}
+                />
+                <AddImagesButton link={`news/images/${blogPost.id}`} />
+              </div>
+            )}
           </div>
         </header>
-        <p className="max-w-2xl whitespace-break-spaces py-2 text-base leading-loose">
-          {blogPost.body.trim()}
-        </p>
+        <div
+          className="max-w-2xl whitespace-break-spaces py-2 text-base leading-loose"
+          dangerouslySetInnerHTML={{
+            __html: convertMarkdownLinks(blogPost.body.trim()),
+          }}
+        />
         {blogPost.image_url && (
           <Image
             src={blogPost.image_url}
             width="0"
             height="0"
             sizes="100vw"
-            className="h-auto w-full"
+            className="h-auto w-full max-w-xl"
             alt={`${blogPost.title} image`}
             quality={IMAGE_QUALITY}
           />
+        )}
+        {blogPost.images.length > 0 && (
+          <section className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3">
+            {blogPost.images.map((img, idx) => {
+              return (
+                <picture
+                  onClick={() => {
+                    setCurrentImageIndex(idx);
+                    setCarouselOpen(true);
+                  }}
+                  key={img.id}
+                  className="relative h-40 w-40 cursor-pointer shadow-lg sm:h-52 sm:w-52 xl:h-60 xl:w-60"
+                >
+                  <Image
+                    src={img.src}
+                    alt={`${img.id} picture`}
+                    fill
+                    className="rounded-md object-cover object-center"
+                    {...(img.blururl
+                      ? { placeholder: "blur", blurDataURL: img.blururl }
+                      : {})}
+                  />
+                </picture>
+              );
+            })}
+          </section>
         )}
         <div className="mb-4 w-full border-t border-zinc-200" />
         <div className="flex w-full flex-col gap-2 px-2" ref={commentsRef}>
@@ -136,6 +195,18 @@ export async function getStaticProps({
       id: parseInt(params?.id),
     },
     include: {
+      images: {
+        select: {
+          id: true,
+          src: true,
+          height: true,
+          width: true,
+          blururl: true,
+        },
+        orderBy: {
+          priority: "asc",
+        },
+      },
       tags: {
         select: {
           blogposttag: true,

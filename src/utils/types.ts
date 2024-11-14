@@ -4,6 +4,15 @@ import type { kittenSchema } from "~/lib/validators/litter";
 
 export type BlogPostWithTags = Prisma.BlogPostGetPayload<{
   include: {
+    images: {
+      select: {
+        id: true,
+        src: true,
+        height: true,
+        width: true,
+        blururl: true,
+      },
+    },
     tags: {
       select: {
         blogposttag: true;
