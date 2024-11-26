@@ -17,11 +17,14 @@ export const kittenSchema = z.object({
     .max(255, { message: "Info must be less than 255 characters long" })
     .optional()
     .or(z.literal("")),
-  orderStatus: z.union([
-    z.literal("AVAILABLE"),
-    z.literal("BOOKED"),
-    z.literal("SOLD").optional(),
-  ]),
+  orderStatus: z
+    .union([
+      z.literal("AVAILABLE"),
+      z.literal("BOOKED"),
+      z.literal("HIDDEN"),
+      z.literal("SOLD"),
+    ])
+    .optional(),
 });
 
 export const litterSchema = z.object({

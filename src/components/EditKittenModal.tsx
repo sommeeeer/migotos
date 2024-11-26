@@ -164,6 +164,10 @@ export default function EditKittenModal({
                       <RadioGroupItem value="SOLD" id="sold" />
                       <Label htmlFor="sold">Sold</Label>
                     </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="HIDDEN" id="hidden" />
+                      <Label htmlFor="hidden">Hidden</Label>
+                    </div>
                   </RadioGroup>
                 )}
               />

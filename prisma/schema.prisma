@@ -45,6 +45,7 @@ enum KittenOrderStatus {
   AVAILABLE
   BOOKED
   SOLD
+  HIDDEN
 }
 
 model Kitten {
