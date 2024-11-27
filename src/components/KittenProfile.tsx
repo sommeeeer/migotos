@@ -2,7 +2,6 @@ import Image from "next/image";
 import femaleImg from "/public/static/female-50x50.png";
 import maleImg from "/public/static/male-50x50.png";
 import { KittenOrderStatus } from "@prisma/client";
-import { IMAGE_QUALITY } from "~/lib/utils";
 
 export interface KittenProfileProps {
   name: string;
@@ -25,13 +24,17 @@ export default function KittenProfile({
         <Image
           src={femaleImg}
           alt={`${name}'s picture`}
-          quality={IMAGE_QUALITY}
+          quality={100}
+          width={50}
+          height={50}
         />
       ) : (
         <Image
           src={maleImg}
           alt={`${name}'s picture`}
-          quality={IMAGE_QUALITY}
+          quality={100}
+          width={50}
+          height={50}
         />
       )}
       <h3 className="text-2xl">
