@@ -8,6 +8,8 @@ import { useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import ImageCarousel from "~/components/ImageCarousel";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 type LitterWithPictureWeeks = Prisma.LitterGetPayload<{
   include: {
@@ -83,6 +85,15 @@ function KittenPictures({
             </div>
           </div>
         ))}
+        <div className="self-center mt-12">
+          <Link
+            className="flex items-center gap-2 text-lg p-3 text-gray-700 hover:text-gray-900 transition"
+            href={`/kittens/${litter.slug}`}
+          >
+            <ArrowLeft />
+            {`Go back`}
+          </Link>
+        </div>
       </div>
       <Footer />
     </>
