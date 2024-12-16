@@ -4,27 +4,27 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { DialogTrigger } from "@radix-ui/react-dialog";
-import { FaCat } from "react-icons/fa";
-import { signIn, signOut } from "next-auth/react";
-import { FcGoogle } from "react-icons/fc";
-import { AiFillFacebook, AiOutlineMail } from "react-icons/ai";
-import { useSession } from "next-auth/react";
-import { cn } from "~/lib/utils";
-import { Input } from "./ui/input";
-import { useRef, useState } from "react";
-import { z } from "zod";
-import { Loader2 } from "lucide-react";
-import BorderText from "./BorderText";
+} from './ui/dialog';
+import { DialogTrigger } from '@radix-ui/react-dialog';
+import { FaCat } from 'react-icons/fa';
+import { signIn, signOut } from 'next-auth/react';
+import { FcGoogle } from 'react-icons/fc';
+import { AiFillFacebook, AiOutlineMail } from 'react-icons/ai';
+import { useSession } from 'next-auth/react';
+import { cn } from '~/lib/utils';
+import { Input } from './ui/input';
+import { useRef, useState } from 'react';
+import { z } from 'zod';
+import { Loader2 } from 'lucide-react';
+import BorderText from './BorderText';
 
 interface LoginModalProps {
-  variant: "comment" | "navbar";
+  variant: 'comment' | 'navbar';
 }
 
 export default function LoginModal({ variant }: LoginModalProps) {
   const { data: session } = useSession();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [error, setError] = useState<null | string>(null);
   const [isLoadingEmail, setIsLoadingEmail] = useState(false);
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
@@ -48,9 +48,9 @@ export default function LoginModal({ variant }: LoginModalProps) {
     try {
       emailSchema.parse(email);
       setIsLoadingEmail(true);
-      void signIn("email", { email: email });
+      void signIn('email', { email: email });
     } catch (error) {
-      setError("Please enter a valid email address");
+      setError('Please enter a valid email address');
       emailInputRef.current?.focus();
     } finally {
       setIsLoadingEmail(false);
@@ -65,16 +65,16 @@ export default function LoginModal({ variant }: LoginModalProps) {
     <Dialog
       onOpenChange={() => {
         setError(null);
-        setEmail("");
+        setEmail('');
       }}
     >
       <DialogTrigger asChild>
         <button
           className={cn({
-            "mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg md:hover:text-hoverbg":
-              variant === "navbar",
-            "h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 p-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600":
-              variant === "comment",
+            'mr-4 text-3xl font-medium transition-colors duration-300 hover:text-zinc-400 md:text-lg md:hover:text-hoverbg':
+              variant === 'navbar',
+            'h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 p-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600':
+              variant === 'comment',
           })}
         >
           Sign in
@@ -94,7 +94,7 @@ export default function LoginModal({ variant }: LoginModalProps) {
               disabled={isLoadingEmail || isLoadingGoogle || isLoadingFacebook}
               onClick={() => {
                 setIsLoadingGoogle(true);
-                void signIn("google");
+                void signIn('google');
               }}
               className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-14 py-2 font-normal text-[#3B4045] hover:bg-[#F9FAFA] hover:text-[#3b4045]"
             >
@@ -109,14 +109,14 @@ export default function LoginModal({ variant }: LoginModalProps) {
               disabled={isLoadingEmail || isLoadingGoogle || isLoadingFacebook}
               onClick={() => {
                 setIsLoadingFacebook(true);
-                void signIn("facebook");
+                void signIn('facebook');
               }}
               className="flex items-center gap-2 rounded-md border border-gray-300 bg-[#385499] px-14 py-2 font-normal text-gray-100 hover:bg-[#2a4894] hover:text-gray-200"
             >
               {isLoadingFacebook ? (
                 <Loader2 size={20} className="animate-spin" />
               ) : (
-                <AiFillFacebook size={20} color={"white"} />
+                <AiFillFacebook size={20} color={'white'} />
               )}
               Sign in with Facebook
             </button>

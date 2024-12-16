@@ -1,15 +1,15 @@
-import { useRouter } from "next/router";
-import { FaCat } from "react-icons/fa";
-import { GrGallery } from "react-icons/gr";
-import Link from "next/link";
-import { twMerge } from "tailwind-merge";
-import { AiFillDelete, AiFillEdit } from "react-icons/ai";
-import { format } from "date-fns";
-import { type Cat } from "@prisma/client";
+import { useRouter } from 'next/router';
+import { FaCat } from 'react-icons/fa';
+import { GrGallery } from 'react-icons/gr';
+import Link from 'next/link';
+import { twMerge } from 'tailwind-merge';
+import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
+import { format } from 'date-fns';
+import { type Cat } from '@prisma/client';
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-} from "next/types";
+} from 'next/types';
 
 import {
   Table,
@@ -19,9 +19,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
-import { db } from "~/server/db";
-import { buttonVariants } from "~/components/ui/button";
+} from '~/components/ui/table';
+import { db } from '~/server/db';
+import { buttonVariants } from '~/components/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,25 +32,25 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { api } from "~/utils/api";
-import { toast } from "~/components/ui/use-toast";
-import AdminLayout from "../AdminLayout";
-import { checkAdminSession } from "~/server/helpers";
-import { Loader2 } from "lucide-react";
+} from '~/components/ui/alert-dialog';
+import { api } from '~/utils/api';
+import { toast } from '~/components/ui/use-toast';
+import AdminLayout from '../AdminLayout';
+import { checkAdminSession } from '~/server/helpers';
+import { Loader2 } from 'lucide-react';
 
 type CatsProps = {
   cats: Pick<
     Cat,
-    | "id"
-    | "name"
-    | "nickname"
-    | "stamnavn"
-    | "pedigreeurl"
-    | "birth"
-    | "gender"
-    | "fertile"
-    | "breeder"
+    | 'id'
+    | 'name'
+    | 'nickname'
+    | 'stamnavn'
+    | 'pedigreeurl'
+    | 'birth'
+    | 'gender'
+    | 'fertile'
+    | 'breeder'
   >[];
 };
 
@@ -63,18 +63,18 @@ export default function Cats({ cats }: CatsProps) {
   } = api.cat.deleteCat.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Cat deleted successfully.",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
+        description: 'Cat deleted successfully.',
       });
       void router.replace(router.asPath);
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while trying to update cat.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Something went wrong while trying to update cat.',
       });
     },
   });
@@ -85,7 +85,7 @@ export default function Cats({ cats }: CatsProps) {
   return (
     <AdminLayout>
       <div className="mb-4 flex flex-col items-start gap-4 rounded-lg bg-white p-4 shadow">
-        <Link className={twMerge(buttonVariants())} href={"/admin/cats/new"}>
+        <Link className={twMerge(buttonVariants())} href={'/admin/cats/new'}>
           <FaCat className="mr-1 h-4 w-4" />
           New Cat
         </Link>
@@ -124,9 +124,9 @@ export default function Cats({ cats }: CatsProps) {
                     <p>NONE</p>
                   )}
                 </TableCell>
-                <TableCell>{format(cat.birth, "dd.MM.yyyy")}</TableCell>
+                <TableCell>{format(cat.birth, 'dd.MM.yyyy')}</TableCell>
                 <TableCell>{cat.gender}</TableCell>
-                <TableCell>{cat.fertile ? "Yes" : "No"}</TableCell>
+                <TableCell>{cat.fertile ? 'Yes' : 'No'}</TableCell>
                 <TableCell>{cat.breeder}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
@@ -179,7 +179,7 @@ export default function Cats({ cats }: CatsProps) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<CatsProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -190,7 +190,7 @@ export async function getServerSideProps(
   }
   const cats = await db.cat.findMany({
     orderBy: {
-      birth: "desc",
+      birth: 'desc',
     },
     select: {
       id: true,

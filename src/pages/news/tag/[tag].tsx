@@ -1,11 +1,11 @@
-import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import Footer from "~/components/Footer";
-import NewsCard from "~/components/ui/NewsCard";
-import { db } from "~/server/db";
-import { capitalizeString } from "~/utils/helpers";
-import type { BlogPostWithTags } from "~/utils/types";
+import { type GetStaticPropsResult, type GetStaticPropsContext } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import Footer from '~/components/Footer';
+import NewsCard from '~/components/ui/NewsCard';
+import { db } from '~/server/db';
+import { capitalizeString } from '~/utils/helpers';
+import type { BlogPostWithTags } from '~/utils/types';
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -80,7 +80,7 @@ export async function getStaticProps({
       },
     },
     orderBy: {
-      post_date: "desc",
+      post_date: 'desc',
     },
   });
 
@@ -108,7 +108,7 @@ export async function getStaticPaths() {
     params: { tag: tag.value.toLowerCase() },
   }));
 
-  return { paths, fallback: "blocking" };
+  return { paths, fallback: 'blocking' };
 }
 
 function PageHead({ title }: { title: string }) {

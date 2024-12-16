@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
-import { twMerge } from "tailwind-merge";
-import { IMAGE_QUALITY } from "~/lib/utils";
+import Image from 'next/image';
+import Link from 'next/link';
+import { twMerge } from 'tailwind-merge';
+import { IMAGE_QUALITY } from '~/lib/utils';
 
 interface CatProfileProps {
   imageSrc: string | undefined;
@@ -17,12 +17,12 @@ export default function CatProfile({
   name,
   tribalName,
   slug,
-  classNames = "",
+  classNames = '',
   blurData,
 }: CatProfileProps) {
   const classes = twMerge(
-    "flex flex-col items-center gap-2 text-center transition duration-300 ease-in-out",
-    classNames,
+    'flex flex-col items-center gap-2 text-center transition duration-300 ease-in-out',
+    classNames
   );
 
   if (!slug) {
@@ -30,7 +30,7 @@ export default function CatProfile({
       <div className={classes}>
         {blurData ? (
           <Image
-            src={imageSrc ?? ""}
+            src={imageSrc ?? ''}
             alt={name}
             width={200}
             height={200}
@@ -41,7 +41,7 @@ export default function CatProfile({
           />
         ) : (
           <Image
-            src={imageSrc ?? ""}
+            src={imageSrc ?? ''}
             alt={name}
             width={200}
             height={200}
@@ -59,7 +59,7 @@ export default function CatProfile({
     <Link href={`/cats/${slug}`} className={classes}>
       {blurData ? (
         <Image
-          src={imageSrc ?? ""}
+          src={imageSrc ?? ''}
           alt={name}
           width={200}
           height={200}
@@ -70,7 +70,7 @@ export default function CatProfile({
         />
       ) : (
         <Image
-          src={imageSrc ?? ""}
+          src={imageSrc ?? ''}
           alt={name}
           width={200}
           height={200}

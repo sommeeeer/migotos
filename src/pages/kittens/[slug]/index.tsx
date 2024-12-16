@@ -1,26 +1,26 @@
-import { useRef } from "react";
-import Head from "next/head";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { Role, type Cat, type Prisma } from "@prisma/client";
-import { AnimatePresence } from "framer-motion";
-import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
+import { useRef } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { Role, type Cat, type Prisma } from '@prisma/client';
+import { AnimatePresence } from 'framer-motion';
+import { type GetStaticPropsResult, type GetStaticPropsContext } from 'next';
 
-import CatProfile from "~/components/CatProfile";
-import Footer from "~/components/Footer";
-import KittenProfile from "~/components/KittenProfile";
-import PictureButton from "~/components/PictureButton";
-import Comment from "~/components/Comment";
-import CommentForm from "~/components/CommentForm";
-import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { db } from "~/server/db";
-import { findName, formatDate } from "~/utils/helpers";
-import { api } from "~/utils/api";
-import LoginButton from "~/components/LoginButton";
-import CommentsIconButton from "~/components/CommentsIconButton";
-import PicturesIconButton from "~/components/PicturesIconButton";
-import EditIconButton from "~/components/EditIconButton";
-import AddImagesButton from "~/components/AddImagesButton";
+import CatProfile from '~/components/CatProfile';
+import Footer from '~/components/Footer';
+import KittenProfile from '~/components/KittenProfile';
+import PictureButton from '~/components/PictureButton';
+import Comment from '~/components/Comment';
+import CommentForm from '~/components/CommentForm';
+import LoadingSpinner from '~/components/ui/LoadingSpinner';
+import { db } from '~/server/db';
+import { findName, formatDate } from '~/utils/helpers';
+import { api } from '~/utils/api';
+import LoginButton from '~/components/LoginButton';
+import CommentsIconButton from '~/components/CommentsIconButton';
+import PicturesIconButton from '~/components/PicturesIconButton';
+import EditIconButton from '~/components/EditIconButton';
+import AddImagesButton from '~/components/AddImagesButton';
 
 type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
   include: {
@@ -32,8 +32,8 @@ type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
 
 type Props = {
   litter: LitterWithKittensAndTagsAndPictures;
-  mother: Pick<Cat, "slug" | "name"> | null;
-  father: Pick<Cat, "slug" | "name"> | null;
+  mother: Pick<Cat, 'slug' | 'name'> | null;
+  father: Pick<Cat, 'slug' | 'name'> | null;
 };
 
 function LitterPage({ litter, mother, father }: Props) {
@@ -46,11 +46,11 @@ function LitterPage({ litter, mother, father }: Props) {
     refetch,
   } = api.comment.getComments.useQuery({
     id: litter.id,
-    commentType: "litter_id",
+    commentType: 'litter_id',
   });
 
-  let mother_slug = "";
-  let father_slug = "";
+  let mother_slug = '';
+  let father_slug = '';
   if (mother?.slug) {
     mother_slug = mother.slug;
   }
@@ -59,16 +59,16 @@ function LitterPage({ litter, mother, father }: Props) {
   }
 
   const isWeeks = litter.LitterPictureWeek.some(
-    (week) => !isNaN(+week.name.charAt(0)),
+    (week) => !isNaN(+week.name.charAt(0))
   );
 
-  const picturesSubHeading = isWeeks ? "FROM 0-12 WEEKS" : "CLICK ON NAME";
+  const picturesSubHeading = isWeeks ? 'FROM 0-12 WEEKS' : 'CLICK ON NAME';
 
   const pictureWeeks = [...litter.LitterPictureWeek]
-    .sort((a, b) => (a.name === "Newborn" ? -1 : b.name === "Newborn" ? 1 : 0))
+    .sort((a, b) => (a.name === 'Newborn' ? -1 : b.name === 'Newborn' ? 1 : 0))
     .map((week) => (
       <PictureButton
-        label={week.name.replace("-", " ")}
+        label={week.name.replace('-', ' ')}
         url={`${litter.slug}/pictures/${week.name}`}
         key={week.id}
       />
@@ -122,7 +122,7 @@ function LitterPage({ litter, mother, father }: Props) {
               blurData={litter.mother_img_blururl}
             />
           </section>
-          {litter.description?.split("\n").map((p, i) => (
+          {litter.description?.split('\n').map((p, i) => (
             <p
               key={i}
               className="self-start text-left text-[15px] leading-8 text-[#515151]"
@@ -136,7 +136,7 @@ function LitterPage({ litter, mother, father }: Props) {
             <KittenProfile
               key={i}
               name={k.name}
-              info={k.info ?? ""}
+              info={k.info ?? ''}
               stamnavn={k.stamnavn}
               gender={k.gender}
               orderStatus={k.orderStatus}
@@ -259,7 +259,7 @@ export async function getStaticProps({
   const mother = results[0];
   let father = results[1];
 
-  if (father?.name.toLowerCase().includes("georg")) {
+  if (father?.name.toLowerCase().includes('georg')) {
     father = null;
   }
 
@@ -279,7 +279,7 @@ export async function getStaticPaths() {
     params: { slug: litter.slug },
   }));
 
-  return { paths, fallback: "blocking" };
+  return { paths, fallback: 'blocking' };
 }
 
 function PageHead({ litter }: { litter: LitterWithKittensAndTagsAndPictures }) {

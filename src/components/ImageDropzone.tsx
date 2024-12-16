@@ -1,9 +1,9 @@
-import Dropzone from "react-dropzone";
-import { IoCloudUploadOutline } from "react-icons/io5";
+import Dropzone from 'react-dropzone';
+import { IoCloudUploadOutline } from 'react-icons/io5';
 
-import { Input } from "~/components/ui/input";
-import { toast } from "./ui/use-toast";
-import { cn } from "~/lib/utils";
+import { Input } from '~/components/ui/input';
+import { toast } from './ui/use-toast';
+import { cn } from '~/lib/utils';
 
 interface ImageDropzoneProps {
   onDrop: (acceptedFiles: File[]) => void;
@@ -19,15 +19,15 @@ export default function ImageDropzone({
       onDropAccepted={onDrop}
       disabled={isLoading}
       accept={{
-        "image/png": [".png"],
-        "image/jpeg": [".jpeg", ".jpg"],
-        "image/webp": [".webp"],
+        'image/png': ['.png'],
+        'image/jpeg': ['.jpeg', '.jpg'],
+        'image/webp': ['.webp'],
       }}
       onDropRejected={() => {
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Only images are allowed. .png, .jpg, .jpeg and .webp",
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Only images are allowed. .png, .jpg, .jpeg and .webp',
         });
       }}
     >
@@ -35,9 +35,9 @@ export default function ImageDropzone({
         <div
           {...getRootProps()}
           className={cn(
-            "mt-2 flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-900/25 text-center transition",
-            isDragActive && "border-4 bg-gray-100/40",
-            isLoading && "bg-gray-100 animate-pulse",
+            'mt-2 flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-900/25 text-center transition',
+            isDragActive && 'border-4 bg-gray-100/40',
+            isLoading && 'bg-gray-100 animate-pulse'
           )}
         >
           <IoCloudUploadOutline className="h-6 w-6 text-blue-700" />

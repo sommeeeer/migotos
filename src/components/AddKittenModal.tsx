@@ -1,5 +1,5 @@
-import { type SetStateAction, type Dispatch } from "react";
-import { Button } from "./ui/button";
+import { type SetStateAction, type Dispatch } from 'react';
+import { Button } from './ui/button';
 import {
   Dialog,
   DialogClose,
@@ -9,15 +9,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Controller, useForm, useFormContext } from "react-hook-form";
-import { kittenSchema, type litterSchema } from "~/lib/validators/litter";
-import { type z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
+} from './ui/dialog';
+import { Label } from './ui/label';
+import { Input } from './ui/input';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Controller, useForm, useFormContext } from 'react-hook-form';
+import { kittenSchema, type litterSchema } from '~/lib/validators/litter';
+import { type z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Plus } from 'lucide-react';
 
 interface AddKittenModalProps {
   isKittenDialogOpen: boolean;
@@ -38,11 +38,11 @@ export default function AddKittenModal({
   } = useForm<z.infer<typeof kittenSchema>>({
     resolver: zodResolver(kittenSchema),
     defaultValues: {
-      name: "",
-      gender: "female",
-      info: "",
-      stamnavn: "",
-      orderStatus: "AVAILABLE",
+      name: '',
+      gender: 'female',
+      info: '',
+      stamnavn: '',
+      orderStatus: 'AVAILABLE',
     },
   });
   const litterForm = useFormContext<z.infer<typeof litterSchema>>();
@@ -50,24 +50,24 @@ export default function AddKittenModal({
   function onSubmitKitten(values: z.infer<typeof kittenSchema>) {
     if (
       litterForm
-        .getValues("kittens")
+        .getValues('kittens')
         .find(
-          (kitten) => kitten.name.toLowerCase() === values.name.toLowerCase(),
+          (kitten) => kitten.name.toLowerCase() === values.name.toLowerCase()
         )
     ) {
       setError(
-        "name",
+        'name',
         {
-          type: "custom",
-          message: "Kitten with this name already exists",
+          type: 'custom',
+          message: 'Kitten with this name already exists',
         },
-        { shouldFocus: true },
+        { shouldFocus: true }
       );
     } else {
       litterForm.setValue(
-        "kittens",
-        [...litterForm.getValues("kittens"), values],
-        { shouldValidate: true, shouldDirty: true },
+        'kittens',
+        [...litterForm.getValues('kittens'), values],
+        { shouldValidate: true, shouldDirty: true }
       );
       closeModal();
     }
@@ -81,7 +81,7 @@ export default function AddKittenModal({
   return (
     <Dialog open={isKittenDialogOpen} onOpenChange={closeModal}>
       <DialogTrigger asChild>
-        <Button type="button" className="self-start" variant={"secondary"}>
+        <Button type="button" className="self-start" variant={'secondary'}>
           <Plus className="mr-1" size={16} />
           Add kitten
         </Button>
@@ -100,7 +100,7 @@ export default function AddKittenModal({
               type="name"
               id="name"
               placeholder="Name"
-              {...register("name", { required: "Name is required" })}
+              {...register('name', { required: 'Name is required' })}
             />
             {errors.name && (
               <p className="text-sm text-red-500">{errors.name.message}</p>
@@ -112,7 +112,7 @@ export default function AddKittenModal({
               type="stamnavn"
               id="stamnavn"
               placeholder="Fargekode"
-              {...register("stamnavn", { required: "Fargekode is required" })}
+              {...register('stamnavn', { required: 'Fargekode is required' })}
             />
             {errors.stamnavn && (
               <p className="text-sm text-red-500">{errors.stamnavn.message}</p>
@@ -124,7 +124,7 @@ export default function AddKittenModal({
               type="info"
               id="info"
               placeholder="Info"
-              {...register("info")}
+              {...register('info')}
             />
             {errors.info && (
               <p className="text-sm text-red-500">{errors.info.message}</p>

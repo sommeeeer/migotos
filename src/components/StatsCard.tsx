@@ -4,11 +4,11 @@ import {
   FaDesktop,
   FaMobileAlt,
   FaUserFriends,
-} from "react-icons/fa";
-import { BiMessageSquareDetail, BiNews, BiSolidCat } from "react-icons/bi";
-import { HiUsers } from "react-icons/hi";
-import { type AdminProps } from "~/pages/admin";
-import { BsImages } from "react-icons/bs";
+} from 'react-icons/fa';
+import { BiMessageSquareDetail, BiNews, BiSolidCat } from 'react-icons/bi';
+import { HiUsers } from 'react-icons/hi';
+import { type AdminProps } from '~/pages/admin';
+import { BsImages } from 'react-icons/bs';
 
 export default function StatsCard({ counts }: AdminProps) {
   return (

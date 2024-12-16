@@ -1,13 +1,13 @@
-import AdminLayout from "../AdminLayout";
-import { format } from "date-fns";
+import AdminLayout from '../AdminLayout';
+import { format } from 'date-fns';
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-} from "next/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import type z from "zod";
-import { Button } from "~/components/ui/button";
+} from 'next/types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import type z from 'zod';
+import { Button } from '~/components/ui/button';
 import {
   Form,
   FormControl,
@@ -15,27 +15,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { useRouter } from "next/router";
-import { Textarea } from "~/components/ui/textarea";
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { useRouter } from 'next/router';
+import { Textarea } from '~/components/ui/textarea';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover";
-import { Calendar } from "~/components/ui/calendar";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { addHours } from "date-fns";
-import { cn } from "~/lib/utils";
-import { toast } from "~/components/ui/use-toast";
-import { api } from "~/utils/api";
-import { MdOutlinePostAdd } from "react-icons/md";
-import { checkAdminSession } from "~/server/helpers";
-import { blogPostSchema } from "~/lib/validators/blogpost";
-import { ImageUpload } from "~/components/ImageUpload";
-import CreatableSelect from "react-select/creatable";
-import { db } from "~/server/db";
+} from '~/components/ui/popover';
+import { Calendar } from '~/components/ui/calendar';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { addHours } from 'date-fns';
+import { cn } from '~/lib/utils';
+import { toast } from '~/components/ui/use-toast';
+import { api } from '~/utils/api';
+import { MdOutlinePostAdd } from 'react-icons/md';
+import { checkAdminSession } from '~/server/helpers';
+import { blogPostSchema } from '~/lib/validators/blogpost';
+import { ImageUpload } from '~/components/ImageUpload';
+import CreatableSelect from 'react-select/creatable';
+import { db } from '~/server/db';
 
 export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
   const router = useRouter();
@@ -43,9 +43,9 @@ export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
   const form = useForm<z.infer<typeof blogPostSchema>>({
     resolver: zodResolver(blogPostSchema),
     defaultValues: {
-      body: "",
+      body: '',
       post_date: new Date(),
-      title: "",
+      title: '',
       image_url: undefined,
       tags: [],
     },
@@ -54,18 +54,18 @@ export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
   const { mutate, isLoading } = api.blogpost.createBlogPost.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Blogpost successfully added.",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
+        description: 'Blogpost successfully added.',
       });
-      void router.push("/admin/news");
+      void router.push('/admin/news');
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong. Please try again.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Something went wrong. Please try again.',
       });
     },
   });
@@ -83,9 +83,9 @@ export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
 
   function handleCreate(inputValue: string) {
     form.setValue(
-      "tags",
-      [...form.getValues("tags"), { label: inputValue, value: inputValue }],
-      { shouldDirty: true },
+      'tags',
+      [...form.getValues('tags'), { label: inputValue, value: inputValue }],
+      { shouldDirty: true }
     );
   }
 
@@ -138,14 +138,14 @@ export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
                       <FormControl>
                         <Button
                           disabled={isLoading}
-                          variant={"outline"}
+                          variant={'outline'}
                           className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
+                            'w-[240px] pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground'
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, 'PPP')
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -159,7 +159,7 @@ export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
+                          date > new Date() || date < new Date('1900-01-01')
                         }
                         initialFocus
                       />
@@ -240,7 +240,7 @@ export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<
   GetServerSidePropsResult<{
     notFound?: boolean;

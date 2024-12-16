@@ -1,8 +1,8 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { deleteImages } from "~/server/helpers";
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { deleteImages } from '~/server/helpers';
 
 export const imageRouter = createTRPCRouter({
   deleteImage: protectedProcedure
@@ -10,15 +10,15 @@ export const imageRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         const deletedImages = await deleteImages([
-          decodeURI(input.url.replace("https://cdn.migotos.com/", "")),
+          decodeURI(input.url.replace('https://cdn.migotos.com/', '')),
         ]);
-        
+
         return deletedImages;
       } catch (err) {
         console.error(err);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong',
         });
       }
     }),

@@ -1,4 +1,4 @@
-import { twMerge } from "tailwind-merge";
+import { twMerge } from 'tailwind-merge';
 
 type Props = {
   className?: string;
@@ -10,8 +10,8 @@ export default function LoadingSpinner({ className }: Props) {
       aria-hidden="true"
       role="status"
       className={twMerge(
-        "inline h-6 w-6 animate-spin text-gray-200 dark:text-gray-600",
-        className,
+        'inline h-6 w-6 animate-spin text-gray-200 dark:text-gray-600',
+        className
       )}
       viewBox="0 0 100 101"
       fill="none"

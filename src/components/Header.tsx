@@ -1,13 +1,13 @@
-import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import migotosLogo from "../../public/static/migotos_logo.png";
-import Navbar from "~/components/Navbar";
-import Hamburger from "hamburger-react";
-import { useState } from "react";
-import type { ReactNode } from "react";
-import noScroll from "no-scroll";
-import { IMAGE_QUALITY } from "~/lib/utils";
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import migotosLogo from '../../public/static/migotos_logo.png';
+import Navbar from '~/components/Navbar';
+import Hamburger from 'hamburger-react';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
+import noScroll from 'no-scroll';
+import { IMAGE_QUALITY } from '~/lib/utils';
 
 interface LayoutProps {
   children: ReactNode; // ReactNode allows rendering any type of React component or JSX
@@ -38,7 +38,7 @@ export default function Header({ children }: LayoutProps) {
         </Link>
         <div
           className={`z-50 md:hidden ${
-            isMobileOpen ? "text-zinc-300" : "text-zinc-700"
+            isMobileOpen ? 'text-zinc-300' : 'text-zinc-700'
           }`}
         >
           <Hamburger
@@ -52,9 +52,7 @@ export default function Header({ children }: LayoutProps) {
         </div>
         <Navbar isOpen={isMobileOpen} closeMobileMenu={closeMobileMenu} />
       </header>
-      <main className={`flex w-full flex-col items-center`}>
-        {children}
-      </main>
+      <main className={`flex w-full flex-col items-center`}>{children}</main>
     </>
   );
 }

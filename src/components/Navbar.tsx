@@ -1,12 +1,12 @@
-import clsx from "clsx";
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
-import { type NextRouter, useRouter } from "next/router";
-import LoginModal from "./LoginModal";
-import { useSession } from "next-auth/react";
-import { Role } from "@prisma/client";
-import { Search } from "lucide-react";
-import { cn } from "~/lib/utils";
+import clsx from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
+import { type NextRouter, useRouter } from 'next/router';
+import LoginModal from './LoginModal';
+import { useSession } from 'next-auth/react';
+import { Role } from '@prisma/client';
+import { Search } from 'lucide-react';
+import { cn } from '~/lib/utils';
 
 interface NavbarProps {
   isOpen: boolean;
@@ -15,7 +15,7 @@ interface NavbarProps {
 
 function Navbar({ isOpen, closeMobileMenu }: NavbarProps) {
   const router = useRouter();
-  const links = ["About", "Cats", "Kittens", "News", "Contact", "Instagram"];
+  const links = ['About', 'Cats', 'Kittens', 'News', 'Contact', 'Instagram'];
   const session = useSession();
 
   return (
@@ -90,20 +90,20 @@ function NavItem({
   router: NextRouter;
   closeMobileMenu: () => void;
 }) {
-  const isActive = router.pathname === (href === "/home" ? "/" : href);
-  const isInstagram = text === "Instagram";
+  const isActive = router.pathname === (href === '/home' ? '/' : href);
+  const isInstagram = text === 'Instagram';
 
   return (
     <Link
-      href={isInstagram ? "https://www.instagram.com/migotos/" : href}
-      rel={isInstagram ? "noopener noreferrer" : ""}
-      target={isInstagram ? "_blank" : ""}
+      href={isInstagram ? 'https://www.instagram.com/migotos/' : href}
+      rel={isInstagram ? 'noopener noreferrer' : ''}
+      target={isInstagram ? '_blank' : ''}
       onClick={closeMobileMenu}
       className={clsx(
-        "mr-4 text-3xl font-medium md:text-lg",
+        'mr-4 text-3xl font-medium md:text-lg',
         isActive
-          ? "pointer-events-none text-zinc-500 md:text-hoverbg"
-          : "transition-colors duration-300 hover:text-zinc-400 md:hover:text-hoverbg",
+          ? 'pointer-events-none text-zinc-500 md:text-hoverbg'
+          : 'transition-colors duration-300 hover:text-zinc-400 md:hover:text-hoverbg'
       )}
     >
       {text}
@@ -116,8 +116,8 @@ function SearchBarMobile({ className }: { className?: string }) {
     <form
       action="/search"
       className={cn(
-        "md relative mx-auto flex w-2/3 max-w-xl items-center justify-center space-x-2 rounded-full bg-white px-4 py-2 shadow-md",
-        className,
+        'md relative mx-auto flex w-2/3 max-w-xl items-center justify-center space-x-2 rounded-full bg-white px-4 py-2 shadow-md',
+        className
       )}
     >
       <Search className="h-5 w-5 stroke-gray-700" />
@@ -143,9 +143,9 @@ function SearchBarDesktop({ className }: { className?: string }) {
     <form
       action="/search"
       className={cn(
-        "relative",
+        'relative',
         className,
-        router.pathname === "/search" && "hidden",
+        router.pathname === '/search' && 'hidden'
       )}
     >
       <Search className="absolute left-0 ml-2 mt-2 h-5 w-5" />

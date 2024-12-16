@@ -1,12 +1,12 @@
-import Link from "next/link";
-import { MdDashboard } from "react-icons/md";
-import { HiUsers } from "react-icons/hi";
-import { BiMessageSquareDetail, BiNews, BiSolidCat } from "react-icons/bi";
-import { FaCat } from "react-icons/fa";
-import { useRouter } from "next/router";
-import { twMerge } from "tailwind-merge";
-import clsx from "clsx";
-import { Toaster } from "~/components/ui/toaster";
+import Link from 'next/link';
+import { MdDashboard } from 'react-icons/md';
+import { HiUsers } from 'react-icons/hi';
+import { BiMessageSquareDetail, BiNews, BiSolidCat } from 'react-icons/bi';
+import { FaCat } from 'react-icons/fa';
+import { useRouter } from 'next/router';
+import { twMerge } from 'tailwind-merge';
+import clsx from 'clsx';
+import { Toaster } from '~/components/ui/toaster';
 
 export default function AdminLayout({
   children,
@@ -14,8 +14,8 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const splittedPath = router.pathname.split("/");
-  let heading = "Dashboard";
+  const splittedPath = router.pathname.split('/');
+  let heading = 'Dashboard';
   if (splittedPath.length <= 3) {
     heading =
       splittedPath.at(-1)![0]?.toUpperCase() + splittedPath.at(-1)!.slice(1);
@@ -36,9 +36,9 @@ export default function AdminLayout({
               href="/admin"
               className={twMerge(
                 clsx(
-                  "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname === "/admin" && "bg-blue-800 text-white",
-                ),
+                  'flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white',
+                  router.pathname === '/admin' && 'bg-blue-800 text-white'
+                )
               )}
             >
               <MdDashboard className="mr-2 h-6 w-6" />
@@ -50,10 +50,10 @@ export default function AdminLayout({
               href="/admin/users"
               className={twMerge(
                 clsx(
-                  "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname.startsWith("/admin/users") &&
-                    "bg-blue-800 text-white",
-                ),
+                  'flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white',
+                  router.pathname.startsWith('/admin/users') &&
+                    'bg-blue-800 text-white'
+                )
               )}
             >
               <HiUsers className="mr-2 h-6 w-6" />
@@ -65,10 +65,10 @@ export default function AdminLayout({
               href="/admin/messages"
               className={twMerge(
                 clsx(
-                  "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname.startsWith("/admin/messages") &&
-                    "bg-blue-800 text-white",
-                ),
+                  'flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white',
+                  router.pathname.startsWith('/admin/messages') &&
+                    'bg-blue-800 text-white'
+                )
               )}
             >
               <BiMessageSquareDetail className="mr-2 h-6 w-6" />
@@ -80,10 +80,10 @@ export default function AdminLayout({
               href="/admin/news"
               className={twMerge(
                 clsx(
-                  "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname.startsWith("/admin/news") &&
-                    "bg-blue-800 text-white",
-                ),
+                  'flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white',
+                  router.pathname.startsWith('/admin/news') &&
+                    'bg-blue-800 text-white'
+                )
               )}
             >
               <BiNews className="mr-2 h-6 w-6" />
@@ -95,10 +95,10 @@ export default function AdminLayout({
               href="/admin/cats"
               className={twMerge(
                 clsx(
-                  "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname.startsWith("/admin/cats") &&
-                    "bg-blue-800 text-white",
-                ),
+                  'flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white',
+                  router.pathname.startsWith('/admin/cats') &&
+                    'bg-blue-800 text-white'
+                )
               )}
             >
               <FaCat className="mr-2 h-6 w-6" />
@@ -110,10 +110,10 @@ export default function AdminLayout({
               href="/admin/litters"
               className={twMerge(
                 clsx(
-                  "flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white",
-                  router.pathname.startsWith("/admin/litters") &&
-                    "bg-blue-800 text-white",
-                ),
+                  'flex items-center rounded-lg p-2 text-base font-normal text-gray-300 hover:bg-blue-800 hover:text-white',
+                  router.pathname.startsWith('/admin/litters') &&
+                    'bg-blue-800 text-white'
+                )
               )}
             >
               <BiSolidCat className="mr-2 h-6 w-6" />

@@ -1,14 +1,14 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { contactSchema } from "~/lib/validators/contact";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+import { contactSchema } from '~/lib/validators/contact';
 
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from "~/server/api/trpc";
-import { db } from "~/server/db";
-import { sendEmail } from "~/server/helpers";
+} from '~/server/api/trpc';
+import { db } from '~/server/db';
+import { sendEmail } from '~/server/helpers';
 
 export const contactRouter = createTRPCRouter({
   hello: publicProcedure.input(contactSchema).mutation(async ({ input }) => {
@@ -27,12 +27,12 @@ export const contactRouter = createTRPCRouter({
       name: input.name,
     });
     if (!emailSent) {
-      console.error("Failed to send email when someone messaged.");
+      console.error('Failed to send email when someone messaged.');
     }
     if (!msg) {
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to create message",
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to create message',
       });
     }
     return { success: true };
@@ -41,8 +41,8 @@ export const contactRouter = createTRPCRouter({
     const msg = await db.contactMessage.findFirst({ where: { id: input } });
     if (!msg) {
       throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Message not found",
+        code: 'NOT_FOUND',
+        message: 'Message not found',
       });
     }
     await db.contactMessage.delete({ where: { id: input } });
@@ -54,8 +54,8 @@ export const contactRouter = createTRPCRouter({
       return count;
     } catch (error) {
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to delete messages",
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to delete messages',
       });
     }
   }),
@@ -63,14 +63,14 @@ export const contactRouter = createTRPCRouter({
     try {
       const msgs = await db.contactMessage.findMany({
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
       });
       return msgs;
     } catch (error) {
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to get messages",
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to get messages',
       });
     }
   }),
@@ -81,8 +81,8 @@ export const contactRouter = createTRPCRouter({
         const msg = await db.contactMessage.findFirst({ where: { id: input } });
         if (!msg) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Message not found",
+            code: 'NOT_FOUND',
+            message: 'Message not found',
           });
         }
         await db.contactMessage.update({
@@ -93,8 +93,8 @@ export const contactRouter = createTRPCRouter({
       } catch (error) {
         console.error(error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to set message as opened",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to set message as opened',
         });
       }
     }),
@@ -104,12 +104,12 @@ export const contactRouter = createTRPCRouter({
         message: z
           .string()
           .min(5, {
-            message: "Message must be at least 5 characters",
+            message: 'Message must be at least 5 characters',
           })
           .max(500, {
-            message: "Message must be less than 500 characters",
+            message: 'Message must be less than 500 characters',
           }),
-      }),
+      })
     )
     .mutation(async ({ input }) => {
       const feedback = await db.feedback.create({
@@ -120,8 +120,8 @@ export const contactRouter = createTRPCRouter({
 
       if (!feedback) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create message",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to create message',
         });
       }
       return { success: true };

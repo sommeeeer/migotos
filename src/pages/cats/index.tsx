@@ -1,10 +1,10 @@
-import { db } from "~/server/db";
-import { type Cat, type CatImage } from "@prisma/client";
-import { type GetStaticPropsResult } from "next";
-import BorderText from "~/components/BorderText";
-import CatsGrid from "~/components/CatsGrid";
-import Footer from "~/components/Footer";
-import Head from "next/head";
+import { db } from '~/server/db';
+import { type Cat, type CatImage } from '@prisma/client';
+import { type GetStaticPropsResult } from 'next';
+import BorderText from '~/components/BorderText';
+import CatsGrid from '~/components/CatsGrid';
+import Footer from '~/components/Footer';
+import Head from 'next/head';
 
 export interface CatWithImage extends Cat {
   CatImage: CatImage[];
@@ -67,7 +67,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       db.cat.findMany({
         where: {
           fertile: true,
-          gender: "Male",
+          gender: 'Male',
         },
         include: {
           CatImage: {
@@ -78,7 +78,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       db.cat.findMany({
         where: {
           fertile: true,
-          gender: "Female",
+          gender: 'Female',
         },
         include: {
           CatImage: {
@@ -89,7 +89,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       db.cat.findMany({
         where: {
           fertile: false,
-          gender: "Male",
+          gender: 'Male',
         },
         include: {
           CatImage: {
@@ -100,7 +100,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       db.cat.findMany({
         where: {
           fertile: false,
-          gender: "Female",
+          gender: 'Female',
         },
         include: {
           CatImage: {

@@ -1,27 +1,27 @@
-import { imageDimensionsFromStream } from "image-dimensions";
+import { imageDimensionsFromStream } from 'image-dimensions';
 import {
   type NextApiResponse,
   type GetServerSidePropsContext,
-} from "next/types";
-import { getServerAuthSession } from "~/server/auth";
-import { Role } from "@prisma/client";
+} from 'next/types';
+import { getServerAuthSession } from '~/server/auth';
+import { Role } from '@prisma/client';
 import {
   DeleteObjectCommand,
   PutObjectCommand,
   S3Client,
-} from "@aws-sdk/client-s3";
-import { Bucket } from "sst/node/bucket";
+} from '@aws-sdk/client-s3';
+import { Bucket } from 'sst/node/bucket';
 import {
   CloudFrontClient,
   CreateInvalidationCommand,
-} from "@aws-sdk/client-cloudfront";
-import { env } from "~/env.mjs";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { createTransport } from "nodemailer";
-import { GetParametersCommand, SSMClient } from "@aws-sdk/client-ssm";
+} from '@aws-sdk/client-cloudfront';
+import { env } from '~/env.mjs';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { createTransport } from 'nodemailer';
+import { GetParametersCommand, SSMClient } from '@aws-sdk/client-ssm';
 
 export const BLURURL =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC";
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAP0lEQVR4nAE0AMv/AKF9ZGpKMRwAAHtjTACwjnKnlH92bmDv5tEAo4Rp7OPR///39+/dADMmF3FcS+3g197QxXIHG4lcxt8jAAAAAElFTkSuQmCC';
 
 export async function checkAdminSession(ctx: GetServerSidePropsContext) {
   const session = await getServerAuthSession(ctx);
@@ -42,7 +42,7 @@ export async function deleteImages(filenames: string[]) {
         Bucket: Bucket.bucketid.bucketName,
       });
       const client = new S3Client({
-        region: "eu-north-1",
+        region: 'eu-north-1',
       });
       const deletedImage = await client.send(command);
       deletedImages.push(deletedImage);
@@ -50,7 +50,7 @@ export async function deleteImages(filenames: string[]) {
     return deletedImages;
   } catch (err) {
     console.error(err);
-    throw new Error("Error deleting images");
+    throw new Error('Error deleting images');
   }
 }
 
@@ -62,14 +62,14 @@ export async function getSignedURL() {
     });
     const uploadUrl = await getSignedUrl(
       new S3Client({
-        region: "eu-north-1",
+        region: 'eu-north-1',
       }),
-      command,
+      command
     );
     return uploadUrl;
   } catch (err) {
     console.error(err);
-    throw new Error("Error getting signed URL");
+    throw new Error('Error getting signed URL');
   }
 }
 export async function getSignedURLS(filenames: string[]) {
@@ -82,16 +82,16 @@ export async function getSignedURLS(filenames: string[]) {
       });
       const uploadUrl = await getSignedUrl(
         new S3Client({
-          region: "eu-north-1",
+          region: 'eu-north-1',
         }),
-        command,
+        command
       );
       urls.push(uploadUrl);
     }
     return urls;
   } catch (err) {
     console.error(err);
-    throw new Error("Error getting signed URLS");
+    throw new Error('Error getting signed URLS');
   }
 }
 
@@ -105,7 +105,7 @@ async function getDistributionId() {
         `${process.env.SST_SSM_PREFIX}Parameter/FRONTEND_DISTRIBUTION_ID/value`,
       ],
       WithDecryption: false,
-    }),
+    })
   );
   return domain.Parameters?.[0]?.Value ?? null;
 }
@@ -114,7 +114,7 @@ export async function invalidateCFPaths(paths: string[]) {
   try {
     const distributionId = await getDistributionId();
     if (!distributionId) {
-      throw new Error("Distribution ID not found");
+      throw new Error('Distribution ID not found');
     }
     await cloudFront.send(
       new CreateInvalidationCommand({
@@ -126,10 +126,10 @@ export async function invalidateCFPaths(paths: string[]) {
             Items: paths,
           },
         },
-      }),
+      })
     );
   } catch (err) {
-    console.error("[INVALIDATE_CLOUDFRONT_PATHS_ERROR]", err);
+    console.error('[INVALIDATE_CLOUDFRONT_PATHS_ERROR]', err);
   }
 }
 
@@ -137,11 +137,11 @@ const maxRetries = 3;
 
 export async function revalidateAndInvalidate(
   res: NextApiResponse,
-  paths: string[],
+  paths: string[]
 ) {
-  if (process.env.NODE_ENV !== "development") {
+  if (process.env.NODE_ENV !== 'development') {
     for (const path of paths) {
-      if (path === "/") {
+      if (path === '/') {
         continue;
       }
       let retries = 0;
@@ -156,7 +156,7 @@ export async function revalidateAndInvalidate(
 
           if (retries === maxRetries) {
             console.error(
-              `Failed to revalidate ${path} after ${maxRetries} attempts`,
+              `Failed to revalidate ${path} after ${maxRetries} attempts`
             );
           }
         }
@@ -166,36 +166,36 @@ export async function revalidateAndInvalidate(
       await invalidateCFPaths(
         paths
           .map((path) => {
-            if (path === "/") {
-              return `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`;
-            }
-            return `/_next/data/${process.env.NEXT_BUILD_ID}${path}.json*`;
-          })
-          .concat(paths),
-      );
-    } catch (err) {
-      console.error(
-        `Error invalidateCFPaths() on these routes: \n${paths
-          .map((path) => {
-            if (path === "/") {
+            if (path === '/') {
               return `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`;
             }
             return `/_next/data/${process.env.NEXT_BUILD_ID}${path}.json*`;
           })
           .concat(paths)
-          .join("\n")}\n\n\nError:\n\n\n`,
-        err,
+      );
+    } catch (err) {
+      console.error(
+        `Error invalidateCFPaths() on these routes: \n${paths
+          .map((path) => {
+            if (path === '/') {
+              return `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`;
+            }
+            return `/_next/data/${process.env.NEXT_BUILD_ID}${path}.json*`;
+          })
+          .concat(paths)
+          .join('\n')}\n\n\nError:\n\n\n`,
+        err
       );
     }
   }
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === 'development') {
     for (const path of paths) {
       console.log(`res.validate(${path}`);
     }
 
     const pathsArr = paths
       .map((path) => {
-        if (path === "/") {
+        if (path === '/') {
           return `/_next/data/${process.env.NEXT_BUILD_ID}/index.json`;
         }
         return `/_next/data/${process.env.NEXT_BUILD_ID}${path}.json*`;
@@ -210,7 +210,7 @@ export async function revalidateAndInvalidate(
 export async function getImageDimensions(url: string) {
   const { body } = await fetch(url);
   if (!body) {
-    throw new Error("No body in response");
+    throw new Error('No body in response');
   }
   const dimensions = await imageDimensionsFromStream(body);
   return dimensions;

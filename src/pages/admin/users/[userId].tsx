@@ -1,12 +1,12 @@
-import { type Prisma } from "@prisma/client";
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { db } from "~/server/db";
-import { useRouter } from "next/router";
-import AdminLayout from "../AdminLayout";
-import Link from "next/link";
-import { FaComments } from "react-icons/fa";
-import { checkAdminSession } from "~/server/helpers";
-import { Button } from "~/components/ui/button";
+import { type Prisma } from '@prisma/client';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import { db } from '~/server/db';
+import { useRouter } from 'next/router';
+import AdminLayout from '../AdminLayout';
+import Link from 'next/link';
+import { FaComments } from 'react-icons/fa';
+import { checkAdminSession } from '~/server/helpers';
+import { Button } from '~/components/ui/button';
 
 type UserWithComments = Prisma.UserGetPayload<{
   include: {
@@ -37,7 +37,7 @@ export default function UserPage({ user }: UserProps) {
           <p className="mb-2 py-2 text-xl">
             Total comments: {user.comments.length}
           </p>
-          <FaComments className="relative top-[-4px]" size={"1.5rem"} />
+          <FaComments className="relative top-[-4px]" size={'1.5rem'} />
         </div>
         <div className="flex flex-col gap-6">
           {user.comments.map((comment) => (
@@ -47,10 +47,10 @@ export default function UserPage({ user }: UserProps) {
                   comment.Litter
                     ? `/kittens/${comment.Litter.slug}`
                     : comment.Cat
-                    ? `/cats/${comment.Cat.slug}`
-                    : comment.Post
-                    ? `/news/${comment.Post.id}`
-                    : ""
+                      ? `/cats/${comment.Cat.slug}`
+                      : comment.Post
+                        ? `/news/${comment.Post.id}`
+                        : ''
                 }
               >
                 <span className="text-lg italic">
@@ -74,7 +74,7 @@ export default function UserPage({ user }: UserProps) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<UserProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -84,7 +84,7 @@ export async function getServerSideProps(
     };
   }
 
-  if (!ctx.query?.userId || typeof ctx.query.userId !== "string") {
+  if (!ctx.query?.userId || typeof ctx.query.userId !== 'string') {
     return {
       notFound: true,
     };

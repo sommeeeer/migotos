@@ -1,8 +1,8 @@
-import { Role } from "@prisma/client";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { z, type TypeOf } from "zod";
-import { getServerAuthSession } from "~/server/auth";
-import { getSignedURLS } from "~/server/helpers";
+import { Role } from '@prisma/client';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z, type TypeOf } from 'zod';
+import { getServerAuthSession } from '~/server/auth';
+import { getSignedURLS } from '~/server/helpers';
 
 type ResponseData = {
   message?: string;
@@ -20,37 +20,37 @@ export interface NextApiRequestWithBody extends NextApiRequest {
 
 export default async function handler(
   req: NextApiRequestWithBody,
-  res: NextApiResponse<ResponseData>,
+  res: NextApiResponse<ResponseData>
 ) {
   const session = await getServerAuthSession({
     req,
     res,
   });
   if (!session) {
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 
   if (session.user.role !== Role.ADMIN) {
-    res.status(403).json({ message: "Forbidden" });
+    res.status(403).json({ message: 'Forbidden' });
     return;
   }
 
-  if (req.method !== "POST") {
-    res.status(405).json({ message: "Method not allowed" });
+  if (req.method !== 'POST') {
+    res.status(405).json({ message: 'Method not allowed' });
     return;
   }
 
   const { filenames } = req.body;
   if (!filenames || !Array.isArray(filenames)) {
-    res.status(400).json({ message: "Filenames must be an array" });
+    res.status(400).json({ message: 'Filenames must be an array' });
     return;
   }
 
   const urls = await getSignedURLS(filenames);
 
   if (!urls) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: 'Internal server error' });
     return;
   }
 

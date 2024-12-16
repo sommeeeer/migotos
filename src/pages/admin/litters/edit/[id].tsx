@@ -1,11 +1,11 @@
-import AdminLayout from "../../AdminLayout";
+import AdminLayout from '../../AdminLayout';
 import {
   type GetServerSidePropsResult,
   type GetServerSidePropsContext,
-} from "next/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "~/components/ui/button";
+} from 'next/types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { Button } from '~/components/ui/button';
 import {
   Form,
   FormControl,
@@ -13,41 +13,41 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { useRouter } from "next/router";
-import { Textarea } from "~/components/ui/textarea";
-import { type z } from "zod";
-import { toast } from "~/components/ui/use-toast";
-import { checkAdminSession } from "~/server/helpers";
-import { editLitterSchema } from "~/lib/validators/litter";
-import { CalendarIcon, Edit, Loader2, Trash2 } from "lucide-react";
-import { cn } from "~/lib/utils";
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { useRouter } from 'next/router';
+import { Textarea } from '~/components/ui/textarea';
+import { type z } from 'zod';
+import { toast } from '~/components/ui/use-toast';
+import { checkAdminSession } from '~/server/helpers';
+import { editLitterSchema } from '~/lib/validators/litter';
+import { CalendarIcon, Edit, Loader2, Trash2 } from 'lucide-react';
+import { cn } from '~/lib/utils';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover";
-import { Calendar } from "~/components/ui/calendar";
-import { addHours, format } from "date-fns";
-import { useState } from "react";
-import AddKittenModal from "~/components/AddKittenModal";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
+} from '~/components/ui/popover';
+import { Calendar } from '~/components/ui/calendar';
+import { addHours, format } from 'date-fns';
+import { useState } from 'react';
+import AddKittenModal from '~/components/AddKittenModal';
+import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { api } from "~/utils/api";
-import CreateableSelect from "react-select/creatable";
-import { db } from "~/server/db";
-import type { Prisma } from "@prisma/client";
-import { AiFillEdit } from "react-icons/ai";
-import { ImageUpload } from "~/components/ImageUpload";
-import CreatableSelect from "react-select/creatable";
-import type { EditKittenType } from "~/utils/types";
-import EditKittenModal from "~/components/EditKittenModal";
+} from '~/components/ui/tooltip';
+import { api } from '~/utils/api';
+import CreateableSelect from 'react-select/creatable';
+import { db } from '~/server/db';
+import type { Prisma } from '@prisma/client';
+import { AiFillEdit } from 'react-icons/ai';
+import { ImageUpload } from '~/components/ImageUpload';
+import CreatableSelect from 'react-select/creatable';
+import type { EditKittenType } from '~/utils/types';
+import EditKittenModal from '~/components/EditKittenModal';
 
 type LitterWithKittens = Prisma.LitterGetPayload<{
   include: {
@@ -76,65 +76,65 @@ export default function EditLitter({
   const litterForm = useForm<z.infer<typeof editLitterSchema>>({
     resolver: zodResolver(editLitterSchema),
     defaultValues: {
-      name: litter.name.replace(" LITTER", ""),
-      pedigreeurl: litter.pedigreeurl ?? "",
+      name: litter.name.replace(' LITTER', ''),
+      pedigreeurl: litter.pedigreeurl ?? '',
       mother_name: litter.mother_name,
       father_name: litter.father_name,
       mother_stamnavn: litter.mother_stamnavn,
       father_stamnavn: litter.father_stamnavn,
-      description: litter.description ?? "",
+      description: litter.description ?? '',
       born: litter.born,
       father_img: litter.father_img,
       mother_img: litter.mother_img,
       post_image: litter.post_image ?? undefined,
       kittens: litter.Kitten.map((kitten) => ({
         name: kitten.name,
-        gender: kitten.gender === "man" ? "man" : "female",
-        info: kitten.info ?? "",
-        stamnavn: kitten.stamnavn ?? "",
+        gender: kitten.gender === 'man' ? 'man' : 'female',
+        info: kitten.info ?? '',
+        stamnavn: kitten.stamnavn ?? '',
         orderStatus: kitten.orderStatus ?? undefined,
       })),
       tags: litter.Tag.map((tag) => ({ value: tag.value, label: tag.value })),
     },
   });
   const { isDirty } = litterForm.formState;
-  const postImageValue = litterForm.watch("post_image");
-  const motherImgValue = litterForm.watch("mother_img");
-  const fatherImgValue = litterForm.watch("father_img");
-  const kittens = litterForm.watch("kittens");
+  const postImageValue = litterForm.watch('post_image');
+  const motherImgValue = litterForm.watch('mother_img');
+  const fatherImgValue = litterForm.watch('father_img');
+  const kittens = litterForm.watch('kittens');
   const router = useRouter();
 
   const { mutate: mutateUpdateLitter, isLoading } =
     api.litter.updateLitter.useMutation({
       onSuccess: () => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
-          description: "Litter updated successfully.",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
+          description: 'Litter updated successfully.',
         });
-        void router.push("/admin/litters");
+        void router.push('/admin/litters');
       },
       onError: (error) => {
         console.error(error);
-        if (error.data?.code === "CONFLICT") {
+        if (error.data?.code === 'CONFLICT') {
           window.scrollTo(0, 0);
-          litterForm.setError("name", {
-            message: "Litter with this name already exists.",
+          litterForm.setError('name', {
+            message: 'Litter with this name already exists.',
           });
           setTimeout(() => {
-            litterForm.setFocus("name");
+            litterForm.setFocus('name');
           }, 1);
           return toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Litter with this name already exists.",
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Litter with this name already exists.',
           });
         }
         toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Something went wrong while updating. Please try again",
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Something went wrong while updating. Please try again',
         });
       },
     });
@@ -142,8 +142,8 @@ export default function EditLitter({
   function onSubmitLitter(values: z.infer<typeof editLitterSchema>) {
     if (!isDirty) {
       toast({
-        variant: "destructive",
-        description: "No changes detected.",
+        variant: 'destructive',
+        description: 'No changes detected.',
       });
       return;
     }
@@ -159,8 +159,8 @@ export default function EditLitter({
 
   function handleRemoveKitten(name: string) {
     litterForm.setValue(
-      "kittens",
-      kittens.filter((kitten) => kitten.name !== name),
+      'kittens',
+      kittens.filter((kitten) => kitten.name !== name)
     );
   }
 
@@ -174,14 +174,14 @@ export default function EditLitter({
 
   function handleCreate(inputValue: string) {
     litterForm.setValue(
-      "tags",
+      'tags',
       [
-        ...litterForm.getValues("tags"),
+        ...litterForm.getValues('tags'),
         { label: inputValue, value: inputValue },
       ],
       {
         shouldDirty: true,
-      },
+      }
     );
   }
 
@@ -248,15 +248,15 @@ export default function EditLitter({
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
+                          variant={'outline'}
                           disabled={isLoading}
                           className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
+                            'w-[240px] pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground'
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, 'PPP')
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -270,7 +270,7 @@ export default function EditLitter({
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
+                          date > new Date() || date < new Date('1900-01-01')
                         }
                         initialFocus
                       />
@@ -307,17 +307,17 @@ export default function EditLitter({
                         onChange={(e) => {
                           onChange(e?.value);
                           if (!e?.value)
-                            return litterForm.setValue("mother_stamnavn", "");
+                            return litterForm.setValue('mother_stamnavn', '');
                           const motherName = motherNames.find(
-                            (name) => name.name === e?.value,
+                            (name) => name.name === e?.value
                           );
                           if (motherName) {
                             litterForm.setValue(
-                              "mother_stamnavn",
+                              'mother_stamnavn',
                               motherName.stamnavn,
                               {
                                 shouldValidate: true,
-                              },
+                              }
                             );
                           }
                         }}
@@ -369,15 +369,15 @@ export default function EditLitter({
                         onChange={(e) => {
                           onChange(e?.value);
                           if (!e?.value)
-                            return litterForm.setValue("father_stamnavn", "");
+                            return litterForm.setValue('father_stamnavn', '');
                           const fatherName = fatherNames.find(
-                            (name) => name.name === e?.value,
+                            (name) => name.name === e?.value
                           );
                           if (fatherName) {
                             litterForm.setValue(
-                              "father_stamnavn",
+                              'father_stamnavn',
                               fatherName.stamnavn,
-                              { shouldValidate: true },
+                              { shouldValidate: true }
                             );
                           }
                         }}
@@ -455,7 +455,7 @@ export default function EditLitter({
                             </button>
                           </div>
                           <p>{kitten.name}</p>
-                          {kitten.gender === "female" ? (
+                          {kitten.gender === 'female' ? (
                             <IoMdFemale className="fill-pink-500" />
                           ) : (
                             <IoMdMale className="fill-blue-500" />
@@ -568,7 +568,7 @@ export default function EditLitter({
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<EditLitterProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -578,7 +578,7 @@ export async function getServerSideProps(
     };
   }
 
-  if (!ctx.query?.id || typeof ctx.query.id !== "string") {
+  if (!ctx.query?.id || typeof ctx.query.id !== 'string') {
     return {
       notFound: true,
     };
@@ -606,10 +606,10 @@ export async function getServerSideProps(
       stamnavn: true,
     },
     where: {
-      gender: "Female",
+      gender: 'Female',
     },
     orderBy: {
-      name: "asc",
+      name: 'asc',
     },
   });
 
@@ -619,10 +619,10 @@ export async function getServerSideProps(
       stamnavn: true,
     },
     where: {
-      gender: "Male",
+      gender: 'Male',
     },
     orderBy: {
-      name: "asc",
+      name: 'asc',
     },
   });
 
@@ -631,12 +631,12 @@ export async function getServerSideProps(
       select: {
         value: true,
       },
-      distinct: ["value"],
+      distinct: ['value'],
       orderBy: {
-        value: "asc",
+        value: 'asc',
       },
     })
-  ).filter((tag) => isNaN(Number(tag.value)) && tag.value !== "");
+  ).filter((tag) => isNaN(Number(tag.value)) && tag.value !== '');
 
   return {
     props: {

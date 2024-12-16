@@ -1,15 +1,15 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { editLitterSchema, litterSchema } from "~/lib/validators/litter";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+import { editLitterSchema, litterSchema } from '~/lib/validators/litter';
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { db } from "~/server/db";
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { db } from '~/server/db';
 import {
   BLURURL,
   deleteImages,
   getImageDimensions,
   revalidateAndInvalidate,
-} from "~/server/helpers";
+} from '~/server/helpers';
 
 export const litterRouter = createTRPCRouter({
   createLitter: protectedProcedure
@@ -23,14 +23,14 @@ export const litterRouter = createTRPCRouter({
         });
         if (doesLitterExist) {
           throw new TRPCError({
-            code: "CONFLICT",
-            message: "Litter already exists",
+            code: 'CONFLICT',
+            message: 'Litter already exists',
           });
         }
         const litter = await db.litter.create({
           data: {
             name: input.name.toUpperCase(),
-            slug: input.name.toLowerCase() + "-litter",
+            slug: input.name.toLowerCase() + '-litter',
             born: input.born,
             mother_name: input.mother_name,
             father_name: input.father_name,
@@ -38,9 +38,9 @@ export const litterRouter = createTRPCRouter({
             mother_stamnavn: input.mother_stamnavn,
             pedigreeurl: input.pedigreeurl,
             mother_img: input.mother_img,
-            mother_img_blururl: "",
+            mother_img_blururl: '',
             father_img: input.father_img,
-            father_img_blururl: "",
+            father_img_blururl: '',
             post_image: input.post_image,
             description: input.description,
             Kitten: {
@@ -48,7 +48,7 @@ export const litterRouter = createTRPCRouter({
                 name: kitten.name,
                 gender: kitten.gender,
                 info: kitten.info,
-                stamnavn: kitten.stamnavn ?? "",
+                stamnavn: kitten.stamnavn ?? '',
                 orderStatus: kitten.orderStatus,
               })),
             },
@@ -62,11 +62,11 @@ export const litterRouter = createTRPCRouter({
           },
         });
         try {
-          await ctx.res.revalidate("/");
+          await ctx.res.revalidate('/');
         } catch (err) {
-          console.error("[RES_VALIDATE_ERROR_CREATE_LITTER]: ", err);
+          console.error('[RES_VALIDATE_ERROR_CREATE_LITTER]: ', err);
         }
-        await revalidateAndInvalidate(ctx.res, ["/", "/kittens"]);
+        await revalidateAndInvalidate(ctx.res, ['/', '/kittens']);
         return litter;
       } catch (err) {
         console.error(err);
@@ -74,8 +74,8 @@ export const litterRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -93,8 +93,8 @@ export const litterRouter = createTRPCRouter({
         });
         if (!litter) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Litter not found",
+            code: 'NOT_FOUND',
+            message: 'Litter not found',
           });
         }
         const deletedLitter = await db.litter.delete({
@@ -119,29 +119,29 @@ export const litterRouter = createTRPCRouter({
           litter.mother_img,
           litter.father_img,
         ].map((img) =>
-          img ? decodeURI(img.replace("https://cdn.migotos.com/", "")) : "",
+          img ? decodeURI(img.replace('https://cdn.migotos.com/', '')) : ''
         );
         await deleteImages(
           deletedLitter?.LitterPictureWeek.flatMap((week) =>
             week.KittenPictureImage.map((image) =>
-              decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
-            ),
-          ).concat(profileImages.filter(Boolean)),
+              decodeURI(image.src.replace('https://cdn.migotos.com/', ''))
+            )
+          ).concat(profileImages.filter(Boolean))
         );
 
         try {
-          await ctx.res.revalidate("/");
+          await ctx.res.revalidate('/');
         } catch (err) {
-          console.error("[RES_VALIDATE_ERROR_DELETE_LITTER]: ", err);
+          console.error('[RES_VALIDATE_ERROR_DELETE_LITTER]: ', err);
         }
         await revalidateAndInvalidate(
           ctx.res,
-          ["/", "/kittens", `/kittens/${deletedLitter.slug}`].concat(
+          ['/', '/kittens', `/kittens/${deletedLitter.slug}`].concat(
             litter.LitterPictureWeek.map(
               (week) =>
-                `/kittens/${deletedLitter.slug}/pictures/${week.name.toLowerCase()}`,
-            ),
-          ),
+                `/kittens/${deletedLitter.slug}/pictures/${week.name.toLowerCase()}`
+            )
+          )
         );
         return deletedLitter;
       } catch (err) {
@@ -150,8 +150,8 @@ export const litterRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -166,8 +166,8 @@ export const litterRouter = createTRPCRouter({
         });
         if (!litter) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Litter not found",
+            code: 'NOT_FOUND',
+            message: 'Litter not found',
           });
         }
         const doesLitterExist = await db.litter.findFirst({
@@ -180,8 +180,8 @@ export const litterRouter = createTRPCRouter({
         });
         if (doesLitterExist) {
           throw new TRPCError({
-            code: "CONFLICT",
-            message: "Litter already exists",
+            code: 'CONFLICT',
+            message: 'Litter already exists',
           });
         }
         await db.kitten.deleteMany({
@@ -212,7 +212,7 @@ export const litterRouter = createTRPCRouter({
                 name: kitten.name,
                 gender: kitten.gender,
                 info: kitten.info,
-                stamnavn: kitten.stamnavn ?? "",
+                stamnavn: kitten.stamnavn ?? '',
                 orderStatus: kitten.orderStatus,
               })),
             },
@@ -223,11 +223,11 @@ export const litterRouter = createTRPCRouter({
         });
 
         const tagsToDelete = updatedLitter.Tag.filter(
-          (tag) => !input.tags.some((t) => t.value === tag.value),
+          (tag) => !input.tags.some((t) => t.value === tag.value)
         );
 
         const tagsToCreate = input.tags.filter(
-          (tag) => !updatedLitter.Tag.some((t) => t.value === tag.value),
+          (tag) => !updatedLitter.Tag.some((t) => t.value === tag.value)
         );
 
         await db.tag.deleteMany({
@@ -246,13 +246,13 @@ export const litterRouter = createTRPCRouter({
         });
 
         try {
-          await ctx.res.revalidate("/");
+          await ctx.res.revalidate('/');
         } catch (err) {
-          console.error("[RES_VALIDATE_ERROR_UPDATE_LITTER]: ", err);
+          console.error('[RES_VALIDATE_ERROR_UPDATE_LITTER]: ', err);
         }
         await revalidateAndInvalidate(ctx.res, [
-          "/",
-          "/kittens",
+          '/',
+          '/kittens',
           `/kittens/${updatedLitter.slug.toLowerCase()}`,
         ]);
         return updatedLitter;
@@ -262,8 +262,8 @@ export const litterRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -281,32 +281,32 @@ export const litterRouter = createTRPCRouter({
         });
         if (!litter) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Litter not found",
+            code: 'NOT_FOUND',
+            message: 'Litter not found',
           });
         }
-        let ending = "-weeks";
-        if (input.name === "0") {
-          ending = "Newborn";
+        let ending = '-weeks';
+        if (input.name === '0') {
+          ending = 'Newborn';
         }
-        if (input.name === "1") {
-          ending = "-week";
+        if (input.name === '1') {
+          ending = '-week';
         }
 
         if (
           litter.LitterPictureWeek.some(
-            (week) => week.name === `${input.name}${ending}`,
+            (week) => week.name === `${input.name}${ending}`
           ) ||
           litter.LitterPictureWeek.some((week) => week.name === ending)
         ) {
           throw new TRPCError({
-            code: "CONFLICT",
-            message: "Week already exists",
+            code: 'CONFLICT',
+            message: 'Week already exists',
           });
         }
         const week = await db.litterPictureWeek.create({
           data: {
-            name: ending === "Newborn" ? ending : `${input.name}${ending}`,
+            name: ending === 'Newborn' ? ending : `${input.name}${ending}`,
             Litter: {
               connect: {
                 id: input.litter_id,
@@ -324,8 +324,8 @@ export const litterRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -335,7 +335,7 @@ export const litterRouter = createTRPCRouter({
         title: z.string(),
         litter_id: z.number(),
         week_id: z.number(),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -353,8 +353,8 @@ export const litterRouter = createTRPCRouter({
           !litter.LitterPictureWeek.find((week) => week.id === input.week_id)
         ) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Litter or week not found",
+            code: 'NOT_FOUND',
+            message: 'Litter or week not found',
           });
         }
 
@@ -377,8 +377,8 @@ export const litterRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -402,8 +402,8 @@ export const litterRouter = createTRPCRouter({
         return litter;
       } catch (err) {
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -418,8 +418,8 @@ export const litterRouter = createTRPCRouter({
         });
         if (!litter) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Litter not found",
+            code: 'NOT_FOUND',
+            message: 'Litter not found',
           });
         }
         const week = await db.litterPictureWeek.findFirst({
@@ -430,8 +430,8 @@ export const litterRouter = createTRPCRouter({
         });
         if (!week) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Week not found",
+            code: 'NOT_FOUND',
+            message: 'Week not found',
           });
         }
         const deletedWeek = await db.litterPictureWeek.delete({
@@ -448,8 +448,8 @@ export const litterRouter = createTRPCRouter({
         });
         await deleteImages(
           deletedWeek?.KittenPictureImage.map((image) =>
-            decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
-          ),
+            decodeURI(image.src.replace('https://cdn.migotos.com/', ''))
+          )
         );
         await revalidateAndInvalidate(ctx.res, [
           `/kittens/${litter.slug.toLowerCase()}`,
@@ -462,8 +462,8 @@ export const litterRouter = createTRPCRouter({
         }
         console.error(err);
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -473,7 +473,7 @@ export const litterRouter = createTRPCRouter({
         litter_picture_week: z.number(),
         title: z.string(),
         imageUrls: z.array(z.string()),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -485,8 +485,8 @@ export const litterRouter = createTRPCRouter({
 
         if (!litterPictureWeek) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Week not found",
+            code: 'NOT_FOUND',
+            message: 'Week not found',
           });
         }
         const litter = await db.litter.findFirst({
@@ -506,8 +506,8 @@ export const litterRouter = createTRPCRouter({
 
         if (!kitten) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Kitten not found",
+            code: 'NOT_FOUND',
+            message: 'Kitten not found',
           });
         }
 
@@ -515,10 +515,10 @@ export const litterRouter = createTRPCRouter({
           input.imageUrls.map(async (image) => {
             const dimensions = await getImageDimensions(image);
             if (!dimensions) {
-              console.error("Error getting image dimensions");
+              console.error('Error getting image dimensions');
               throw new TRPCError({
-                code: "BAD_REQUEST",
-                message: "Invalid request",
+                code: 'BAD_REQUEST',
+                message: 'Invalid request',
               });
             }
             const kittenPictureImage = await db.kittenPictureImage.create({
@@ -532,7 +532,7 @@ export const litterRouter = createTRPCRouter({
               },
             });
             return kittenPictureImage;
-          }),
+          })
         );
         await revalidateAndInvalidate(ctx.res, [
           `/kittens/${litter?.slug}/pictures/${litterPictureWeek.name.toLowerCase()}`,
@@ -544,8 +544,8 @@ export const litterRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -567,8 +567,8 @@ export const litterRouter = createTRPCRouter({
         });
         if (!image) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Image not found",
+            code: 'NOT_FOUND',
+            message: 'Image not found',
           });
         }
         const deletedImage = await db.kittenPictureImage.delete({
@@ -577,7 +577,7 @@ export const litterRouter = createTRPCRouter({
           },
         });
         await deleteImages([
-          decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
+          decodeURI(image.src.replace('https://cdn.migotos.com/', '')),
         ]);
         await revalidateAndInvalidate(ctx.res, [
           `/kittens/${image.LitterPictureWeek.Litter.slug}/pictures/${image.LitterPictureWeek.name.toLowerCase()}`,
@@ -589,8 +589,8 @@ export const litterRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),

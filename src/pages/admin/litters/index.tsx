@@ -1,6 +1,6 @@
-import type { Litter } from "@prisma/client";
+import type { Litter } from '@prisma/client';
 
-import AdminLayout from "../AdminLayout";
+import AdminLayout from '../AdminLayout';
 import {
   Table,
   TableBody,
@@ -9,16 +9,16 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
-import { db } from "~/server/db";
+} from '~/components/ui/table';
+import { db } from '~/server/db';
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-} from "next/types";
-import { AiFillDelete, AiFillEdit } from "react-icons/ai";
-import Link from "next/link";
-import { buttonVariants } from "~/components/ui/button";
-import { twMerge } from "tailwind-merge";
+} from 'next/types';
+import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
+import Link from 'next/link';
+import { buttonVariants } from '~/components/ui/button';
+import { twMerge } from 'tailwind-merge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,15 +29,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { GrGallery } from "react-icons/gr";
-import { format } from "date-fns";
-import { checkAdminSession } from "~/server/helpers";
-import { BiSolidCat } from "react-icons/bi";
-import { api } from "~/utils/api";
-import { toast } from "~/components/ui/use-toast";
-import { useRouter } from "next/router";
-import { Loader2 } from "lucide-react";
+} from '~/components/ui/alert-dialog';
+import { GrGallery } from 'react-icons/gr';
+import { format } from 'date-fns';
+import { checkAdminSession } from '~/server/helpers';
+import { BiSolidCat } from 'react-icons/bi';
+import { api } from '~/utils/api';
+import { toast } from '~/components/ui/use-toast';
+import { useRouter } from 'next/router';
+import { Loader2 } from 'lucide-react';
 
 type LittersProps = {
   litters: Litter[];
@@ -52,18 +52,18 @@ export default function Litters({ litters }: LittersProps) {
   } = api.litter.deleteLitter.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Litter deleted successfully.",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
+        description: 'Litter deleted successfully.',
       });
       void router.replace(router.asPath);
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while trying to update cat.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Something went wrong while trying to update cat.',
       });
     },
   });
@@ -75,7 +75,7 @@ export default function Litters({ litters }: LittersProps) {
   return (
     <AdminLayout>
       <div className="mb-4 flex flex-col items-start gap-4 rounded-lg bg-white p-4 shadow">
-        <Link className={twMerge(buttonVariants())} href={"/admin/litters/new"}>
+        <Link className={twMerge(buttonVariants())} href={'/admin/litters/new'}>
           <BiSolidCat className="mr-1 h-4 w-4" />
           New Litter
         </Link>
@@ -95,7 +95,7 @@ export default function Litters({ litters }: LittersProps) {
             {litters.map((litter) => (
               <TableRow key={litter.id} className="text-base">
                 <TableCell>{litter.name}</TableCell>
-                <TableCell>{format(litter.born, "dd.MM.yyyy")}</TableCell>
+                <TableCell>{format(litter.born, 'dd.MM.yyyy')}</TableCell>
                 <TableCell className="max-w-[10rem]">
                   {litter.mother_name}
                 </TableCell>
@@ -169,7 +169,7 @@ export default function Litters({ litters }: LittersProps) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<LittersProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -180,7 +180,7 @@ export async function getServerSideProps(
   }
   const litters = await db.litter.findMany({
     orderBy: {
-      born: "desc",
+      born: 'desc',
     },
   });
 

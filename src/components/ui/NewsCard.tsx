@@ -1,8 +1,8 @@
-import Image from "next/image";
-import router from "next/router";
-import { format } from "date-fns";
-import Tag from "./Tag";
-import { IMAGE_QUALITY } from "~/lib/utils";
+import Image from 'next/image';
+import router from 'next/router';
+import { format } from 'date-fns';
+import Tag from './Tag';
+import { IMAGE_QUALITY } from '~/lib/utils';
 
 interface Props {
   title: string;
@@ -30,7 +30,7 @@ export default function NewsCard({
         <div className="h-[200px] relative">
           <Image
             className="object-cover"
-            src={image_src ?? ""}
+            src={image_src ?? ''}
             alt="Sunset in the mountains"
             fill
             quality={IMAGE_QUALITY}
@@ -43,7 +43,7 @@ export default function NewsCard({
 
       <div className="flex flex-col gap-4 px-6 py-4">
         <div className="mb-2 text-xl font-bold">{title}</div>
-        <p className="text-gray-600">{format(date, "MMMM d, yyyy")}</p>
+        <p className="text-gray-600">{format(date, 'MMMM d, yyyy')}</p>
       </div>
       <div className="self-start px-6 pb-2 pt-4">
         {tags.map((tag) => (

@@ -2,12 +2,12 @@ import type {
   BlogPostImage,
   CatImage,
   KittenPictureImage,
-} from "@prisma/client";
-import { motion } from "framer-motion";
-import { X } from "lucide-react";
-import Image from "next/image";
-import noScroll from "no-scroll";
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+} from '@prisma/client';
+import { motion } from 'framer-motion';
+import { X } from 'lucide-react';
+import Image from 'next/image';
+import noScroll from 'no-scroll';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import {
   Carousel,
   CarouselContent,
@@ -15,15 +15,15 @@ import {
   CarouselNext,
   CarouselPrevious,
   type CarouselApi,
-} from "~/components/ui/carousel";
-import { cn, IMAGE_QUALITY } from "~/lib/utils";
+} from '~/components/ui/carousel';
+import { cn, IMAGE_QUALITY } from '~/lib/utils';
 
 interface Props {
   name?: string;
   images:
     | CatImage[]
     | KittenPictureImage[]
-    | Pick<BlogPostImage, "id" | "src" | "height" | "width" | "blururl">[];
+    | Pick<BlogPostImage, 'id' | 'src' | 'height' | 'width' | 'blururl'>[];
   setOpen: Dispatch<SetStateAction<boolean>>;
   imageIndex: number;
 }
@@ -36,7 +36,7 @@ export default function ImageCarousel({
 }: Props) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(imageIndex + 1);
-  const [title, setTitle] = useState<string | undefined>("");
+  const [title, setTitle] = useState<string | undefined>('');
   const [currentImageSrc, setCurrentImageSrc] = useState<string | undefined>();
 
   useEffect(() => {
@@ -46,23 +46,23 @@ export default function ImageCarousel({
     setTitle((images[imageIndex] as KittenPictureImage)?.title ?? name);
     setCurrentImageSrc(images[imageIndex]?.src);
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         setOpen(false);
-      } else if (event.key === "ArrowLeft") {
+      } else if (event.key === 'ArrowLeft') {
         api.scrollPrev();
-      } else if (event.key === "ArrowRight") {
+      } else if (event.key === 'ArrowRight') {
         api.scrollNext();
       }
     };
 
-    api?.on("select", () => {
+    api?.on('select', () => {
       setCurrent(api.selectedScrollSnap() + 1);
     });
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       noScroll.off();
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
       api?.destroy();
     };
   }, [api, setOpen, imageIndex, images, name]);
@@ -140,18 +140,18 @@ export default function ImageCarousel({
         <CarouselNext className="duration-400 right-2 z-[60] p-2 opacity-0 transition-all hover:opacity-60 disabled:hidden sm:right-6 sm:opacity-60 md:right-10 lg:right-12 xl:right-16" />
         <p
           className={cn(
-            "absolute bottom-3 left-3 p-1 tracking-wide text-white",
+            'absolute bottom-3 left-3 p-1 tracking-wide text-white',
             title &&
               title.length > 20 &&
-              "left-1/2 top-6 max-h-fit -translate-x-1/2 rounded-md bg-black/40  px-2 py-1",
+              'left-1/2 top-6 max-h-fit -translate-x-1/2 rounded-md bg-black/40  px-2 py-1'
           )}
         >{`${current}/${images.length}`}</p>
         <p
           className={cn(
-            "absolute bottom-3 right-3 p-1 tracking-wide text-white",
+            'absolute bottom-3 right-3 p-1 tracking-wide text-white',
             title &&
               title.length > 20 &&
-              "left-2 mx-auto max-w-fit rounded-md bg-black/40 px-2 py-1 text-center text-xs min-[400px]:text-lg md:bottom-4",
+              'left-2 mx-auto max-w-fit rounded-md bg-black/40 px-2 py-1 text-center text-xs min-[400px]:text-lg md:bottom-4'
           )}
         >
           {title}

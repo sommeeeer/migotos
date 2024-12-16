@@ -1,9 +1,9 @@
-import Image from "next/image";
+import Image from 'next/image';
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
-} from "next/types";
-import { useMemo, useState } from "react";
+} from 'next/types';
+import { useMemo, useState } from 'react';
 import {
   CalendarPlus,
   HardDriveIcon,
@@ -11,28 +11,28 @@ import {
   RotateCcw,
   Trash2,
   Upload,
-} from "lucide-react";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
-import { AnimatePresence, motion } from "framer-motion";
+} from 'lucide-react';
+import { IoMdFemale, IoMdMale } from 'react-icons/io';
+import { AnimatePresence, motion } from 'framer-motion';
 import type {
   KittenPictureImage,
   LitterPictureWeek,
   Prisma,
-} from "@prisma/client";
+} from '@prisma/client';
 
-import { db } from "~/server/db";
-import { checkAdminSession } from "~/server/helpers";
-import AdminLayout from "../../AdminLayout";
-import { Button } from "~/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { db } from '~/server/db';
+import { checkAdminSession } from '~/server/helpers';
+import AdminLayout from '../../AdminLayout';
+import { Button } from '~/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import BorderText from "~/components/BorderText";
+} from '~/components/ui/card';
+import BorderText from '~/components/BorderText';
 import {
   Dialog,
   DialogClose,
@@ -42,11 +42,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
-import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { bytesToMB, handleImageChange } from "~/utils/helpers";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
+} from '~/components/ui/dialog';
+import LoadingSpinner from '~/components/ui/LoadingSpinner';
+import { bytesToMB, handleImageChange } from '~/utils/helpers';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -54,10 +54,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { api } from "~/utils/api";
-import { toast } from "~/components/ui/use-toast";
-import { cn } from "~/lib/utils";
+} from '~/components/ui/select';
+import { api } from '~/utils/api';
+import { toast } from '~/components/ui/use-toast';
+import { cn } from '~/lib/utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,10 +68,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { useUploadImages } from "~/hooks/use-upload-images";
-import { Progress } from "~/components/ui/progress";
-import ImageDropzone from "~/components/ImageDropzone";
+} from '~/components/ui/alert-dialog';
+import { useUploadImages } from '~/hooks/use-upload-images';
+import { Progress } from '~/components/ui/progress';
+import ImageDropzone from '~/components/ImageDropzone';
 
 type LitterWithImages = Prisma.LitterGetPayload<{
   include: {
@@ -90,7 +90,7 @@ type EditLitterImagesProps = {
 
 export default function EditCatImages({ litter }: EditLitterImagesProps) {
   const [kittenImages, setKittenImages] = useState<KittenPictureImage[]>(
-    litter.LitterPictureWeek.at(-1)?.KittenPictureImage ?? [],
+    litter.LitterPictureWeek.at(-1)?.KittenPictureImage ?? []
   );
   const [currentLitter, setCurrentLitter] = useState<LitterWithImages>(litter);
   const [tab, setTab] = useState(currentLitter.LitterPictureWeek.at(-1)?.name);
@@ -100,15 +100,15 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
   const [isAddWeeksOpen, setIsAddWeeksOpen] = useState(false);
   const [weekNumber, setWeekNumber] = useState<number | undefined>(
     currentLitter.LitterPictureWeek.length > 0
-      ? parseInt(currentLitter.LitterPictureWeek.at(-1)?.name || "") + 1
-      : 1,
+      ? parseInt(currentLitter.LitterPictureWeek.at(-1)?.name || '') + 1
+      : 1
   );
   const [size, setSize] = useState<number | undefined>();
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [filesToUpload, setFilesToUpload] = useState<File[] | null>();
-  const [kittenSelectValue, setKittenSelectValue] = useState<string>("");
+  const [kittenSelectValue, setKittenSelectValue] = useState<string>('');
   const [weekTitle, setWeekTitle] = useState<string>(
-    currentWeekSelected?.title ?? "",
+    currentWeekSelected?.title ?? ''
   );
   const [progressValue, setProgressValue] = useState(0);
 
@@ -117,7 +117,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
   const groupedImages = useMemo(() => {
     const groups: Record<string, KittenPictureImage[]> = {};
     kittenImages?.forEach((image) => {
-      const key = image.title ?? "";
+      const key = image.title ?? '';
       if (!groups[key]) {
         groups[key] = [];
       }
@@ -139,26 +139,26 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
           setCurrentLitter(litter);
           setKittenImages(
             litter.LitterPictureWeek.find(
-              (week) => week.id === currentWeekSelected?.id,
-            )?.KittenPictureImage ?? [],
+              (week) => week.id === currentWeekSelected?.id
+            )?.KittenPictureImage ?? []
           );
           if (currentWeekSelected) {
             if (
               !litter.LitterPictureWeek.find(
-                (week) => week.name === currentWeekSelected?.name,
+                (week) => week.name === currentWeekSelected?.name
               )
             ) {
               setCurrentWeekSelected(litter.LitterPictureWeek.at(-1) ?? null);
-              setTab(litter.LitterPictureWeek.at(-1)?.name ?? "");
+              setTab(litter.LitterPictureWeek.at(-1)?.name ?? '');
               setKittenImages(
-                litter.LitterPictureWeek.at(-1)?.KittenPictureImage ?? [],
+                litter.LitterPictureWeek.at(-1)?.KittenPictureImage ?? []
               );
-              setWeekTitle(litter.LitterPictureWeek.at(-1)?.title ?? "");
+              setWeekTitle(litter.LitterPictureWeek.at(-1)?.title ?? '');
             } else {
               setWeekTitle(
                 litter.LitterPictureWeek.find(
-                  (week) => week.name === currentWeekSelected?.name,
-                )?.title ?? "",
+                  (week) => week.name === currentWeekSelected?.name
+                )?.title ?? ''
               );
             }
           }
@@ -166,26 +166,26 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         initialData: litter,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
-      },
+      }
     );
 
   const { mutate: mutateSetWeekTitle, isLoading: isLoadingSetWeekTitle } =
     api.litter.setWeekTitle.useMutation({
       onSuccess: () => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
-          description: "Week title updated successfully.",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
+          description: 'Week title updated successfully.',
         });
         void refetchGetLitter();
       },
       onError: () => {
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
-            "Something went wrong while updating week title. Please try again",
+            'Something went wrong while updating week title. Please try again',
         });
         void refetchGetLitter();
       },
@@ -195,10 +195,10 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
     api.litter.addWeek.useMutation({
       onSuccess: (newWeek) => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
-          description: "Week added successfully.",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
+          description: 'Week added successfully.',
         });
         setIsAddWeeksOpen(false);
         void refetchGetLitter();
@@ -206,19 +206,19 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
         setCurrentWeekSelected(newWeek);
       },
       onError: (error) => {
-        if (error.shape?.data.code === "CONFLICT") {
+        if (error.shape?.data.code === 'CONFLICT') {
           toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Week already exists.",
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Week already exists.',
           });
           return;
         }
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
-            "Something went wrong while adding week. Please try again",
+            'Something went wrong while adding week. Please try again',
         });
         void refetchGetLitter();
       },
@@ -228,20 +228,20 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
     api.litter.deleteWeek.useMutation({
       onSuccess: () => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
-          description: "Week deleted successfully.",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
+          description: 'Week deleted successfully.',
         });
         setIsAddWeeksOpen(false);
         void refetchGetLitter();
       },
       onError: () => {
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
-            "Something went wrong while adding week. Please try again",
+            'Something went wrong while adding week. Please try again',
         });
         void refetchGetLitter();
       },
@@ -251,19 +251,19 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
     api.litter.addLitterImages.useMutation({
       onSuccess: () => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
-          description: "Kitten images added successfully.",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
+          description: 'Kitten images added successfully.',
         });
         void refetchGetLitter();
       },
       onError: () => {
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
-            "Something went wrong while adding images. Please try again",
+            'Something went wrong while adding images. Please try again',
         });
         void refetchGetLitter();
       },
@@ -286,27 +286,27 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
     ? isNaN(parseInt(currentWeekSelected.name))
       ? `Add photos to ${currentWeekSelected.name}`
       : `Add photos to week ${parseInt(currentWeekSelected.name)}`
-    : "";
+    : '';
 
   async function handleUpload() {
     if (!filesToUpload)
       return toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select images to upload.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select images to upload.',
       });
     if (!kittenSelectValue) {
       return toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select a kitten name.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select a kitten name.',
       });
     }
     if (!currentWeekSelected) {
       return toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select a week.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select a week.',
       });
     }
     const imageUrls = await uploadImages(filesToUpload, (i) => {
@@ -329,24 +329,24 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
   function handleSetWeekTitle() {
     if (!currentWeekSelected) {
       return toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select a week.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select a week.',
       });
     }
 
     if (!weekTitle) {
       return toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please enter a title.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please enter a title.',
       });
     }
     if (weekTitle === currentWeekSelected.title) {
       return toast({
-        variant: "default",
-        title: "Info",
-        description: "Title is the same as before.",
+        variant: 'default',
+        title: 'Info',
+        description: 'Title is the same as before.',
       });
     }
     mutateSetWeekTitle({
@@ -360,15 +360,15 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
     setTab(value);
     setCurrentWeekSelected(
       currentLitter.LitterPictureWeek.find((week) => week.name === value) ??
-        null,
+        null
     );
     setKittenImages(
       currentLitter.LitterPictureWeek.find((week) => week.name === value)
-        ?.KittenPictureImage ?? [],
+        ?.KittenPictureImage ?? []
     );
     setWeekTitle(
       currentLitter.LitterPictureWeek.find((week) => week.name === value)
-        ?.title ?? "",
+        ?.title ?? ''
     );
   }
 
@@ -387,7 +387,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                   setSelectedImages([]);
                   setSize(undefined);
                   setFilesToUpload(null);
-                  setKittenSelectValue("");
+                  setKittenSelectValue('');
                 }}
               >
                 <Button
@@ -424,7 +424,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                           files,
                           setFilesToUpload,
                           setSelectedImages,
-                          setSize,
+                          setSize
                         )
                       }
                     />
@@ -462,7 +462,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                           {currentLitter.Kitten.map((kitten) => (
                             <SelectItem key={kitten.id} value={kitten.name}>
                               <div className="flex items-center gap-2">
-                                {kitten.gender === "female" ? (
+                                {kitten.gender === 'female' ? (
                                   <IoMdFemale className="h-4 w-4 fill-pink-500" />
                                 ) : (
                                   <IoMdMale className="h-4 w-4 fill-blue-500" />
@@ -513,12 +513,12 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                     let weekNumber = 0;
                     if (currentLitter.LitterPictureWeek.length > 0) {
                       const lastWeekName =
-                        currentLitter.LitterPictureWeek.at(-1)?.name || "0";
+                        currentLitter.LitterPictureWeek.at(-1)?.name || '0';
                       const numberMatch = lastWeekName.match(/\d+/);
                       if (numberMatch) {
                         weekNumber = parseInt(numberMatch[0]) + 1;
                       } else {
-                        if (lastWeekName === "Newborn") {
+                        if (lastWeekName === 'Newborn') {
                           weekNumber = 1;
                         } else {
                           weekNumber =
@@ -587,12 +587,12 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
               </DialogContent>
             </Dialog>
             <Button
-              className={cn(isFetchingGetLitter && "bg-gray-700")}
+              className={cn(isFetchingGetLitter && 'bg-gray-700')}
               onClick={() => refetchGetLitter()}
               disabled={isFetchingGetLitter}
             >
               <RotateCcw
-                className={cn("h-5 w-5", isFetchingGetLitter && "animate-spin")}
+                className={cn('h-5 w-5', isFetchingGetLitter && 'animate-spin')}
               />
             </Button>
           </div>
@@ -600,15 +600,15 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
             <Tabs value={tab} onValueChange={onTabChange}>
               <TabsList className="mx-auto flex h-fit w-fit flex-wrap border">
                 {currentLitter.LitterPictureWeek.sort((a, b) => {
-                  if (a.name === "Newborn") return -1;
-                  if (b.name === "Newborn") return 1;
+                  if (a.name === 'Newborn') return -1;
+                  if (b.name === 'Newborn') return 1;
                   return parseInt(a.name) - parseInt(b.name);
                 }).map((week) => (
                   <TabsTrigger
                     className="px-4 py-2 text-base"
                     key={week.id}
                     value={week.name}
-                  >{`${week.name.replace("-", " ")}`}</TabsTrigger>
+                  >{`${week.name.replace('-', ' ')}`}</TabsTrigger>
                 ))}
               </TabsList>
               {currentLitter.LitterPictureWeek.map((week) => (
@@ -670,7 +670,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                       <Input
                         className="flex-1"
                         onKeyDown={(e) => {
-                          if (e.key === "Enter") {
+                          if (e.key === 'Enter') {
                             handleSetWeekTitle();
                           }
                         }}
@@ -690,7 +690,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                   </div>
                   <Card>
                     <CardHeader>
-                      <CardTitle>{week.name.replace("-", " ")}</CardTitle>
+                      <CardTitle>{week.name.replace('-', ' ')}</CardTitle>
                       <CardDescription>
                         {week.KittenPictureImage.length} total images
                       </CardDescription>
@@ -699,7 +699,7 @@ export default function EditCatImages({ litter }: EditLitterImagesProps) {
                       <section>
                         {Object.entries(groupedImages).map(([key, images]) => (
                           <div key={key}>
-                            {key !== "" && <BorderText text={key} />}
+                            {key !== '' && <BorderText text={key} />}
                             <ul className="mb-6 grid grid-cols-responsive justify-items-center gap-2 gap-y-4">
                               <AnimatePresence>
                                 {images.map((image) => (
@@ -741,19 +741,19 @@ function KittenImage({
     api.litter.deleteKittenImage.useMutation({
       onSuccess: () => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
-          description: "Image deleted successfully.",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
+          description: 'Image deleted successfully.',
         });
         refetchImages();
       },
       onError: () => {
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
-            "Something went wrong while deleting image. Please try again",
+            'Something went wrong while deleting image. Please try again',
         });
       },
     });
@@ -774,7 +774,7 @@ function KittenImage({
       <picture className="relative h-full w-full">
         <Image
           src={image.src}
-          alt={image.title ?? "Photo of kitten"}
+          alt={image.title ?? 'Photo of kitten'}
           placeholder="blur"
           blurDataURL={image.blururl}
           fill
@@ -811,7 +811,7 @@ function KittenImage({
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<EditLitterImagesProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -821,7 +821,7 @@ export async function getServerSideProps(
     };
   }
 
-  if (!ctx.query?.id || typeof ctx.query.id !== "string") {
+  if (!ctx.query?.id || typeof ctx.query.id !== 'string') {
     return {
       notFound: true,
     };

@@ -1,25 +1,25 @@
-import { Role, type BlogPost } from "@prisma/client";
-import { format } from "date-fns";
-import { AnimatePresence } from "framer-motion";
-import { useSession } from "next-auth/react";
-import Head from "next/head";
-import Image from "next/image";
-import type { GetStaticPropsContext, GetStaticPropsResult } from "next/types";
-import { useRef, useState } from "react";
-import AddImagesButton from "~/components/AddImagesButton";
-import Comment from "~/components/Comment";
-import CommentForm from "~/components/CommentForm";
-import CommentsIconButton from "~/components/CommentsIconButton";
-import EditIconButton from "~/components/EditIconButton";
-import Footer from "~/components/Footer";
-import ImageCarousel from "~/components/ImageCarousel";
-import LoginButton from "~/components/LoginButton";
-import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import Tag from "~/components/ui/Tag";
-import { IMAGE_QUALITY } from "~/lib/utils";
-import { db } from "~/server/db";
-import { api } from "~/utils/api";
-import type { BlogPostWithTagsAndImages } from "~/utils/types";
+import { Role, type BlogPost } from '@prisma/client';
+import { format } from 'date-fns';
+import { AnimatePresence } from 'framer-motion';
+import { useSession } from 'next-auth/react';
+import Head from 'next/head';
+import Image from 'next/image';
+import type { GetStaticPropsContext, GetStaticPropsResult } from 'next/types';
+import { useRef, useState } from 'react';
+import AddImagesButton from '~/components/AddImagesButton';
+import Comment from '~/components/Comment';
+import CommentForm from '~/components/CommentForm';
+import CommentsIconButton from '~/components/CommentsIconButton';
+import EditIconButton from '~/components/EditIconButton';
+import Footer from '~/components/Footer';
+import ImageCarousel from '~/components/ImageCarousel';
+import LoginButton from '~/components/LoginButton';
+import LoadingSpinner from '~/components/ui/LoadingSpinner';
+import Tag from '~/components/ui/Tag';
+import { IMAGE_QUALITY } from '~/lib/utils';
+import { db } from '~/server/db';
+import { api } from '~/utils/api';
+import type { BlogPostWithTagsAndImages } from '~/utils/types';
 
 type Props = {
   blogPost: BlogPostWithTagsAndImages;
@@ -35,7 +35,7 @@ function BlogPost({ blogPost }: Props) {
     refetch,
   } = api.comment.getComments.useQuery({
     id: blogPost.id,
-    commentType: "post_id",
+    commentType: 'post_id',
   });
   const commentsRef = useRef<HTMLDivElement>(null);
 
@@ -43,7 +43,7 @@ function BlogPost({ blogPost }: Props) {
     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
     return text.replace(
       linkRegex,
-      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">$1</a>',
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">$1</a>'
     );
   };
 
@@ -63,7 +63,7 @@ function BlogPost({ blogPost }: Props) {
           <h1 className="text-center text-xl sm:text-2xl">{blogPost.title}</h1>
           <div className="flex w-full items-center justify-center gap-2 border-b-2 border-t-zinc-100 text-[#777777]">
             <span className="text-sm">
-              {format(new Date(blogPost.post_date), "MMMM d, yyyy")}
+              {format(new Date(blogPost.post_date), 'MMMM d, yyyy')}
             </span>
             <span>•</span>
             <div className="flex items-center gap-0">
@@ -127,7 +127,7 @@ function BlogPost({ blogPost }: Props) {
                     fill
                     className="rounded-md object-cover object-center"
                     {...(img.blururl
-                      ? { placeholder: "blur", blurDataURL: img.blururl }
+                      ? { placeholder: 'blur', blurDataURL: img.blururl }
                       : {})}
                   />
                 </picture>
@@ -138,7 +138,7 @@ function BlogPost({ blogPost }: Props) {
         <div className="mb-4 w-full border-t border-zinc-200" />
         <div className="flex w-full flex-col gap-2 px-2" ref={commentsRef}>
           <h1 className="text-lg uppercase text-[#777777]">
-            {comments?.length ?? "0"} comments
+            {comments?.length ?? '0'} comments
           </h1>
           <div className="mt-2 flex max-w-2xl flex-col gap-6">
             <AnimatePresence>
@@ -204,7 +204,7 @@ export async function getStaticProps({
           blururl: true,
         },
         orderBy: {
-          priority: "asc",
+          priority: 'asc',
         },
       },
       tags: {
@@ -235,7 +235,7 @@ export async function getStaticPaths() {
     params: { id: blog.id.toString() },
   }));
 
-  return { paths, fallback: "blocking" };
+  return { paths, fallback: 'blocking' };
 }
 
 function PageHead({ blogPost }: { blogPost: BlogPost }) {
@@ -255,13 +255,13 @@ function PageHead({ blogPost }: { blogPost: BlogPost }) {
       <meta
         property="og:image"
         content={
-          blogPost.image_url ?? "/static/icons/cropped-socialicon-480x480.png"
+          blogPost.image_url ?? '/static/icons/cropped-socialicon-480x480.png'
         }
       />
       <meta property="og:image:alt" content="Blogpost post image" />
       <meta
         property="og:image:type"
-        content={blogPost.image_url ? ".jpg" : ".png"}
+        content={blogPost.image_url ? '.jpg' : '.png'}
       />
       {!blogPost.image_url && (
         <>

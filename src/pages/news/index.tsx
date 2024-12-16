@@ -1,10 +1,10 @@
-import Head from "next/head";
-import { type GetStaticPropsResult } from "next/types";
-import Footer from "~/components/Footer";
-import PaginationMenu from "~/components/PaginationMenu";
-import NewsCard from "~/components/ui/NewsCard";
-import { db } from "~/server/db";
-import type { BlogPostWithTags } from "~/utils/types";
+import Head from 'next/head';
+import { type GetStaticPropsResult } from 'next/types';
+import Footer from '~/components/Footer';
+import PaginationMenu from '~/components/PaginationMenu';
+import NewsCard from '~/components/ui/NewsCard';
+import { db } from '~/server/db';
+import type { BlogPostWithTags } from '~/utils/types';
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -60,14 +60,14 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
   const blogPostTotalCount = blogPostCount - 1;
 
   const totalPages = Math.ceil(
-    blogPostTotalCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
+    blogPostTotalCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE)
   );
 
   const blogPosts = await db.blogPost.findMany({
     take: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
     skip: 0,
     orderBy: {
-      post_date: "desc",
+      post_date: 'desc',
     },
     include: {
       tags: {

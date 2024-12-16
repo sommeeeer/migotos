@@ -1,13 +1,13 @@
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-} from "next/types";
-import { UAParser } from "ua-parser-js";
+} from 'next/types';
+import { UAParser } from 'ua-parser-js';
 
-import AdminLayout from "./AdminLayout";
-import StatsCard from "~/components/StatsCard";
-import { checkAdminSession } from "~/server/helpers";
-import { db } from "~/server/db";
+import AdminLayout from './AdminLayout';
+import StatsCard from '~/components/StatsCard';
+import { checkAdminSession } from '~/server/helpers';
+import { db } from '~/server/db';
 
 export type AdminProps = {
   counts: {
@@ -35,7 +35,7 @@ export default function Admin({ counts }: AdminProps) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<AdminProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -87,7 +87,7 @@ export async function getServerSideProps(
   };
 
   const mobileCount = visitors.filter((v) => {
-    return UAParser(v.ua).device.type === "mobile";
+    return UAParser(v.ua).device.type === 'mobile';
   }).length;
   const desktopCount = visitors.filter((v) => isDesktop(v.ua)).length;
 

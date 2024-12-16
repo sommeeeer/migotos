@@ -1,5 +1,5 @@
-import CatProfile from "~/components/CatProfile";
-import type { CatWithImage } from "~/pages/cats";
+import CatProfile from '~/components/CatProfile';
+import type { CatWithImage } from '~/pages/cats';
 
 interface CatsGridProps {
   cats: CatWithImage[];

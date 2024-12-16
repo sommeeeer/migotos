@@ -1,11 +1,11 @@
-import Head from "next/head";
-import type { GetStaticPropsResult } from "next/types";
-import { useState } from "react";
-import FilterLitters from "~/components/FilterLitters";
-import Footer from "~/components/Footer";
-import LitterProfile from "~/components/LitterProfile";
-import { db } from "~/server/db";
-import type { LitterWithTags } from "~/utils/types";
+import Head from 'next/head';
+import type { GetStaticPropsResult } from 'next/types';
+import { useState } from 'react';
+import FilterLitters from '~/components/FilterLitters';
+import Footer from '~/components/Footer';
+import LitterProfile from '~/components/LitterProfile';
+import { db } from '~/server/db';
+import type { LitterWithTags } from '~/utils/types';
 
 interface LittersProps {
   litters: LitterWithTags[];
@@ -18,12 +18,12 @@ function Litters({ litters, yearsArray }: LittersProps) {
 
   function filterByYear(year: number | string) {
     setCurrentFilter(year.toString());
-    if (year === "All") {
+    if (year === 'All') {
       setLittersValue(litters);
     } else {
       const filteredLitters = litters.filter(
         (litter) =>
-          new Date(litter.born).getFullYear().toString() === year.toString(),
+          new Date(litter.born).getFullYear().toString() === year.toString()
       );
       setLittersValue(filteredLitters);
     }
@@ -72,7 +72,7 @@ export async function getStaticProps(): Promise<
 > {
   const litters = await db.litter.findMany({
     orderBy: {
-      born: "desc",
+      born: 'desc',
     },
     include: {
       Tag: true,

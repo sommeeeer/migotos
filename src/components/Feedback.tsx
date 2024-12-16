@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 
-import { api } from "~/utils/api";
-import { useOnClickOutside } from "~/hooks/use-on-click-outside";
+import { api } from '~/utils/api';
+import { useOnClickOutside } from '~/hooks/use-on-click-outside';
 
 export default function Feedback() {
   const ref = useRef(null);
   const [open, setOpen] = useState(false);
-  const [formState, setFormState] = useState("idle");
-  const [feedback, setFeedback] = useState("");
+  const [formState, setFormState] = useState('idle');
+  const [feedback, setFeedback] = useState('');
 
   const { mutate, isLoading } = api.contact.feedback.useMutation();
 
@@ -18,10 +18,10 @@ export default function Feedback() {
   };
 
   const submit = useCallback(() => {
-    setFormState("loading");
+    setFormState('loading');
     mutate({ message: feedback });
     setTimeout(() => {
-      setFormState("success");
+      setFormState('success');
     }, 1500);
 
     setTimeout(() => {
@@ -31,22 +31,22 @@ export default function Feedback() {
 
   useEffect(() => {
     const handleKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         setOpen(false);
       }
 
       if (
         (event.ctrlKey || event.metaKey) &&
-        event.key === "Enter" &&
+        event.key === 'Enter' &&
         open &&
-        formState === "idle"
+        formState === 'idle'
       ) {
         submit();
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [open, formState, submit]);
 
   useOnClickOutside(ref, handleClickOutside);
@@ -57,8 +57,8 @@ export default function Feedback() {
         layoutId="wrapper"
         onClick={() => {
           setOpen(true);
-          setFormState("idle");
-          setFeedback("");
+          setFormState('idle');
+          setFeedback('');
         }}
         disabled={isLoading}
         key="button"
@@ -80,13 +80,13 @@ export default function Feedback() {
               aria-hidden
               className="absolute left-4 top-[17px] text-sm text-[#63635d] data-[feedback=true]:!opacity-0"
               layoutId="title"
-              data-success={formState === "success" ? "true" : "false"}
-              data-feedback={feedback ? "true" : "false"}
+              data-success={formState === 'success' ? 'true' : 'false'}
+              data-feedback={feedback ? 'true' : 'false'}
             >
               Feedback
             </motion.span>
 
-            {formState === "success" ? (
+            {formState === 'success' ? (
               <div
                 className="flex h-full flex-col items-center justify-center"
                 key="success"
@@ -205,7 +205,7 @@ export default function Feedback() {
                   </div>
 
                   <button
-                    disabled={formState === "loading"}
+                    disabled={formState === 'loading'}
                     type="submit"
                     className="feedback-submit-btn relative ml-auto flex h-6 w-[104px] items-center justify-center overflow-hidden rounded-[6px] text-xs font-semibold shadow-sm"
                   >
@@ -213,7 +213,7 @@ export default function Feedback() {
                       <motion.span
                         className="flex w-full items-center justify-center text-white"
                         transition={{
-                          type: "spring",
+                          type: 'spring',
                           duration: 0.3,
                           bounce: 0,
                         }}
@@ -222,7 +222,7 @@ export default function Feedback() {
                         exit={{ opacity: 0, y: 25 }}
                         key={formState}
                       >
-                        {formState === "loading" ? (
+                        {formState === 'loading' ? (
                           <Loader2
                             size={14}
                             className="animate-spin"

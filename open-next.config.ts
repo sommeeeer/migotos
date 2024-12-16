@@ -1,11 +1,11 @@
-import type { OpenNextConfig } from "open-next/types/open-next";
+import type { OpenNextConfig } from 'open-next/types/open-next';
 const config = {
   // buildCommand: "echo 'Skippinig next build'",
   default: {
     override: {
-      tagCache: "dynamodb-lite",
-      incrementalCache: "s3-lite",
-      queue: "sqs-lite",
+      tagCache: 'dynamodb-lite',
+      incrementalCache: 's3-lite',
+      queue: 'sqs-lite',
     },
   },
   dangerous: {

@@ -1,21 +1,21 @@
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
-} from "next/types";
-import CreateableSelect from "react-select/creatable";
-import { useRouter } from "next/router";
-import { format } from "date-fns";
-import type { Prisma } from "@prisma/client";
-import { AiFillEdit } from "react-icons/ai";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { addHours } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { type z } from "zod";
+} from 'next/types';
+import CreateableSelect from 'react-select/creatable';
+import { useRouter } from 'next/router';
+import { format } from 'date-fns';
+import type { Prisma } from '@prisma/client';
+import { AiFillEdit } from 'react-icons/ai';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { addHours } from 'date-fns';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { type z } from 'zod';
 
-import AdminLayout from "../../AdminLayout";
-import { db } from "~/server/db";
-import { Button } from "~/components/ui/button";
+import AdminLayout from '../../AdminLayout';
+import { db } from '~/server/db';
+import { Button } from '~/components/ui/button';
 import {
   Form,
   FormControl,
@@ -23,23 +23,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { Textarea } from '~/components/ui/textarea';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover";
-import { Calendar } from "~/components/ui/calendar";
-import { cn } from "~/lib/utils";
-import { catSchema } from "~/lib/validators/cat";
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import { toast } from "~/components/ui/use-toast";
-import { Checkbox } from "~/components/ui/checkbox";
-import { api } from "~/utils/api";
-import { checkAdminSession } from "~/server/helpers";
-import { ImageUpload } from "~/components/ImageUpload";
+} from '~/components/ui/popover';
+import { Calendar } from '~/components/ui/calendar';
+import { cn } from '~/lib/utils';
+import { catSchema } from '~/lib/validators/cat';
+import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
+import { toast } from '~/components/ui/use-toast';
+import { Checkbox } from '~/components/ui/checkbox';
+import { api } from '~/utils/api';
+import { checkAdminSession } from '~/server/helpers';
+import { ImageUpload } from '~/components/ImageUpload';
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -66,16 +66,16 @@ export default function EditCat({
       name: cat.name,
       stamnavn: cat.stamnavn,
       breeder: cat.breeder,
-      description: cat.description ?? "",
+      description: cat.description ?? '',
       father: cat.father,
       mother: cat.mother,
       gender: cat.gender,
       owner: cat.owner,
-      pedigreeurl: cat.pedigreeurl ?? "",
+      pedigreeurl: cat.pedigreeurl ?? '',
       nickname: cat.nickname,
       birth: cat.birth,
       fertile: cat.fertile,
-      image_url: cat.CatImage[0]?.src ?? "",
+      image_url: cat.CatImage[0]?.src ?? '',
     },
   });
 
@@ -84,19 +84,19 @@ export default function EditCat({
   const { mutate, isLoading } = api.cat.updateCat.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Cat updated successfully.",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
+        description: 'Cat updated successfully.',
       });
-      void router.push("/admin/cats");
+      void router.push('/admin/cats');
     },
     onError: (error) => {
       console.error(error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while updating. Please try again",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Something went wrong while updating. Please try again',
       });
     },
   });
@@ -104,8 +104,8 @@ export default function EditCat({
   function onSubmit(values: z.infer<typeof catSchema>) {
     if (!isDirty) {
       toast({
-        variant: "destructive",
-        description: "No changes detected.",
+        variant: 'destructive',
+        description: 'No changes detected.',
       });
       return;
     }
@@ -168,15 +168,15 @@ export default function EditCat({
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
+                          variant={'outline'}
                           disabled={isLoading}
                           className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
+                            'w-[240px] pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground'
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, 'PPP')
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -190,7 +190,7 @@ export default function EditCat({
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
+                          date > new Date() || date < new Date('1900-01-01')
                         }
                         initialFocus
                       />
@@ -402,7 +402,7 @@ export default function EditCat({
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<EditCatProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -412,7 +412,7 @@ export async function getServerSideProps(
     };
   }
 
-  if (!ctx.query?.id || typeof ctx.query.id !== "string") {
+  if (!ctx.query?.id || typeof ctx.query.id !== 'string') {
     return {
       notFound: true,
     };
@@ -439,10 +439,10 @@ export async function getServerSideProps(
         name: true,
       },
       where: {
-        gender: "Female",
+        gender: 'Female',
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     }),
     db.cat.findMany({
@@ -450,10 +450,10 @@ export async function getServerSideProps(
         name: true,
       },
       where: {
-        gender: "Male",
+        gender: 'Male',
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     }),
   ]);

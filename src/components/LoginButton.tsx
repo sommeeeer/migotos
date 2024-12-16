@@ -1,4 +1,4 @@
-import LoginModal from "./LoginModal";
+import LoginModal from './LoginModal';
 
 export default function LoginButton() {
   return (

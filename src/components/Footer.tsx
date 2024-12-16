@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { TfiAngleDoubleUp } from "react-icons/tfi";
-import { Button } from "./ui/button";
-import Link from "next/link";
-import { cn } from "~/lib/utils";
-import { BsFacebook, BsInstagram } from "react-icons/bs";
+import { useEffect, useState } from 'react';
+import { TfiAngleDoubleUp } from 'react-icons/tfi';
+import { Button } from './ui/button';
+import Link from 'next/link';
+import { cn } from '~/lib/utils';
+import { BsFacebook, BsInstagram } from 'react-icons/bs';
 
 export default function Footer() {
   const [showButton, setShowButton] = useState(false);
@@ -11,17 +11,17 @@ export default function Footer() {
     function handleScrollButtonVisibility() {
       window.scrollY > 300 ? setShowButton(true) : setShowButton(false);
     }
-    window.addEventListener("scroll", handleScrollButtonVisibility);
+    window.addEventListener('scroll', handleScrollButtonVisibility);
 
     return () => {
-      window.removeEventListener("scroll", handleScrollButtonVisibility);
+      window.removeEventListener('scroll', handleScrollButtonVisibility);
     };
   }, []);
   return (
     <footer
       className={cn(
-        "flex w-full max-w-3xl flex-col justify-center border-t-2 border-t-zinc-100 px-4",
-        !showButton && "mb-6",
+        'flex w-full max-w-3xl flex-col justify-center border-t-2 border-t-zinc-100 px-4',
+        !showButton && 'mb-6'
       )}
     >
       <div className="mt-8 flex flex-col items-center justify-between gap-12 text-center">
@@ -65,13 +65,13 @@ export default function Footer() {
             onClick={() => {
               window.scrollTo({
                 top: 0,
-                behavior: "smooth",
+                behavior: 'smooth',
               });
             }}
           >
             <div className="mb-6 flex items-center gap-2 text-hoverbg hover:text-zinc-400">
               <p className="text-base">Go to top</p>
-              <TfiAngleDoubleUp size={"2rem"} className="" />
+              <TfiAngleDoubleUp size={'2rem'} className="" />
             </div>
           </button>
         )}

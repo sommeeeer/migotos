@@ -1,20 +1,20 @@
-import { useRouter } from "next/router";
-import { FaCat } from "react-icons/fa";
-import CreateableSelect from "react-select/creatable";
-import { format } from "date-fns";
+import { useRouter } from 'next/router';
+import { FaCat } from 'react-icons/fa';
+import CreateableSelect from 'react-select/creatable';
+import { format } from 'date-fns';
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-} from "next/types";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { addHours } from "date-fns";
-import { type z } from "zod";
+} from 'next/types';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { addHours } from 'date-fns';
+import { type z } from 'zod';
 
-import { Calendar } from "~/components/ui/calendar";
-import { cn } from "~/lib/utils";
-import { Input } from "~/components/ui/input";
+import { Calendar } from '~/components/ui/calendar';
+import { cn } from '~/lib/utils';
+import { Input } from '~/components/ui/input';
 import {
   Form,
   FormControl,
@@ -22,23 +22,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Textarea } from "~/components/ui/textarea";
+} from '~/components/ui/form';
+import { Textarea } from '~/components/ui/textarea';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover";
-import { toast } from "~/components/ui/use-toast";
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
-import { Checkbox } from "~/components/ui/checkbox";
-import { catSchema } from "~/lib/validators/cat";
-import { api } from "~/utils/api";
-import { checkAdminSession } from "~/server/helpers";
-import { Button } from "~/components/ui/button";
-import AdminLayout from "../AdminLayout";
-import { db } from "~/server/db";
-import { ImageUpload } from "~/components/ImageUpload";
+} from '~/components/ui/popover';
+import { toast } from '~/components/ui/use-toast';
+import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
+import { Checkbox } from '~/components/ui/checkbox';
+import { catSchema } from '~/lib/validators/cat';
+import { api } from '~/utils/api';
+import { checkAdminSession } from '~/server/helpers';
+import { Button } from '~/components/ui/button';
+import AdminLayout from '../AdminLayout';
+import { db } from '~/server/db';
+import { ImageUpload } from '~/components/ImageUpload';
 
 interface NewCatProps {
   motherNames: { name: string }[];
@@ -50,16 +50,16 @@ export default function NewCat({ motherNames, fatherNames }: NewCatProps) {
   const form = useForm<z.infer<typeof catSchema>>({
     resolver: zodResolver(catSchema),
     defaultValues: {
-      name: "",
-      stamnavn: "",
-      breeder: "",
-      description: "",
-      father: "",
-      mother: "",
-      gender: "Female",
-      owner: "",
-      pedigreeurl: "",
-      nickname: "",
+      name: '',
+      stamnavn: '',
+      breeder: '',
+      description: '',
+      father: '',
+      mother: '',
+      gender: 'Female',
+      owner: '',
+      pedigreeurl: '',
+      nickname: '',
       birth: new Date(),
       fertile: false,
       image_url: undefined,
@@ -69,20 +69,20 @@ export default function NewCat({ motherNames, fatherNames }: NewCatProps) {
   const { mutate, isLoading } = api.cat.createCat.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Cat created successfully.",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
+        description: 'Cat created successfully.',
       });
-      void router.push("/admin/cats");
+      void router.push('/admin/cats');
     },
     onError: (error) => {
       console.error(error);
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
-          "Something went wrong while creating cat. Please try again",
+          'Something went wrong while creating cat. Please try again',
       });
     },
   });
@@ -144,15 +144,15 @@ export default function NewCat({ motherNames, fatherNames }: NewCatProps) {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
+                          variant={'outline'}
                           disabled={isLoading}
                           className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
+                            'w-[240px] pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground'
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, 'PPP')
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -166,7 +166,7 @@ export default function NewCat({ motherNames, fatherNames }: NewCatProps) {
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
+                          date > new Date() || date < new Date('1900-01-01')
                         }
                         initialFocus
                       />
@@ -377,7 +377,7 @@ export default function NewCat({ motherNames, fatherNames }: NewCatProps) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<NewCatProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -393,10 +393,10 @@ export async function getServerSideProps(
         name: true,
       },
       where: {
-        gender: "Female",
+        gender: 'Female',
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     }),
     db.cat.findMany({
@@ -404,10 +404,10 @@ export async function getServerSideProps(
         name: true,
       },
       where: {
-        gender: "Male",
+        gender: 'Male',
       },
       orderBy: {
-        name: "asc",
+        name: 'asc',
       },
     }),
   ]);

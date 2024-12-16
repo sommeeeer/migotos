@@ -1,9 +1,9 @@
-import { Loader2, X } from "lucide-react";
-import Image from "next/image";
-import { Input } from "./ui/input";
-import { useUploadImages } from "~/hooks/use-upload-images";
-import { cn } from "~/lib/utils";
-import { api } from "~/utils/api";
+import { Loader2, X } from 'lucide-react';
+import Image from 'next/image';
+import { Input } from './ui/input';
+import { useUploadImages } from '~/hooks/use-upload-images';
+import { cn } from '~/lib/utils';
+import { api } from '~/utils/api';
 
 interface ImageUploadProps {
   onChange: (url?: string) => void;
@@ -17,10 +17,10 @@ export function ImageUpload({ onChange, value, postImage }: ImageUploadProps) {
   const { mutate: deleteImage, isLoading: isDeleteImageLoading } =
     api.image.deleteImage.useMutation({
       onSuccess: () => {
-        onChange("");
+        onChange('');
       },
       onError: () => {
-        console.error("error deleting image");
+        console.error('error deleting image');
       },
     });
 
@@ -28,8 +28,8 @@ export function ImageUpload({ onChange, value, postImage }: ImageUploadProps) {
     return (
       <div
         className={cn(
-          "relative h-[200px] w-[200px] rounded-full",
-          postImage && "h-[200px] w-[338px] rounded-none",
+          'relative h-[200px] w-[200px] rounded-full',
+          postImage && 'h-[200px] w-[338px] rounded-none'
         )}
         title={value}
       >
@@ -38,8 +38,8 @@ export function ImageUpload({ onChange, value, postImage }: ImageUploadProps) {
           src={value}
           alt="Upload"
           className={cn(
-            "rounded-full",
-            postImage && "rounded-none object-cover",
+            'rounded-full',
+            postImage && 'rounded-none object-cover'
           )}
         />
         <button
@@ -50,8 +50,8 @@ export function ImageUpload({ onChange, value, postImage }: ImageUploadProps) {
           }
           disabled={isDeleteImageLoading}
           className={cn(
-            "absolute right-4 top-1 rounded-full bg-red-500 p-1 text-gray-600 shadow-sm transition duration-200 hover:scale-110 hover:bg-red-600",
-            postImage && "-right-4 -top-6",
+            'absolute right-4 top-1 rounded-full bg-red-500 p-1 text-gray-600 shadow-sm transition duration-200 hover:scale-110 hover:bg-red-600',
+            postImage && '-right-4 -top-6'
           )}
           type="button"
         >

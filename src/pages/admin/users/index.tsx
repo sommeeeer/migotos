@@ -1,10 +1,10 @@
-import { type Prisma, Role } from "@prisma/client";
-import AdminLayout from "../AdminLayout";
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { db } from "~/server/db";
-import { format } from "date-fns";
-import { AiFillDelete } from "react-icons/ai";
-import { RiAdminFill } from "react-icons/ri";
+import { type Prisma, Role } from '@prisma/client';
+import AdminLayout from '../AdminLayout';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import { db } from '~/server/db';
+import { format } from 'date-fns';
+import { AiFillDelete } from 'react-icons/ai';
+import { RiAdminFill } from 'react-icons/ri';
 
 import {
   Table,
@@ -14,7 +14,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
+} from '~/components/ui/table';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,16 +25,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { api } from "~/utils/api";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import clsx from "clsx";
-import { FaComments } from "react-icons/fa";
-import Link from "next/link";
-import { cn } from "~/lib/utils";
-import { checkAdminSession } from "~/server/helpers";
-import { toast } from "~/components/ui/use-toast";
+} from '~/components/ui/alert-dialog';
+import { api } from '~/utils/api';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import clsx from 'clsx';
+import { FaComments } from 'react-icons/fa';
+import Link from 'next/link';
+import { cn } from '~/lib/utils';
+import { checkAdminSession } from '~/server/helpers';
+import { toast } from '~/components/ui/use-toast';
 
 type UserWithComment = Prisma.UserGetPayload<{
   include: {
@@ -54,10 +54,10 @@ export default function Users({ users }: UsersProps) {
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
-          "Something went wrong while deleting user. Please try again.",
+          'Something went wrong while deleting user. Please try again.',
       });
     },
   });
@@ -67,9 +67,9 @@ export default function Users({ users }: UsersProps) {
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Error while trying to give admin to user",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Error while trying to give admin to user',
       });
     },
   });
@@ -109,7 +109,7 @@ export default function Users({ users }: UsersProps) {
                 <TableCell>{user.id}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.emailVerified ? "Yes" : "No"}</TableCell>
+                <TableCell>{user.emailVerified ? 'Yes' : 'No'}</TableCell>
                 <TableCell>
                   {user.image && (
                     <Image
@@ -124,7 +124,7 @@ export default function Users({ users }: UsersProps) {
                 <TableCell>{user.role}</TableCell>
                 <TableCell>{user.comments.length}</TableCell>
                 <TableCell>
-                  {format(user.createdAt, "dd.MM.yyyy HH:mm:ss")}
+                  {format(user.createdAt, 'dd.MM.yyyy HH:mm:ss')}
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
@@ -161,9 +161,9 @@ export default function Users({ users }: UsersProps) {
                         <button>
                           <RiAdminFill
                             className={cn(
-                              "h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600",
+                              'h-8 w-8 transition-colors duration-200 hover:scale-105 hover:text-zinc-600',
                               user.role === Role.ADMIN &&
-                                "fill-gray-500 hover:fill-red-500",
+                                'fill-gray-500 hover:fill-red-500'
                             )}
                           />
                         </button>
@@ -184,12 +184,12 @@ export default function Users({ users }: UsersProps) {
                           <AlertDialogAction
                             className={clsx(
                               user.role === Role.ADMIN
-                                ? "bg-red-500 hover:bg-red-600"
-                                : "bg-lime-500 hover:bg-lime-400",
+                                ? 'bg-red-500 hover:bg-red-600'
+                                : 'bg-lime-500 hover:bg-lime-400'
                             )}
                             onClick={() => toggleAdminUser(user.id)}
                           >
-                            {user.role === Role.ADMIN ? "Remove" : "Give"}
+                            {user.role === Role.ADMIN ? 'Remove' : 'Give'}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -209,7 +209,7 @@ export default function Users({ users }: UsersProps) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<UsersProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -221,7 +221,7 @@ export async function getServerSideProps(
 
   const users = await db.user.findMany({
     orderBy: {
-      role: "desc",
+      role: 'desc',
     },
     include: {
       comments: true,

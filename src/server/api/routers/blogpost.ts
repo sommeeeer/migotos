@@ -1,14 +1,14 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { blogPostSchema } from "~/lib/validators/blogpost";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+import { blogPostSchema } from '~/lib/validators/blogpost';
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { db } from "~/server/db";
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { db } from '~/server/db';
 import {
   deleteImages,
   getImageDimensions,
   revalidateAndInvalidate,
-} from "~/server/helpers";
+} from '~/server/helpers';
 
 export const blogpostRouter = createTRPCRouter({
   createBlogPost: protectedProcedure
@@ -45,24 +45,24 @@ export const blogpostRouter = createTRPCRouter({
           },
         });
         try {
-          await ctx.res.revalidate("/");
+          await ctx.res.revalidate('/');
         } catch (err) {
-          console.error("[RES_VALIDATE_ERROR_CREATE_BLOGPOST]: ", err);
+          console.error('[RES_VALIDATE_ERROR_CREATE_BLOGPOST]: ', err);
         }
         await revalidateAndInvalidate(
           ctx.res,
-          ["/", "/news"].concat(
+          ['/', '/news'].concat(
             blogpost.tags.map(
-              (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`,
-            ),
-          ),
+              (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`
+            )
+          )
         );
         return blogpost;
       } catch (err) {
         console.error(err);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong',
         });
       }
     }),
@@ -84,8 +84,8 @@ export const blogpostRouter = createTRPCRouter({
         });
         if (!blogpost) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Blogpost not found",
+            code: 'NOT_FOUND',
+            message: 'Blogpost not found',
           });
         }
         const deletedBlogPost = await db.blogPost.delete({
@@ -97,24 +97,24 @@ export const blogpostRouter = createTRPCRouter({
           await deleteImages([blogpost.image_url]);
         }
         try {
-          await ctx.res.revalidate("/");
+          await ctx.res.revalidate('/');
         } catch (err) {
-          console.error("[RES_VALIDATE_ERROR_DELETE_BLOGPOST]: ", err);
+          console.error('[RES_VALIDATE_ERROR_DELETE_BLOGPOST]: ', err);
         }
         await revalidateAndInvalidate(
           ctx.res,
-          ["/", "/news"].concat(
+          ['/', '/news'].concat(
             blogpost.tags.map(
-              (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`,
-            ),
-          ),
+              (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`
+            )
+          )
         );
         return deletedBlogPost;
       } catch (err) {
         console.error(err);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong',
         });
       }
     }),
@@ -129,8 +129,8 @@ export const blogpostRouter = createTRPCRouter({
         });
         if (!blogpost) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Blogpost not found",
+            code: 'NOT_FOUND',
+            message: 'Blogpost not found',
           });
         }
 
@@ -155,14 +155,12 @@ export const blogpostRouter = createTRPCRouter({
 
         // find tags to delete and create
         const tagsToDelete = updatedBlogPost.tags.filter(
-          (tag) => !input.tags.some((t) => t.value === tag.blogposttag.value),
+          (tag) => !input.tags.some((t) => t.value === tag.blogposttag.value)
         );
 
         const tagsToCreate = input.tags.filter(
           (tag) =>
-            !updatedBlogPost.tags.some(
-              (t) => t.blogposttag.value === tag.value,
-            ),
+            !updatedBlogPost.tags.some((t) => t.blogposttag.value === tag.value)
         );
 
         await Promise.all(
@@ -174,8 +172,8 @@ export const blogpostRouter = createTRPCRouter({
                   blogposttag_id: tag.blogposttag.id,
                 },
               },
-            }),
-          ),
+            })
+          )
         );
 
         await Promise.all(
@@ -198,24 +196,24 @@ export const blogpostRouter = createTRPCRouter({
                   },
                 },
               },
-            }),
-          ),
+            })
+          )
         );
 
         await revalidateAndInvalidate(
           ctx.res,
-          ["/", "/news"].concat(
+          ['/', '/news'].concat(
             updatedBlogPost.tags.map(
-              (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`,
-            ),
-          ),
+              (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`
+            )
+          )
         );
         return updatedBlogPost;
       } catch (err) {
         console.error(err);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong',
         });
       }
     }),
@@ -231,15 +229,15 @@ export const blogpostRouter = createTRPCRouter({
             },
           },
           orderBy: {
-            priority: "asc",
+            priority: 'asc',
           },
         });
         return blogPostImages;
       } catch (err) {
         console.error(err);
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -248,7 +246,7 @@ export const blogpostRouter = createTRPCRouter({
       z.object({
         blogpost_id: z.number(),
         order: z.array(z.object({ id: z.number(), priority: z.number() })),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -264,7 +262,7 @@ export const blogpostRouter = createTRPCRouter({
               },
             });
             return updatedBlogImage;
-          }),
+          })
         );
         const cat = await db.blogPost.findFirst({
           where: {
@@ -273,8 +271,8 @@ export const blogpostRouter = createTRPCRouter({
         });
         if (!cat) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "BLogpost not found",
+            code: 'NOT_FOUND',
+            message: 'BLogpost not found',
           });
         }
         await revalidateAndInvalidate(ctx.res, [`/news/${cat.id}`]);
@@ -285,14 +283,14 @@ export const blogpostRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
   addBlogPostImages: protectedProcedure
     .input(
-      z.object({ blogpost_id: z.number(), imageUrls: z.array(z.string()) }),
+      z.object({ blogpost_id: z.number(), imageUrls: z.array(z.string()) })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -301,7 +299,7 @@ export const blogpostRouter = createTRPCRouter({
             blogpost_id: input.blogpost_id,
           },
           orderBy: {
-            priority: "desc",
+            priority: 'desc',
           },
           take: 1,
         });
@@ -312,10 +310,10 @@ export const blogpostRouter = createTRPCRouter({
             newPriority = newPriority + 1;
             const dimensions = await getImageDimensions(image);
             if (!dimensions) {
-              console.error("Error getting image dimensions");
+              console.error('Error getting image dimensions');
               throw new TRPCError({
-                code: "BAD_REQUEST",
-                message: "Invalid request",
+                code: 'BAD_REQUEST',
+                message: 'Invalid request',
               });
             }
             const newBlogPostImage = await db.blogPostImage.create({
@@ -328,7 +326,7 @@ export const blogpostRouter = createTRPCRouter({
               },
             });
             return newBlogPostImage;
-          }),
+          })
         );
         const blogpost = await db.blogPost.findFirst({
           where: {
@@ -340,8 +338,8 @@ export const blogpostRouter = createTRPCRouter({
         });
         if (!blogpost) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Blogpost not found",
+            code: 'NOT_FOUND',
+            message: 'Blogpost not found',
           });
         }
         await revalidateAndInvalidate(ctx.res, [`/news/${blogpost.id}`]);
@@ -352,8 +350,8 @@ export const blogpostRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -373,13 +371,13 @@ export const blogpostRouter = createTRPCRouter({
         });
         if (!blogpost) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Blogpost not found",
+            code: 'NOT_FOUND',
+            message: 'Blogpost not found',
           });
         }
         await deleteImages([
           decodeURI(
-            deletedBlogPostImage.src.replace("https://cdn.migotos.com/", ""),
+            deletedBlogPostImage.src.replace('https://cdn.migotos.com/', '')
           ),
         ]);
         await revalidateAndInvalidate(ctx.res, [`/news/${blogpost.id}`]);
@@ -390,8 +388,8 @@ export const blogpostRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),

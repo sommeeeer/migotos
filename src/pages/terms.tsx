@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
-import Head from "next/head";
-import Footer from "~/components/Footer";
+import Head from 'next/head';
+import Footer from '~/components/Footer';
 
 export default function TermsOfService() {
   return (

@@ -1,4 +1,4 @@
-import YearButton from "./ui/YearButton";
+import YearButton from './ui/YearButton';
 
 interface FilterLittersProps {
   years: number[];
@@ -13,10 +13,10 @@ export default function FilterLitters({
 }: FilterLittersProps) {
   return (
     <div className="mb-6 mt-4 flex flex-wrap gap-x-5 gap-y-3 px-6 font-normal">
-      {["All", ...years].map((year) => (
+      {['All', ...years].map((year) => (
         <YearButton
           className={
-            currentYear === String(year) ? "font-semibold text-hoverbg" : ""
+            currentYear === String(year) ? 'font-semibold text-hoverbg' : ''
           }
           key={year}
           year={year}

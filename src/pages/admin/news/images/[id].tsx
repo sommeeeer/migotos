@@ -6,32 +6,32 @@ import {
   useSensor,
   useSensors,
   type DragEndEvent,
-} from "@dnd-kit/core";
+} from '@dnd-kit/core';
 import {
   arrayMove,
   rectSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import type { BlogPostImage, Prisma } from "@prisma/client";
-import { AnimatePresence, motion } from "framer-motion";
-import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from "lucide-react";
-import Image from "next/image";
-import { useId, useState } from "react";
-import { AiFillDelete } from "react-icons/ai";
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import type { BlogPostImage, Prisma } from '@prisma/client';
+import { AnimatePresence, motion } from 'framer-motion';
+import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from 'lucide-react';
+import Image from 'next/image';
+import { useId, useState } from 'react';
+import { AiFillDelete } from 'react-icons/ai';
 
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
-} from "next/types";
-import { Button } from "~/components/ui/button";
-import { db } from "~/server/db";
-import { checkAdminSession } from "~/server/helpers";
-import AdminLayout from "../../AdminLayout";
+} from 'next/types';
+import { Button } from '~/components/ui/button';
+import { db } from '~/server/db';
+import { checkAdminSession } from '~/server/helpers';
+import AdminLayout from '../../AdminLayout';
 
-import ImageDropzone from "~/components/ImageDropzone";
+import ImageDropzone from '~/components/ImageDropzone';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,7 +42,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
+} from '~/components/ui/alert-dialog';
 import {
   Dialog,
   DialogClose,
@@ -52,15 +52,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
-import { Label } from "~/components/ui/label";
-import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { Progress } from "~/components/ui/progress";
-import { toast } from "~/components/ui/use-toast";
-import { useUploadImages } from "~/hooks/use-upload-images";
-import { cn } from "~/lib/utils";
-import { api } from "~/utils/api";
-import { bytesToMB, handleImageChange } from "~/utils/helpers";
+} from '~/components/ui/dialog';
+import { Label } from '~/components/ui/label';
+import LoadingSpinner from '~/components/ui/LoadingSpinner';
+import { Progress } from '~/components/ui/progress';
+import { toast } from '~/components/ui/use-toast';
+import { useUploadImages } from '~/hooks/use-upload-images';
+import { cn } from '~/lib/utils';
+import { api } from '~/utils/api';
+import { bytesToMB, handleImageChange } from '~/utils/helpers';
 
 type BlogPostWithImage = Prisma.BlogPostGetPayload<{
   include: {
@@ -88,7 +88,7 @@ export default function EditBlogImages({ blogpost }: EditBlogImagesProps) {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   const { isLoading, isFetching, isError, refetch } =
@@ -102,7 +102,7 @@ export default function EditBlogImages({ blogpost }: EditBlogImagesProps) {
         },
         initialData: blogpost.images,
         refetchOnMount: false,
-      },
+      }
     );
 
   const id = useId();
@@ -111,19 +111,19 @@ export default function EditBlogImages({ blogpost }: EditBlogImagesProps) {
     api.blogpost.updateBlogPostImagesOrder.useMutation({
       onSuccess: () => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
-          description: "Blogpost images order updated successfully.",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
+          description: 'Blogpost images order updated successfully.',
         });
         void refetch();
       },
       onError: () => {
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
-            "Something went wrong while updating image order. Please try again",
+            'Something went wrong while updating image order. Please try again',
         });
         void refetch();
       },
@@ -132,21 +132,21 @@ export default function EditBlogImages({ blogpost }: EditBlogImagesProps) {
     api.blogpost.addBlogPostImages.useMutation({
       onSuccess: () => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
           description:
-            "Blogpost images succesfully uploaded and added to the database.",
+            'Blogpost images succesfully uploaded and added to the database.',
         });
         void refetch();
         setProgressValue(0);
       },
       onError: () => {
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
-            "Something went wrong while adding images to the database. Please try again",
+            'Something went wrong while adding images to the database. Please try again',
         });
         void refetch();
       },
@@ -181,9 +181,9 @@ export default function EditBlogImages({ blogpost }: EditBlogImagesProps) {
   async function handleUpload() {
     if (!filesToUpload)
       return toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select images to upload.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select images to upload.',
       });
     const imageUrls = await uploadImages(filesToUpload, (i) => {
       const progress = (i / filesToUpload.length) * 100;
@@ -272,7 +272,7 @@ export default function EditBlogImages({ blogpost }: EditBlogImagesProps) {
                           files,
                           setFilesToUpload,
                           setSelectedImages,
-                          setSize,
+                          setSize
                         )
                       }
                     />
@@ -320,12 +320,12 @@ export default function EditBlogImages({ blogpost }: EditBlogImagesProps) {
               </DialogContent>
             </Dialog>
             <Button
-              className={cn(isFetching && "bg-primary/80")}
+              className={cn(isFetching && 'bg-primary/80')}
               onClick={() => refetch()}
               disabled={isFetching}
             >
               <RotateCcw
-                className={cn("h-5 w-5", isFetching && "animate-spin")}
+                className={cn('h-5 w-5', isFetching && 'animate-spin')}
               />
             </Button>
           </div>
@@ -397,19 +397,19 @@ function SortableItem({
     api.blogpost.deleteBlogPostImage.useMutation({
       onSuccess: () => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
-          description: "Image deleted successfully.",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
+          description: 'Image deleted successfully.',
         });
         refetchImages();
       },
       onError: () => {
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
-            "Something went wrong while deleting image. Please try again",
+            'Something went wrong while deleting image. Please try again',
         });
       },
     });
@@ -477,7 +477,7 @@ function SortableItem({
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<
   GetServerSidePropsResult<{
     blogpost: BlogPostWithImage;
@@ -491,7 +491,7 @@ export async function getServerSideProps(
     };
   }
 
-  if (!ctx.query?.id || typeof ctx.query.id !== "string") {
+  if (!ctx.query?.id || typeof ctx.query.id !== 'string') {
     return {
       notFound: true,
     };
@@ -509,7 +509,7 @@ export async function getServerSideProps(
           },
         },
         orderBy: {
-          priority: "asc",
+          priority: 'asc',
         },
       },
     },

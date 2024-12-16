@@ -1,19 +1,19 @@
-import Footer from "~/components/Footer";
-import TextareaAutosize from "react-textarea-autosize";
-import { contactSchema } from "~/lib/validators/contact";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import { api } from "~/utils/api";
-import type { z } from "zod";
-import { useEffect, useState } from "react";
-import clsx from "clsx";
-import { BiCheck, BiError } from "react-icons/bi";
-import { BsFacebook, BsInstagram } from "react-icons/bs";
-import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import ErrorParagraph from "~/components/ui/ErrorParagraph";
-import Head from "next/head";
+import Footer from '~/components/Footer';
+import TextareaAutosize from 'react-textarea-autosize';
+import { contactSchema } from '~/lib/validators/contact';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { type SubmitHandler, useForm } from 'react-hook-form';
+import { api } from '~/utils/api';
+import type { z } from 'zod';
+import { useEffect, useState } from 'react';
+import clsx from 'clsx';
+import { BiCheck, BiError } from 'react-icons/bi';
+import { BsFacebook, BsInstagram } from 'react-icons/bs';
+import LoadingSpinner from '~/components/ui/LoadingSpinner';
+import ErrorParagraph from '~/components/ui/ErrorParagraph';
+import Head from 'next/head';
 
-type StatusType = "" | "sent" | "error";
+type StatusType = '' | 'sent' | 'error';
 
 export default function Contact() {
   const {
@@ -24,26 +24,26 @@ export default function Contact() {
   } = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
   });
-  const [status, setStatus] = useState<StatusType>("");
+  const [status, setStatus] = useState<StatusType>('');
   const { mutate, isLoading } = api.contact.hello.useMutation({
     onSuccess(data) {
       if (data.success) {
         window.scrollTo(0, 0);
-        setStatus("sent");
+        setStatus('sent');
         reset();
       } else {
-        setStatus("error");
+        setStatus('error');
       }
     },
     onError() {
-      setStatus("error");
+      setStatus('error');
     },
   });
 
   useEffect(() => {
-    if (status !== "") {
+    if (status !== '') {
       const timeout = setTimeout(() => {
-        setStatus("");
+        setStatus('');
       }, 7500);
       return () => clearTimeout(timeout);
     }
@@ -74,7 +74,7 @@ export default function Contact() {
             >
               <input
                 className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-                {...register("name")}
+                {...register('name')}
                 autoComplete="name"
                 placeholder="Name"
               />
@@ -83,7 +83,7 @@ export default function Contact() {
               )}
               <input
                 className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-                {...register("email")}
+                {...register('email')}
                 placeholder="Email"
                 autoComplete="email"
               />
@@ -92,7 +92,7 @@ export default function Contact() {
               )}
               <input
                 className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-                {...register("subject")}
+                {...register('subject')}
                 placeholder="Subject"
               />
               {errors.subject?.message && (
@@ -101,7 +101,7 @@ export default function Contact() {
 
               <TextareaAutosize
                 className="h-14 rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-                {...register("message")}
+                {...register('message')}
                 placeholder="Message"
                 minRows={4}
               />
@@ -120,7 +120,7 @@ export default function Contact() {
                     Loading...
                   </>
                 ) : (
-                  "Send Message"
+                  'Send Message'
                 )}
               </button>
             </form>
@@ -134,18 +134,18 @@ export default function Contact() {
 }
 
 function StatusMessage({ status }: { status: StatusType }) {
-  if (status === "") return null;
+  if (status === '') return null;
 
-  const sent = status === "sent";
-  const error = status === "error";
+  const sent = status === 'sent';
+  const error = status === 'error';
 
   let statusMessage;
   if (sent) {
-    statusMessage = "Message sent!\nYou will hear from us soon.";
+    statusMessage = 'Message sent!\nYou will hear from us soon.';
   }
 
   if (error) {
-    statusMessage = "Error sending message. Please try again.";
+    statusMessage = 'Error sending message. Please try again.';
   }
 
   return (
@@ -154,8 +154,8 @@ function StatusMessage({ status }: { status: StatusType }) {
       {sent && <BiCheck className="h-10 w-10 fill-green-600" />}
       <p
         className={clsx(
-          "text-center text-lg text-green-600",
-          sent ? "whitespace-break-spaces text-green-600" : "text-red-600",
+          'text-center text-lg text-green-600',
+          sent ? 'whitespace-break-spaces text-green-600' : 'text-red-600'
         )}
       >
         {statusMessage}
@@ -188,13 +188,13 @@ function ContactInfo() {
       </div>
       <div className="flex flex-col gap-1">
         <h3 className="text-xl text-[#7d7d7d]">EMAIL</h3>
-        <a className="hover:text-zinc-400" href={"mailto:eva@migotos.com"}>
+        <a className="hover:text-zinc-400" href={'mailto:eva@migotos.com'}>
           eva@migotos.com
         </a>
       </div>
       <div className="flex flex-col gap-1">
         <h3 className="text-xl text-[#7d7d7d]">TELEPHONE NUMBER</h3>
-        <a className="hover:text-zinc-400" href={"tel:+4797689786"}>
+        <a className="hover:text-zinc-400" href={'tel:+4797689786'}>
           +47 97 68 97 86
         </a>
       </div>

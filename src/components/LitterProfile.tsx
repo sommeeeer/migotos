@@ -1,9 +1,9 @@
-import Link from "next/link";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { cn } from "~/lib/utils";
-import { FaArrowRight } from "react-icons/fa";
-import { formatDate } from "~/utils/helpers";
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { cn } from '~/lib/utils';
+import { FaArrowRight } from 'react-icons/fa';
+import { formatDate } from '~/utils/helpers';
 
 interface LitterProfileProps {
   id: number;
@@ -29,15 +29,15 @@ export default function LitterProfile({
   return (
     <motion.div
       className={cn(
-        "relative flex h-[216px] w-[352px] flex-col overflow-hidden rounded-md bg-zinc-400 shadow-md",
-        className,
+        'relative flex h-[216px] w-[352px] flex-col overflow-hidden rounded-md bg-zinc-400 shadow-md',
+        className
       )}
       initial={{ opacity: 0, scale: 0.2 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
       layout
     >
-      <Link href={`kittens/${slug}`} style={{ height: "100%" }}>
+      <Link href={`kittens/${slug}`} style={{ height: '100%' }}>
         <FaArrowRight className="absolute right-0 top-0 z-10 m-4 text-3xl text-white" />
         {post_image && (
           <Image
@@ -46,12 +46,12 @@ export default function LitterProfile({
             alt={name}
             width={650}
             height={400}
-            style={{ height: "100%", objectFit: "cover" }}
+            style={{ height: '100%', objectFit: 'cover' }}
           />
         )}
         {!frontPage && (
           <div className="absolute bottom-0 z-10 p-4 font-playfair uppercase tracking-wider text-white">
-            <h3 className="text-sm">{tags.join(", ")}</h3>
+            <h3 className="text-sm">{tags.join(', ')}</h3>
             <h1 className="text-lg">{name}</h1>
           </div>
         )}

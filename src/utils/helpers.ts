@@ -1,20 +1,19 @@
-
-import { parseISO, format } from "date-fns";
-import crypto from "crypto";
-import type { Dispatch, SetStateAction } from "react";
+import { parseISO, format } from 'date-fns';
+import crypto from 'crypto';
+import type { Dispatch, SetStateAction } from 'react';
 
 export function formatDate(inputDate: string) {
   const date = parseISO(inputDate);
-  const day = format(date, "do");
-  const monthYear = format(date, "MMMM yyyy");
+  const day = format(date, 'do');
+  const monthYear = format(date, 'MMMM yyyy');
   const formattedDay = day;
   return `born ${formattedDay} of ${monthYear}`;
 }
 
 export function findName(name: string) {
   return name
-    .replaceAll(",", "")
-    .split(" ")
+    .replaceAll(',', '')
+    .split(' ')
     .filter((w) => {
       if (w.length > 3 && /^[a-zA-Z]+$/.test(w)) {
         return w;
@@ -30,20 +29,20 @@ export async function uploadS3(file: File, uploadUrl: string) {
   try {
     const image = await fetch(uploadUrl, {
       body: file,
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": file.type,
-        "Content-Disposition": `attachment; filename="${file.name}"`,
+        'Content-Type': file.type,
+        'Content-Disposition': `attachment; filename="${file.name}"`,
       },
     });
     return image.url
-      .split("?")[0]
+      .split('?')[0]
       ?.replace(
-        "https://s3.eu-north-1.amazonaws.com/images.migotos.com/",
-        "https://cdn.migotos.com/",
+        'https://s3.eu-north-1.amazonaws.com/images.migotos.com/',
+        'https://cdn.migotos.com/'
       );
   } catch (error) {
-    throw new Error("Error uploading image");
+    throw new Error('Error uploading image');
   }
 }
 
@@ -53,15 +52,15 @@ export function bytesToMB(bytes: number) {
 
 export function createGravatarURL(
   email: string | undefined,
-  size = 32,
+  size = 32
 ): string {
   if (!email) {
     return `https://www.gravatar.com/avatar/?d=mp&size=${size}`;
   }
   const hash = crypto
-    .createHash("md5")
+    .createHash('md5')
     .update(email.trim().toLowerCase())
-    .digest("hex");
+    .digest('hex');
   return `https://www.gravatar.com/avatar/${hash}?d=identicon&size=${size}`;
 }
 
@@ -73,13 +72,13 @@ export function handleImageChange(
   files: File[],
   setFilesToUpload: Dispatch<SetStateAction<File[] | undefined | null>>,
   setSelectedImages: Dispatch<SetStateAction<string[]>>,
-  setSize: Dispatch<SetStateAction<number | undefined>>,
+  setSize: Dispatch<SetStateAction<number | undefined>>
 ) {
   const imagesArray: string[] = [];
 
   if (files) {
     for (const file of files) {
-      if (file.type.startsWith("image/")) {
+      if (file.type.startsWith('image/')) {
         imagesArray.push(URL.createObjectURL(file));
       }
     }

@@ -1,11 +1,11 @@
-import { type ContactMessage } from "@prisma/client";
-import AdminLayout from "../AdminLayout";
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { db } from "~/server/db";
-import { format } from "date-fns";
-import { BiMessageAltDetail } from "react-icons/bi";
-import { AiFillDelete, AiOutlineMail } from "react-icons/ai";
-import { BiTime } from "react-icons/bi";
+import { type ContactMessage } from '@prisma/client';
+import AdminLayout from '../AdminLayout';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import { db } from '~/server/db';
+import { format } from 'date-fns';
+import { BiMessageAltDetail } from 'react-icons/bi';
+import { AiFillDelete, AiOutlineMail } from 'react-icons/ai';
+import { BiTime } from 'react-icons/bi';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
+} from '~/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -22,7 +22,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
+} from '~/components/ui/table';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,14 +33,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { api } from "~/utils/api";
-import { checkAdminSession } from "~/server/helpers";
-import { Button } from "~/components/ui/button";
-import { toast } from "~/components/ui/use-toast";
-import { useState } from "react";
-import { cn } from "~/lib/utils";
-import { Inbox, MailCheck, MailOpen, RotateCcw, Trash2 } from "lucide-react";
+} from '~/components/ui/alert-dialog';
+import { api } from '~/utils/api';
+import { checkAdminSession } from '~/server/helpers';
+import { Button } from '~/components/ui/button';
+import { toast } from '~/components/ui/use-toast';
+import { useState } from 'react';
+import { cn } from '~/lib/utils';
+import { Inbox, MailCheck, MailOpen, RotateCcw, Trash2 } from 'lucide-react';
 
 type MessagesProps = {
   initialMessages: ContactMessage[];
@@ -59,36 +59,36 @@ export default function Messages({ initialMessages }: MessagesProps) {
   const { mutate: mutateDeleteOne } = api.contact.delete.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Message deleted successfully.",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
+        description: 'Message deleted successfully.',
       });
       void refetch();
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Error while trying to delete message.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Error while trying to delete message.',
       });
     },
   });
   const { mutate: mutateDeleteAll } = api.contact.deleteAll.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Messages deleted successfully.",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
+        description: 'Messages deleted successfully.',
       });
       void refetch();
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while deleting all messages.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Something went wrong while deleting all messages.',
       });
     },
   });
@@ -145,12 +145,12 @@ export default function Messages({ initialMessages }: MessagesProps) {
             </AlertDialogContent>
           </AlertDialog>
           <Button
-            className={cn(isFetching && "bg-gray-700")}
+            className={cn(isFetching && 'bg-gray-700')}
             onClick={() => refetch()}
             disabled={isFetching}
           >
             <RotateCcw
-              className={cn("h-5 w-5", isFetching && "animate-spin")}
+              className={cn('h-5 w-5', isFetching && 'animate-spin')}
             />
           </Button>
         </div>
@@ -175,7 +175,7 @@ export default function Messages({ initialMessages }: MessagesProps) {
             {messages.map((message) => (
               <TableRow
                 key={message.id}
-                className={cn("text-base", !message.seen && "font-semibold")}
+                className={cn('text-base', !message.seen && 'font-semibold')}
               >
                 <TableCell>{message.id}</TableCell>
                 <TableCell>{message.name}</TableCell>
@@ -187,7 +187,7 @@ export default function Messages({ initialMessages }: MessagesProps) {
                   {message.seen ? <MailCheck /> : <MailOpen />}
                 </TableCell>
                 <TableCell>
-                  {format(message.createdAt, "dd.MM.yyyy HH:mm:ss")}
+                  {format(message.createdAt, 'dd.MM.yyyy HH:mm:ss')}
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
@@ -205,7 +205,7 @@ export default function Messages({ initialMessages }: MessagesProps) {
                           <div className="mb-10 flex justify-between text-gray-600">
                             <span className="flex items-center gap-1">
                               <BiTime />
-                              {format(message.createdAt, "dd.MM.yyyy HH:mm:ss")}
+                              {format(message.createdAt, 'dd.MM.yyyy HH:mm:ss')}
                             </span>
                             <a href={`mailto:${message.email}`}>
                               <span className="flex items-center gap-1">
@@ -260,7 +260,7 @@ export default function Messages({ initialMessages }: MessagesProps) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<MessagesProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -272,7 +272,7 @@ export async function getServerSideProps(
 
   const initialMessages = await db.contactMessage.findMany({
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc',
     },
   });
 

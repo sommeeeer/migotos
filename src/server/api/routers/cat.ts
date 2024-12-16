@@ -1,15 +1,15 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
-import { catSchema } from "~/lib/validators/cat";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
+import { catSchema } from '~/lib/validators/cat';
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { db } from "~/server/db";
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import { db } from '~/server/db';
 import {
   BLURURL,
   deleteImages,
   getImageDimensions,
   revalidateAndInvalidate,
-} from "~/server/helpers";
+} from '~/server/helpers';
 
 export const catRouter = createTRPCRouter({
   deleteCat: protectedProcedure
@@ -23,8 +23,8 @@ export const catRouter = createTRPCRouter({
         });
         if (!cat) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Cat not found",
+            code: 'NOT_FOUND',
+            message: 'Cat not found',
           });
         }
         const deletedCat = await db.cat.delete({
@@ -42,18 +42,18 @@ export const catRouter = createTRPCRouter({
         if (deletedCat?.CatImage) {
           await deleteImages(
             deletedCat?.CatImage.map((image) =>
-              decodeURI(image.src.replace("https://cdn.migotos.com/", "")),
-            ),
+              decodeURI(image.src.replace('https://cdn.migotos.com/', ''))
+            )
           );
         }
         try {
-          await ctx.res.revalidate("/");
+          await ctx.res.revalidate('/');
         } catch (err) {
-          console.error("[RES_VALIDATE_ERROR_DELETE_CAT]: ", err);
+          console.error('[RES_VALIDATE_ERROR_DELETE_CAT]: ', err);
         }
         await revalidateAndInvalidate(ctx.res, [
-          "/",
-          "/cats",
+          '/',
+          '/cats',
           `/cats/${deletedCat.slug}`,
         ]);
         return deletedCat;
@@ -63,8 +63,8 @@ export const catRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -86,8 +86,8 @@ export const catRouter = createTRPCRouter({
         });
         if (!cat || !cat.CatImage[0]) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Cat not found",
+            code: 'NOT_FOUND',
+            message: 'Cat not found',
           });
         }
         const updatedCat = await db.cat.update({
@@ -131,13 +131,13 @@ export const catRouter = createTRPCRouter({
           },
         });
         try {
-          await ctx.res.revalidate("/");
+          await ctx.res.revalidate('/');
         } catch (err) {
-          console.error("[RES_VALIDATE_ERROR_UPDATE_CAT]: ", err);
+          console.error('[RES_VALIDATE_ERROR_UPDATE_CAT]: ', err);
         }
         await revalidateAndInvalidate(ctx.res, [
-          "/",
-          "/cats",
+          '/',
+          '/cats',
           `/cats/${updatedCat.slug}`,
         ]);
         return updatedCat;
@@ -147,8 +147,8 @@ export const catRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -170,7 +170,7 @@ export const catRouter = createTRPCRouter({
             fertile: input.fertile ?? false,
             gender: input.gender,
             owner: input.owner,
-            slug: `${input.nickname.replaceAll(" ", "-").toLowerCase()}-page`,
+            slug: `${input.nickname.replaceAll(' ', '-').toLowerCase()}-page`,
             CatImage: {
               create: {
                 src: input.image_url,
@@ -183,17 +183,17 @@ export const catRouter = createTRPCRouter({
           },
         });
         try {
-          await ctx.res.revalidate("/");
+          await ctx.res.revalidate('/');
         } catch (err) {
-          console.error("[RES_VALIDATE_ERROR_CREATE_CAT]: ", err);
+          console.error('[RES_VALIDATE_ERROR_CREATE_CAT]: ', err);
         }
-        await revalidateAndInvalidate(ctx.res, ["/", "/cats"]);
+        await revalidateAndInvalidate(ctx.res, ['/', '/cats']);
         return newCat;
       } catch (err) {
         console.error(err);
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -202,7 +202,7 @@ export const catRouter = createTRPCRouter({
       z.object({
         cat_id: z.number(),
         order: z.array(z.object({ id: z.number(), priority: z.number() })),
-      }),
+      })
     )
     .mutation(async ({ input, ctx }) => {
       try {
@@ -218,7 +218,7 @@ export const catRouter = createTRPCRouter({
               },
             });
             return updatedCatImage;
-          }),
+          })
         );
         const cat = await db.cat.findFirst({
           where: {
@@ -227,8 +227,8 @@ export const catRouter = createTRPCRouter({
         });
         if (!cat) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Cat not found",
+            code: 'NOT_FOUND',
+            message: 'Cat not found',
           });
         }
         await revalidateAndInvalidate(ctx.res, [`/cats/${cat.slug}`]);
@@ -239,8 +239,8 @@ export const catRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -256,15 +256,15 @@ export const catRouter = createTRPCRouter({
             },
           },
           orderBy: {
-            priority: "asc",
+            priority: 'asc',
           },
         });
         return catImages;
       } catch (err) {
         console.error(err);
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -277,7 +277,7 @@ export const catRouter = createTRPCRouter({
             cat_id: input.cat_id,
           },
           orderBy: {
-            priority: "desc",
+            priority: 'desc',
           },
           take: 1,
           select: {
@@ -291,10 +291,10 @@ export const catRouter = createTRPCRouter({
             newPriority = newPriority + 1;
             const dimensions = await getImageDimensions(image);
             if (!dimensions) {
-              console.error("Error getting image dimensions");
+              console.error('Error getting image dimensions');
               throw new TRPCError({
-                code: "BAD_REQUEST",
-                message: "Invalid request",
+                code: 'BAD_REQUEST',
+                message: 'Invalid request',
               });
             }
             const newCatImage = await db.catImage.create({
@@ -307,7 +307,7 @@ export const catRouter = createTRPCRouter({
               },
             });
             return newCatImage;
-          }),
+          })
         );
         const cat = await db.cat.findFirst({
           where: {
@@ -316,8 +316,8 @@ export const catRouter = createTRPCRouter({
         });
         if (!cat) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Cat not found",
+            code: 'NOT_FOUND',
+            message: 'Cat not found',
           });
         }
         await revalidateAndInvalidate(ctx.res, [
@@ -330,8 +330,8 @@ export const catRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),
@@ -351,13 +351,13 @@ export const catRouter = createTRPCRouter({
         });
         if (!cat) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Cat not found",
+            code: 'NOT_FOUND',
+            message: 'Cat not found',
           });
         }
         await deleteImages([
           decodeURI(
-            deletedCatImage.src.replace("https://cdn.migotos.com/", ""),
+            deletedCatImage.src.replace('https://cdn.migotos.com/', '')
           ),
         ]);
         await revalidateAndInvalidate(ctx.res, [
@@ -370,8 +370,8 @@ export const catRouter = createTRPCRouter({
           throw err;
         }
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invalid request",
+          code: 'BAD_REQUEST',
+          message: 'Invalid request',
         });
       }
     }),

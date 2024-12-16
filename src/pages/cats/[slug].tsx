@@ -2,31 +2,31 @@ import {
   type CatImage as CatImageType,
   type Cat as Cat,
   Role,
-} from "@prisma/client";
-import { db } from "~/server/db";
-import Footer from "~/components/Footer";
-import CatImage from "~/components/CatImage";
-import Link from "next/link";
-import clsx from "clsx";
-import { findName } from "~/utils/helpers";
-import { type GetStaticPropsContext, type GetStaticPropsResult } from "next";
-import { useSession } from "next-auth/react";
-import { api } from "~/utils/api";
-import CommentForm from "~/components/CommentForm";
-import Comment from "~/components/Comment";
-import LoginButton from "~/components/LoginButton";
-import { AnimatePresence } from "framer-motion";
-import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { useEffect, useRef, useState } from "react";
-import { IoMdFemale, IoMdMale } from "react-icons/io";
-import { FaLeaf } from "react-icons/fa";
-import Head from "next/head";
-import ImageCarousel from "~/components/ImageCarousel";
-import CommentsIconButton from "~/components/CommentsIconButton";
-import PicturesIconButton from "~/components/PicturesIconButton";
-import EditIconButton from "~/components/EditIconButton";
-import AddImagesButton from "~/components/AddImagesButton";
-import { IMAGE_QUALITY } from "~/lib/utils";
+} from '@prisma/client';
+import { db } from '~/server/db';
+import Footer from '~/components/Footer';
+import CatImage from '~/components/CatImage';
+import Link from 'next/link';
+import clsx from 'clsx';
+import { findName } from '~/utils/helpers';
+import { type GetStaticPropsContext, type GetStaticPropsResult } from 'next';
+import { useSession } from 'next-auth/react';
+import { api } from '~/utils/api';
+import CommentForm from '~/components/CommentForm';
+import Comment from '~/components/Comment';
+import LoginButton from '~/components/LoginButton';
+import { AnimatePresence } from 'framer-motion';
+import LoadingSpinner from '~/components/ui/LoadingSpinner';
+import { useEffect, useRef, useState } from 'react';
+import { IoMdFemale, IoMdMale } from 'react-icons/io';
+import { FaLeaf } from 'react-icons/fa';
+import Head from 'next/head';
+import ImageCarousel from '~/components/ImageCarousel';
+import CommentsIconButton from '~/components/CommentsIconButton';
+import PicturesIconButton from '~/components/PicturesIconButton';
+import EditIconButton from '~/components/EditIconButton';
+import AddImagesButton from '~/components/AddImagesButton';
+import { IMAGE_QUALITY } from '~/lib/utils';
 
 type Props = {
   cat: Cat & { CatImage: CatImageType[] };
@@ -42,7 +42,7 @@ function Cat({ cat, mother, father }: Props) {
     refetch,
   } = api.comment.getComments.useQuery({
     id: cat.id,
-    commentType: "cat_id",
+    commentType: 'cat_id',
   });
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   const [carouselOpen, setCarouselOpen] = useState<boolean>(false);
@@ -56,18 +56,18 @@ function Cat({ cat, mother, father }: Props) {
   }
 
   const genderIcon =
-    cat.gender === "Female" ? (
+    cat.gender === 'Female' ? (
       <IoMdFemale title="Female" className="h-8 w-8 text-pink-400" />
     ) : (
       <IoMdMale title="Male" className="h-8 w-8 text-blue-500" />
     );
 
-  const fertileText = cat.fertile ? "Yes" : "No";
-  const birthFormatted = cat.birth.toLocaleDateString("no-NO");
+  const fertileText = cat.fertile ? 'Yes' : 'No';
+  const birthFormatted = cat.birth.toLocaleDateString('no-NO');
 
   useEffect(() => {
     async function touchCat() {
-      await fetch("/api/touchcat?id=" + cat.id);
+      await fetch('/api/touchcat?id=' + cat.id);
     }
     void touchCat();
   }, [cat.id]);
@@ -91,8 +91,8 @@ function Cat({ cat, mother, father }: Props) {
             </h1>
             <p
               className={clsx(
-                "text-lg text-zinc-500",
-                !cat.pedigreeurl && "mb-1",
+                'text-lg text-zinc-500',
+                !cat.pedigreeurl && 'mb-1'
               )}
             >
               {cat.stamnavn}
@@ -128,7 +128,7 @@ function Cat({ cat, mother, father }: Props) {
             className="my-2 rounded-full"
             quality={IMAGE_QUALITY}
             {...(profileImg.blururl
-              ? { placeholder: "blur", blurDataURL: profileImg.blururl }
+              ? { placeholder: 'blur', blurDataURL: profileImg.blururl }
               : {})}
           />
           {cat.description && (
@@ -152,7 +152,7 @@ function Cat({ cat, mother, father }: Props) {
               </span>
               <div className="flex items-center gap-2">
                 <p>{fertileText}</p>
-                {fertileText === "Yes" && (
+                {fertileText === 'Yes' && (
                   <FaLeaf className="-rotate-12 text-green-600" />
                 )}
               </div>
@@ -242,7 +242,7 @@ function Cat({ cat, mother, father }: Props) {
                     fill
                     className="rounded-md object-cover object-center"
                     {...(img.blururl
-                      ? { placeholder: "blur", blurDataURL: img.blururl }
+                      ? { placeholder: 'blur', blurDataURL: img.blururl }
                       : {})}
                   />
                 </picture>
@@ -306,7 +306,7 @@ export async function getStaticProps({
     include: {
       CatImage: {
         orderBy: {
-          priority: "asc",
+          priority: 'asc',
         },
       },
     },
@@ -347,13 +347,13 @@ export async function getStaticProps({
   ]);
 
   if (
-    cat.mother.includes("Je Suis Belle") &&
-    mother?.name.includes("Decibelle")
+    cat.mother.includes('Je Suis Belle') &&
+    mother?.name.includes('Decibelle')
   ) {
     mother = null;
   }
 
-  if (father?.name.toLowerCase().includes("georg")) {
+  if (father?.name.toLowerCase().includes('georg')) {
     father = null;
   }
 
@@ -373,7 +373,7 @@ export async function getStaticPaths() {
     params: { slug: cat.slug },
   }));
 
-  return { paths, fallback: "blocking" };
+  return { paths, fallback: 'blocking' };
 }
 
 function PageHead({ cat }: { cat: Cat & { CatImage: CatImageType[] } }) {

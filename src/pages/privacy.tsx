@@ -1,8 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
-import { ExternalLink } from "lucide-react";
-import Head from "next/head";
-import Link from "next/link";
-import Footer from "~/components/Footer";
+import { ExternalLink } from 'lucide-react';
+import Head from 'next/head';
+import Link from 'next/link';
+import Footer from '~/components/Footer';
 
 export default function Privacy() {
   return (
@@ -78,7 +78,7 @@ export default function Privacy() {
           <h2 className="text-xl font-semibold">Contact Us</h2>
           <p>
             If you have any questions about this Privacy Policy, please contact
-            us at: <a href={"mailto:eva@migotos.com"}>eva@migotos.com</a>
+            us at: <a href={'mailto:eva@migotos.com'}>eva@migotos.com</a>
           </p>
         </article>
       </div>

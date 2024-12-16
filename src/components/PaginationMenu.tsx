@@ -6,8 +6,8 @@ import {
   PaginationNext,
   PaginationPrevious,
   Pagination,
-} from "~/components/ui/pagination";
-import { cn } from "~/lib/utils";
+} from '~/components/ui/pagination';
+import { cn } from '~/lib/utils';
 
 interface PaginationProps {
   currentPage: number;
@@ -35,11 +35,11 @@ export default function PaginationMenu({
   }
 
   if (leftEllipsis) {
-    pageNumbers.splice(1, 0, "...");
+    pageNumbers.splice(1, 0, '...');
   }
 
   if (rightEllipsis) {
-    pageNumbers.splice(pageNumbers.length - 1, 0, "...");
+    pageNumbers.splice(pageNumbers.length - 1, 0, '...');
   }
 
   return (
@@ -51,26 +51,26 @@ export default function PaginationMenu({
               rel="prev"
               href={
                 currentPage - 1 <= 1
-                  ? "/news/"
+                  ? '/news/'
                   : `/news/page/${currentPage - 1}`
               }
             />
           </PaginationItem>
         )}
         {pageNumbers.map((number, index) =>
-          typeof number === "string" ? (
+          typeof number === 'string' ? (
             <PaginationEllipsis key={index} title="More pages" />
           ) : (
             <PaginationItem key={index}>
               <PaginationLink
-                href={number === 1 ? "/news/" : `/news/page/${number}`}
+                href={number === 1 ? '/news/' : `/news/page/${number}`}
                 isActive={currentPage === number}
                 className="text-sm sm:text-base md:text-lg lg:text-xl"
               >
                 {number}
               </PaginationLink>
             </PaginationItem>
-          ),
+          )
         )}
         {currentPage < totalPages - 1 && (
           <PaginationItem>

@@ -1,13 +1,13 @@
-import type { BlogPost, Litter } from "@prisma/client";
-import { Search } from "lucide-react";
-import type { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
-import Footer from "~/components/Footer";
-import { db } from "~/server/db";
-import { type CatWithImage } from "./cats";
-import Image from "next/image";
-import Link from "next/link";
-import Head from "next/head";
+import type { BlogPost, Litter } from '@prisma/client';
+import { Search } from 'lucide-react';
+import type { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import Footer from '~/components/Footer';
+import { db } from '~/server/db';
+import { type CatWithImage } from './cats';
+import Image from 'next/image';
+import Link from 'next/link';
+import Head from 'next/head';
 
 type Props = {
   searchResults: {
@@ -50,7 +50,7 @@ export default function Home({ searchResults }: Props) {
           <h1 className="text-2xl font-medium">{`${total} hits on "${q}"`}</h1>
           {catsLength > 0 && (
             <div className="flex flex-col gap-y-4">
-              <h2 className="text-xl font-normal">{`${catsLength} hit${catsLength > 1 ? "s" : ""} in cats`}</h2>
+              <h2 className="text-xl font-normal">{`${catsLength} hit${catsLength > 1 ? 's' : ''} in cats`}</h2>
               <ul className="flex flex-wrap gap-x-2 gap-y-6 md:gap-x-3">
                 {searchResults.cats.map((cat) => (
                   <Link
@@ -59,8 +59,8 @@ export default function Home({ searchResults }: Props) {
                     className="flex flex-col items-center gap-2 p-2"
                   >
                     <Image
-                      src={cat.CatImage[0]?.src ?? ""}
-                      blurDataURL={cat.CatImage[0]?.blururl ?? ""}
+                      src={cat.CatImage[0]?.src ?? ''}
+                      blurDataURL={cat.CatImage[0]?.blururl ?? ''}
                       alt={cat.name}
                       width={100}
                       height={100}
@@ -74,7 +74,7 @@ export default function Home({ searchResults }: Props) {
           )}
           {littersLength > 0 && (
             <div className="flex flex-col gap-y-4">
-              <h2 className="text-xl font-normal">{`${littersLength} hit${littersLength > 1 ? "s" : ""} in litters`}</h2>
+              <h2 className="text-xl font-normal">{`${littersLength} hit${littersLength > 1 ? 's' : ''} in litters`}</h2>
               <ul className="flex flex-wrap gap-x-2 gap-y-6 md:gap-x-3">
                 {searchResults.litters.map((litter) => (
                   <Link
@@ -104,7 +104,7 @@ export default function Home({ searchResults }: Props) {
           )}
           {blogPostsLength > 0 && (
             <div className="flex flex-col gap-y-4">
-              <h2 className="text-xl font-normal">{`${blogPostsLength} hit${blogPostsLength > 1 ? "s" : ""} in blog posts`}</h2>
+              <h2 className="text-xl font-normal">{`${blogPostsLength} hit${blogPostsLength > 1 ? 's' : ''} in blog posts`}</h2>
               <ul className="flex flex-col gap-y-4">
                 {searchResults.blogPosts.map((post) => (
                   <Link
@@ -131,7 +131,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!q || q.length < 1) {
     return {
       redirect: {
-        destination: "/",
+        destination: '/',
         permanent: false,
       },
     };
@@ -251,7 +251,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   ];
 
   const uniqueLitters = Array.from(
-    new Set(combinedLitters.map((litter) => litter.id)),
+    new Set(combinedLitters.map((litter) => litter.id))
   ).map((id) => combinedLitters.find((litter) => litter.id === id));
 
   return {

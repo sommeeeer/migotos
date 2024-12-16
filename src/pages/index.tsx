@@ -1,20 +1,20 @@
-import Autoheight from "embla-carousel-auto-height";
-import Head from "next/head";
-import Link from "next/link";
-import type { GetStaticPropsResult } from "next/types";
-import Feedback from "~/components/Feedback";
-import Footer from "~/components/Footer";
-import LitterProfile from "~/components/LitterProfile";
+import Autoheight from 'embla-carousel-auto-height';
+import Head from 'next/head';
+import Link from 'next/link';
+import type { GetStaticPropsResult } from 'next/types';
+import Feedback from '~/components/Feedback';
+import Footer from '~/components/Footer';
+import LitterProfile from '~/components/LitterProfile';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "~/components/ui/carousel";
-import { cn } from "~/lib/utils";
-import { db } from "~/server/db";
-import type { BlogPostWithTags, LitterWithTags } from "~/utils/types";
+} from '~/components/ui/carousel';
+import { cn } from '~/lib/utils';
+import { db } from '~/server/db';
+import type { BlogPostWithTags, LitterWithTags } from '~/utils/types';
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -38,7 +38,7 @@ export default function Home({ blogPosts, litters }: Props) {
         <section className="mb-12">
           <Carousel
             plugins={[Autoheight()]}
-            className={cn("relative w-full max-w-[352px] md:max-w-96")}
+            className={cn('relative w-full max-w-[352px] md:max-w-96')}
           >
             <CarouselContent>
               {litters.map((litter) => (
@@ -95,7 +95,7 @@ export default function Home({ blogPosts, litters }: Props) {
 export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
   const lastBlogPosts = await db.blogPost.findMany({
     orderBy: {
-      post_date: "desc",
+      post_date: 'desc',
     },
     include: {
       tags: {
@@ -109,7 +109,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
 
   const lastLitters = await db.litter.findMany({
     orderBy: {
-      born: "desc",
+      born: 'desc',
     },
     take: 9,
     include: {

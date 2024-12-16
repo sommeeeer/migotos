@@ -1,13 +1,13 @@
-import Head from "next/head";
-import Image from "next/image";
-import { BsInstagram, BsFacebook } from "react-icons/bs";
-import Footer from "~/components/Footer";
-import evaImgOne from "../../../public/static/eva-250x-250.jpg";
-import evaImgTwo from "../../../public/static/IMG_7581-600x400.jpg";
-import evaImgThree from "../../../public/static/IMG_6350-463x400.jpg";
-import evaImgFour from "../../../public/static/IMG_7361-rotated-480x400.jpg";
-import evaImgFive from "../../../public/static/IMG_7362-rotated-480x400.jpg";
-import { IMAGE_QUALITY } from "~/lib/utils";
+import Head from 'next/head';
+import Image from 'next/image';
+import { BsInstagram, BsFacebook } from 'react-icons/bs';
+import Footer from '~/components/Footer';
+import evaImgOne from '../../../public/static/eva-250x-250.jpg';
+import evaImgTwo from '../../../public/static/IMG_7581-600x400.jpg';
+import evaImgThree from '../../../public/static/IMG_6350-463x400.jpg';
+import evaImgFour from '../../../public/static/IMG_7361-rotated-480x400.jpg';
+import evaImgFive from '../../../public/static/IMG_7362-rotated-480x400.jpg';
+import { IMAGE_QUALITY } from '~/lib/utils';
 
 export default function About() {
   return (
@@ -80,7 +80,7 @@ export default function About() {
           className="my-4 rounded-full"
           src={evaImgOne}
           quality={IMAGE_QUALITY}
-          alt={"Eva picture"}
+          alt={'Eva picture'}
           placeholder="blur"
         />
         <p className="mb-6 text-left text-sm leading-8 text-zinc-800">
@@ -94,23 +94,23 @@ export default function About() {
         <h2 className="font-playfair text-3xl">
           Eva receives the Honorable membership in Norsk Skogkattring
         </h2>
-        <Image className="mb-6" src={evaImgTwo} alt={"Eva recieves diploma"} />
+        <Image className="mb-6" src={evaImgTwo} alt={'Eva recieves diploma'} />
         <h2 className="font-playfair text-3xl">
           Eva receives the &quot;Trulse-statuett&quot; from Norsk Skogkattring
         </h2>
         <Image
           src={evaImgThree}
-          alt={"Eva holds the Trulse statuett from Norsk skogkattring"}
+          alt={'Eva holds the Trulse statuett from Norsk skogkattring'}
           placeholder="blur"
         />
         <Image
           src={evaImgFour}
-          alt={"Photo of an article in the paper"}
+          alt={'Photo of an article in the paper'}
           placeholder="blur"
         />
         <Image
           src={evaImgFive}
-          alt={"Photo 2 of an article in the paper"}
+          alt={'Photo 2 of an article in the paper'}
           placeholder="blur"
         />
       </section>

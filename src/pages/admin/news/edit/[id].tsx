@@ -1,21 +1,21 @@
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
-} from "next/types";
-import { useRouter } from "next/router";
-import { type z } from "zod";
-import CreatableSelect from "react-select/creatable";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { addHours } from "date-fns";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { useForm } from "react-hook-form";
-import { AiFillEdit } from "react-icons/ai";
-import { type BlogPostTag, type Prisma } from "@prisma/client";
+} from 'next/types';
+import { useRouter } from 'next/router';
+import { type z } from 'zod';
+import CreatableSelect from 'react-select/creatable';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { addHours } from 'date-fns';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { format } from 'date-fns';
+import { useForm } from 'react-hook-form';
+import { AiFillEdit } from 'react-icons/ai';
+import { type BlogPostTag, type Prisma } from '@prisma/client';
 
-import AdminLayout from "~/pages/admin/AdminLayout";
-import { db } from "~/server/db";
-import { Button } from "~/components/ui/button";
+import AdminLayout from '~/pages/admin/AdminLayout';
+import { db } from '~/server/db';
+import { Button } from '~/components/ui/button';
 import {
   Form,
   FormControl,
@@ -23,21 +23,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { Textarea } from '~/components/ui/textarea';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "~/components/ui/popover";
-import { Calendar } from "~/components/ui/calendar";
-import { cn } from "~/lib/utils";
-import { toast } from "~/components/ui/use-toast";
-import { api } from "~/utils/api";
-import { blogPostSchema } from "~/lib/validators/blogpost";
-import { checkAdminSession } from "~/server/helpers";
-import { ImageUpload } from "~/components/ImageUpload";
+} from '~/components/ui/popover';
+import { Calendar } from '~/components/ui/calendar';
+import { cn } from '~/lib/utils';
+import { toast } from '~/components/ui/use-toast';
+import { api } from '~/utils/api';
+import { blogPostSchema } from '~/lib/validators/blogpost';
+import { checkAdminSession } from '~/server/helpers';
+import { ImageUpload } from '~/components/ImageUpload';
 
 type BlogPostWithTags = Prisma.BlogPostGetPayload<{
   include: { tags: true };
@@ -60,8 +60,8 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
       image_url: blogpost.image_url ?? undefined,
       tags: [
         ...blogpost.tags.map((tag) => ({
-          label: tags.find((t) => t.id === tag.blogposttag_id)?.value ?? "",
-          value: tags.find((t) => t.id === tag.blogposttag_id)?.value ?? "",
+          label: tags.find((t) => t.id === tag.blogposttag_id)?.value ?? '',
+          value: tags.find((t) => t.id === tag.blogposttag_id)?.value ?? '',
         })),
       ],
     },
@@ -72,18 +72,18 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
   const { mutate, isLoading } = api.blogpost.updateBlogPost.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Blogpost updated successfully.",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
+        description: 'Blogpost updated successfully.',
       });
-      void router.push("/admin/news");
+      void router.push('/admin/news');
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while updating. Please try again",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Something went wrong while updating. Please try again',
       });
     },
   });
@@ -91,8 +91,8 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
   function onSubmit(values: z.infer<typeof blogPostSchema>) {
     if (!isDirty) {
       toast({
-        variant: "destructive",
-        description: "No changes detected.",
+        variant: 'destructive',
+        description: 'No changes detected.',
       });
       return;
     }
@@ -108,15 +108,15 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
     });
   }
 
-  const imageValue = form.watch("image_url");
+  const imageValue = form.watch('image_url');
 
   function handleCreate(inputValue: string) {
     form.setValue(
-      "tags",
-      [...form.getValues("tags"), { label: inputValue, value: inputValue }],
+      'tags',
+      [...form.getValues('tags'), { label: inputValue, value: inputValue }],
       {
         shouldDirty: true,
-      },
+      }
     );
   }
 
@@ -168,15 +168,15 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
-                          variant={"outline"}
+                          variant={'outline'}
                           disabled={isLoading}
                           className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground",
+                            'w-[240px] pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground'
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, 'PPP')
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -190,7 +190,7 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
                         selected={field.value}
                         onSelect={field.onChange}
                         disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
+                          date > new Date() || date < new Date('1900-01-01')
                         }
                         initialFocus
                       />
@@ -266,7 +266,7 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<EditBlogPostProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -276,7 +276,7 @@ export async function getServerSideProps(
     };
   }
 
-  if (!ctx.query?.id || typeof ctx.query.id !== "string") {
+  if (!ctx.query?.id || typeof ctx.query.id !== 'string') {
     return {
       notFound: true,
     };
@@ -298,7 +298,7 @@ export async function getServerSideProps(
 
   const tags = await db.blogPostTag.findMany({
     orderBy: {
-      value: "desc",
+      value: 'desc',
     },
   });
 

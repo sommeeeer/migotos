@@ -1,16 +1,16 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import TextareaAutosize from "react-textarea-autosize";
-import type { z } from "zod";
-import { commentSchema } from "~/lib/validators/comment";
-import ErrorParagraph from "./ui/ErrorParagraph";
-import type { Session } from "next-auth";
-import Image from "next/image";
-import { api } from "~/utils/api";
-import LoadingSpinner from "./ui/LoadingSpinner";
-import type { CommentType } from "~/utils/types";
-import { toast } from "./ui/use-toast";
-import { createGravatarURL } from "~/utils/helpers";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { type SubmitHandler, useForm } from 'react-hook-form';
+import TextareaAutosize from 'react-textarea-autosize';
+import type { z } from 'zod';
+import { commentSchema } from '~/lib/validators/comment';
+import ErrorParagraph from './ui/ErrorParagraph';
+import type { Session } from 'next-auth';
+import Image from 'next/image';
+import { api } from '~/utils/api';
+import LoadingSpinner from './ui/LoadingSpinner';
+import type { CommentType } from '~/utils/types';
+import { toast } from './ui/use-toast';
+import { createGravatarURL } from '~/utils/helpers';
 
 interface CommentFormProps {
   session: Session;
@@ -42,10 +42,10 @@ export default function CommentForm({
     onError: (error) => {
       console.error(error);
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
-          "Something went wrong while adding new comment. Please try again.",
+          'Something went wrong while adding new comment. Please try again.',
       });
     },
   });
@@ -76,7 +76,7 @@ export default function CommentForm({
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
         <TextareaAutosize
           className="h-14 max-w-3xl rounded-sm border-2 border-solid border-gray-200 px-4 py-4 text-base"
-          {...register("message")}
+          {...register('message')}
           placeholder="Message"
           minRows={4}
           disabled={isLoading}
@@ -95,7 +95,7 @@ export default function CommentForm({
               Loading...
             </>
           ) : (
-            "Post Comment"
+            'Post Comment'
           )}
         </button>
       </form>

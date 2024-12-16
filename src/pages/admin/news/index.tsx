@@ -1,17 +1,17 @@
-import { type BlogPost } from "@prisma/client";
-import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { type BlogPost } from '@prisma/client';
+import { format } from 'date-fns';
+import { Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,
-} from "next/types";
-import { AiFillDelete, AiFillEdit } from "react-icons/ai";
-import { GrGallery } from "react-icons/gr";
-import { MdOutlinePostAdd } from "react-icons/md";
-import { twMerge } from "tailwind-merge";
+} from 'next/types';
+import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
+import { GrGallery } from 'react-icons/gr';
+import { MdOutlinePostAdd } from 'react-icons/md';
+import { twMerge } from 'tailwind-merge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,8 +22,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { buttonVariants } from "~/components/ui/button";
+} from '~/components/ui/alert-dialog';
+import { buttonVariants } from '~/components/ui/button';
 import {
   Table,
   TableBody,
@@ -32,13 +32,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
-import { toast } from "~/components/ui/use-toast";
-import { IMAGE_QUALITY } from "~/lib/utils";
-import { db } from "~/server/db";
-import { checkAdminSession } from "~/server/helpers";
-import { api } from "~/utils/api";
-import AdminLayout from "../AdminLayout";
+} from '~/components/ui/table';
+import { toast } from '~/components/ui/use-toast';
+import { IMAGE_QUALITY } from '~/lib/utils';
+import { db } from '~/server/db';
+import { checkAdminSession } from '~/server/helpers';
+import { api } from '~/utils/api';
+import AdminLayout from '../AdminLayout';
 
 type NewsProps = {
   blogposts: BlogPost[];
@@ -56,9 +56,9 @@ export default function News({ blogposts }: NewsProps) {
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong while deleting comment.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Something went wrong while deleting comment.',
       });
     },
   });
@@ -70,7 +70,7 @@ export default function News({ blogposts }: NewsProps) {
   return (
     <AdminLayout>
       <div className="mb-4 flex flex-col items-start gap-4 rounded-lg bg-white p-4 shadow">
-        <Link className={twMerge(buttonVariants())} href={"/admin/news/new"}>
+        <Link className={twMerge(buttonVariants())} href={'/admin/news/new'}>
           <MdOutlinePostAdd className="mr-1 h-4 w-4" />
           New BlogPost
         </Link>
@@ -93,7 +93,7 @@ export default function News({ blogposts }: NewsProps) {
                 <TableCell className="max-w-prose">{blogpost.title}</TableCell>
                 <TableCell>{blogpost.body.length}</TableCell>
                 <TableCell>
-                  <a href={blogpost.image_url ?? ""}>
+                  <a href={blogpost.image_url ?? ''}>
                     {blogpost.image_url ? (
                       <Image
                         src={blogpost.image_url}
@@ -109,7 +109,7 @@ export default function News({ blogposts }: NewsProps) {
                   </a>
                 </TableCell>
                 <TableCell>
-                  {format(blogpost.post_date, "dd.MM.yyyy")}
+                  {format(blogpost.post_date, 'dd.MM.yyyy')}
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
@@ -164,7 +164,7 @@ export default function News({ blogposts }: NewsProps) {
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<NewsProps>> {
   const adminSession = await checkAdminSession(ctx);
 
@@ -176,7 +176,7 @@ export async function getServerSideProps(
 
   const blogposts = await db.blogPost.findMany({
     orderBy: {
-      post_date: "desc",
+      post_date: 'desc',
     },
   });
 

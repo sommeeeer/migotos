@@ -1,9 +1,9 @@
-import { type BlogPostTag } from "@prisma/client";
-import { type GetStaticPropsResult } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import Footer from "~/components/Footer";
-import { db } from "~/server/db";
+import { type BlogPostTag } from '@prisma/client';
+import { type GetStaticPropsResult } from 'next';
+import Head from 'next/head';
+import Link from 'next/link';
+import Footer from '~/components/Footer';
+import { db } from '~/server/db';
 
 type Props = {
   tags: BlogPostTag[];

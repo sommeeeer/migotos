@@ -1,15 +1,15 @@
-import { type Prisma, type KittenPictureImage } from "@prisma/client";
-import type { GetStaticPropsContext, GetStaticPropsResult } from "next";
-import BorderText from "~/components/BorderText";
-import Image from "next/image";
-import { db } from "~/server/db";
-import Footer from "~/components/Footer";
-import { useState } from "react";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import ImageCarousel from "~/components/ImageCarousel";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { type Prisma, type KittenPictureImage } from '@prisma/client';
+import type { GetStaticPropsContext, GetStaticPropsResult } from 'next';
+import BorderText from '~/components/BorderText';
+import Image from 'next/image';
+import { db } from '~/server/db';
+import Footer from '~/components/Footer';
+import { useState } from 'react';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import ImageCarousel from '~/components/ImageCarousel';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 type LitterWithPictureWeeks = Prisma.LitterGetPayload<{
   include: {
@@ -57,7 +57,7 @@ function KittenPictures({
         </span>
         {Object.entries(groupedImages).map(([key, images], groupIdx) => (
           <div key={key}>
-            <BorderText text={key !== "" ? key : title} />
+            <BorderText text={key !== '' ? key : title} />
             <div className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3 xl:grid-cols-4">
               {images.map((image, idx) => (
                 <picture
@@ -66,14 +66,14 @@ function KittenPictures({
                   onClick={() => {
                     setCurrentImageIndex(
                       Object.values(groupedImages).slice(0, groupIdx).flat()
-                        .length + idx,
+                        .length + idx
                     );
                     setCarouselOpen(true);
                   }}
                 >
                   <Image
                     src={image.src}
-                    alt={image.title ?? ""}
+                    alt={image.title ?? ''}
                     fill
                     className="rounded-md object-cover object-center"
                     placeholder="blur"
@@ -127,10 +127,10 @@ export async function getStaticProps({
 
   const groupedImages: Record<string, KittenPictureImage[]> = {};
   images?.KittenPictureImage.forEach((image) => {
-    if (!groupedImages[image.title ?? ""]) {
-      groupedImages[image.title ?? ""] = [];
+    if (!groupedImages[image.title ?? '']) {
+      groupedImages[image.title ?? ''] = [];
     }
-    groupedImages[image.title ?? ""]!.push(image);
+    groupedImages[image.title ?? '']!.push(image);
   });
 
   if (!litter || !images) {
@@ -169,7 +169,7 @@ export async function getStaticPaths() {
     }
   }
 
-  return { paths, fallback: "blocking" };
+  return { paths, fallback: 'blocking' };
 }
 
 function PageHead({ litter }: { litter: LitterWithPictureWeeks }) {
@@ -178,7 +178,7 @@ function PageHead({ litter }: { litter: LitterWithPictureWeeks }) {
 
   return (
     <Head>
-      <title>{`${(key as string).replace("-", " ")} ${
+      <title>{`${(key as string).replace('-', ' ')} ${
         litter.name
       }-LITTER - Migotos`}</title>
       <link
@@ -191,17 +191,17 @@ function PageHead({ litter }: { litter: LitterWithPictureWeeks }) {
         name="description"
         content={`Pictures for ${litter.name} litter at ${(
           key as string
-        ).replace("-", " ")}`}
+        ).replace('-', ' ')}`}
       />
       <meta
         property="og:site_name"
-        content={`${(key as string).replace("-", " ")} ${
+        content={`${(key as string).replace('-', ' ')} ${
           litter.name
         }-LITTER - Migotos`}
       />
       <meta
         property="og:title"
-        content={`${(key as string).replace("-", " ")} ${
+        content={`${(key as string).replace('-', ' ')} ${
           litter.name
         }-LITTER - Migotos`}
       />
@@ -209,7 +209,7 @@ function PageHead({ litter }: { litter: LitterWithPictureWeeks }) {
         property="og:description"
         content={`Pictures for ${litter.name} litter at ${(
           key as string
-        ).replace("-", " ")}`}
+        ).replace('-', ' ')}`}
       />
       <meta property="og:type" content="website" />
       <meta

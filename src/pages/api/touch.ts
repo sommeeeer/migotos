@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from "next/types";
-import { isbot } from "isbot";
+import type { NextApiRequest, NextApiResponse } from 'next/types';
+import { isbot } from 'isbot';
 
-import { db } from "~/server/db";
+import { db } from '~/server/db';
 
 async function incrementCounter(userAgent: string | undefined) {
   const counter = await db.counter.findFirst();
@@ -22,20 +22,20 @@ async function incrementCounter(userAgent: string | undefined) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponse
 ) {
-  if (req.method === "GET") {
+  if (req.method === 'GET') {
     try {
-      if (process.env.NODE_ENV !== "development") {
-        await incrementCounter(req.headers["user-agent"]);
+      if (process.env.NODE_ENV !== 'development') {
+        await incrementCounter(req.headers['user-agent']);
       }
-      res.status(200).json({ message: "Counter incremented successfully" });
+      res.status(200).json({ message: 'Counter incremented successfully' });
     } catch (err) {
       res
         .status(500)
-        .json({ message: "An error occurred while incrementing the counter" });
+        .json({ message: 'An error occurred while incrementing the counter' });
     }
   } else {
-    res.status(405).json({ message: "Method not allowed" });
+    res.status(405).json({ message: 'Method not allowed' });
   }
 }

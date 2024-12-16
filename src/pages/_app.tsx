@@ -1,25 +1,25 @@
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
-import { type AppType } from "next/app";
-import { api } from "~/utils/api";
-import "~/styles/globals.css";
-import Head from "next/head";
-import Header from "~/components/Header";
-import NextNProgress from "nextjs-progressbar";
+import { type Session } from 'next-auth';
+import { SessionProvider } from 'next-auth/react';
+import { type AppType } from 'next/app';
+import { api } from '~/utils/api';
+import '~/styles/globals.css';
+import Head from 'next/head';
+import Header from '~/components/Header';
+import NextNProgress from 'nextjs-progressbar';
 
-import { Poppins, Playfair_Display } from "next/font/google";
-import { useEffect } from "react";
+import { Poppins, Playfair_Display } from 'next/font/google';
+import { useEffect } from 'react';
 
 const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  variable: "--font-poppins",
-  display: "swap",
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-poppins',
+  display: 'swap',
 });
 const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
 });
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -28,11 +28,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   useEffect(() => {
     async function fetchCount() {
-      const visited = localStorage.getItem("visited");
+      const visited = localStorage.getItem('visited');
       if (!visited) {
-        const res = await fetch("/api/touch");
+        const res = await fetch('/api/touch');
         if (res.ok) {
-          localStorage.setItem("visited", "true");
+          localStorage.setItem('visited', 'true');
         }
       }
     }

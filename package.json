@@ -12,7 +12,10 @@
     "start": "next start",
     "sst:deploy": "sst deploy --stage prod",
     "sst:deploystaging": "OPEN_NEXT_DEBUG=true sst deploy --stage staging",
-    "cleanuploads": "aws s3 rm s3://images.migotos.com/uploads/ --recursive"
+    "cleanuploads": "aws s3 rm s3://images.migotos.com/uploads/ --recursive",
+    "lint:fix": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\"",
+    "lint:check": "prettier --check \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\"",
+    "clean": "rm -rf .open-next .sst .next node_modules"
   },
   "dependencies": {
     "@aws-sdk/client-cloudfront": "^3.598.0",

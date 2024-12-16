@@ -1,6 +1,6 @@
-import router from "next/router";
-import type { ComponentProps } from "react";
-import { twMerge } from "tailwind-merge";
+import router from 'next/router';
+import type { ComponentProps } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export default function Tag({
   value,
@@ -9,13 +9,13 @@ export default function Tag({
 }: {
   value: string;
   className?: string;
-} & ComponentProps<"span">) {
+} & ComponentProps<'span'>) {
   return (
     <span
       {...rest}
       className={twMerge(
-        "tracking-wid mb-2 mr-2 inline-block cursor-pointer rounded-full px-3 py-1 text-xs font-semibold text-gray-700 transition-colors duration-200 hover:bg-zinc-200 hover:outline-2",
-        className,
+        'tracking-wid mb-2 mr-2 inline-block cursor-pointer rounded-full px-3 py-1 text-xs font-semibold text-gray-700 transition-colors duration-200 hover:bg-zinc-200 hover:outline-2',
+        className
       )}
       onClick={(e) => {
         e.stopPropagation();

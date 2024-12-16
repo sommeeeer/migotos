@@ -7,16 +7,16 @@
  * need to use are documented accordingly near the end.
  */
 
-import { Role } from "@prisma/client";
-import { initTRPC, TRPCError } from "@trpc/server";
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { type NextApiResponse } from "next";
-import { type Session } from "next-auth";
-import superjson from "superjson";
-import { ZodError } from "zod";
+import { Role } from '@prisma/client';
+import { initTRPC, TRPCError } from '@trpc/server';
+import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
+import { type NextApiResponse } from 'next';
+import { type Session } from 'next-auth';
+import superjson from 'superjson';
+import { ZodError } from 'zod';
 
-import { getServerAuthSession } from "~/server/auth";
-import { db } from "~/server/db";
+import { getServerAuthSession } from '~/server/auth';
+import { db } from '~/server/db';
 
 /**
  * 1. CONTEXT
@@ -116,8 +116,8 @@ export const publicProcedure = t.procedure;
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.session?.user || ctx.session.user.role !== Role.ADMIN) {
     throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "You are not authorized",
+      code: 'UNAUTHORIZED',
+      message: 'You are not authorized',
     });
   }
   return next({

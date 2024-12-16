@@ -1,14 +1,14 @@
-import Head from "next/head";
+import Head from 'next/head';
 import type {
   GetStaticPathsResult,
   GetStaticPropsContext,
   GetStaticPropsResult,
-} from "next/types";
-import Footer from "~/components/Footer";
-import PaginationMenu from "~/components/PaginationMenu";
-import NewsCard from "~/components/ui/NewsCard";
-import { db } from "~/server/db";
-import type { BlogPostWithTags } from "~/utils/types";
+} from 'next/types';
+import Footer from '~/components/Footer';
+import PaginationMenu from '~/components/PaginationMenu';
+import NewsCard from '~/components/ui/NewsCard';
+import { db } from '~/server/db';
+import type { BlogPostWithTags } from '~/utils/types';
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -71,7 +71,7 @@ export async function getStaticProps({
   const blogPostCount = await db.blogPost.count({});
 
   const totalPages = Math.ceil(
-    blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
+    blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE)
   );
 
   if (page > totalPages) {
@@ -84,7 +84,7 @@ export async function getStaticProps({
     skip: (page - 1) * Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
     take: Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
     orderBy: {
-      post_date: "desc",
+      post_date: 'desc',
     },
     include: {
       tags: {
@@ -116,12 +116,12 @@ export async function getStaticPaths() {
   const blogPostCount = await db.blogPost.count();
 
   const totalPages = Math.ceil(
-    blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE),
+    blogPostCount / Number(process.env.NEXT_PUBLIC_POSTS_PER_PAGE)
   );
 
   const staticPathsResult: GetStaticPathsResult = {
     paths: [],
-    fallback: "blocking",
+    fallback: 'blocking',
   };
 
   for (let i = 2; i <= totalPages; i++) {

@@ -1,8 +1,8 @@
-import { AiFillDelete } from "react-icons/ai";
-import { AnimatePresence, motion } from "framer-motion";
-import Image from "next/image";
-import { useState, useId } from "react";
-import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from "lucide-react";
+import { AiFillDelete } from 'react-icons/ai';
+import { AnimatePresence, motion } from 'framer-motion';
+import Image from 'next/image';
+import { useState, useId } from 'react';
+import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from 'lucide-react';
 import {
   DndContext,
   useSensors,
@@ -11,25 +11,25 @@ import {
   KeyboardSensor,
   closestCenter,
   type DragEndEvent,
-} from "@dnd-kit/core";
+} from '@dnd-kit/core';
 import {
   arrayMove,
   rectSortingStrategy,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import type { Cat, CatImage, Prisma } from "@prisma/client";
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import type { Cat, CatImage, Prisma } from '@prisma/client';
 
-import { db } from "~/server/db";
+import { db } from '~/server/db';
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
-} from "next/types";
-import { checkAdminSession } from "~/server/helpers";
-import AdminLayout from "../../AdminLayout";
-import { Button } from "~/components/ui/button";
+} from 'next/types';
+import { checkAdminSession } from '~/server/helpers';
+import AdminLayout from '../../AdminLayout';
+import { Button } from '~/components/ui/button';
 
 import {
   Dialog,
@@ -40,8 +40,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
-import { Label } from "~/components/ui/label";
+} from '~/components/ui/dialog';
+import { Label } from '~/components/ui/label';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,15 +52,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
-import { api } from "~/utils/api";
-import { toast } from "~/components/ui/use-toast";
-import { bytesToMB, handleImageChange } from "~/utils/helpers";
-import LoadingSpinner from "~/components/ui/LoadingSpinner";
-import { cn } from "~/lib/utils";
-import { useUploadImages } from "~/hooks/use-upload-images";
-import { Progress } from "~/components/ui/progress";
-import ImageDropzone from "~/components/ImageDropzone";
+} from '~/components/ui/alert-dialog';
+import { api } from '~/utils/api';
+import { toast } from '~/components/ui/use-toast';
+import { bytesToMB, handleImageChange } from '~/utils/helpers';
+import LoadingSpinner from '~/components/ui/LoadingSpinner';
+import { cn } from '~/lib/utils';
+import { useUploadImages } from '~/hooks/use-upload-images';
+import { Progress } from '~/components/ui/progress';
+import ImageDropzone from '~/components/ImageDropzone';
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -88,7 +88,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   const { isLoading, isFetching, isError, refetch } =
@@ -102,7 +102,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
         },
         initialData: cat.CatImage,
         refetchOnMount: false,
-      },
+      }
     );
 
   const id = useId();
@@ -111,19 +111,19 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
     api.cat.updateCatImagesOrder.useMutation({
       onSuccess: () => {
         toast({
-          variant: "default",
-          title: "Success",
-          color: "green",
-          description: "Cat images order updated successfully.",
+          variant: 'default',
+          title: 'Success',
+          color: 'green',
+          description: 'Cat images order updated successfully.',
         });
         void refetch();
       },
       onError: () => {
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description:
-            "Something went wrong while updating image order. Please try again",
+            'Something went wrong while updating image order. Please try again',
         });
         void refetch();
       },
@@ -131,21 +131,21 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   const { mutate: mutateAddCatImages } = api.cat.addCatImages.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
         description:
-          "Cat images succesfully uploaded and added to the database.",
+          'Cat images succesfully uploaded and added to the database.',
       });
       void refetch();
       setProgressValue(0);
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
-          "Something went wrong while adding images to the database. Please try again",
+          'Something went wrong while adding images to the database. Please try again',
       });
       void refetch();
     },
@@ -180,9 +180,9 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
   async function handleUpload() {
     if (!filesToUpload)
       return toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please select images to upload.",
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select images to upload.',
       });
     const imageUrls = await uploadImages(filesToUpload, (i) => {
       const progress = (i / filesToUpload.length) * 100;
@@ -271,7 +271,7 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
                           files,
                           setFilesToUpload,
                           setSelectedImages,
-                          setSize,
+                          setSize
                         )
                       }
                     />
@@ -319,12 +319,12 @@ export default function EditCatImages({ cat }: EditCatImagesProps) {
               </DialogContent>
             </Dialog>
             <Button
-              className={cn(isFetching && "bg-primary/80")}
+              className={cn(isFetching && 'bg-primary/80')}
               onClick={() => refetch()}
               disabled={isFetching}
             >
               <RotateCcw
-                className={cn("h-5 w-5", isFetching && "animate-spin")}
+                className={cn('h-5 w-5', isFetching && 'animate-spin')}
               />
             </Button>
           </div>
@@ -395,19 +395,19 @@ function SortableItem({
   const { mutate: mutateDeleteImage } = api.cat.deleteCatImage.useMutation({
     onSuccess: () => {
       toast({
-        variant: "default",
-        title: "Success",
-        color: "green",
-        description: "Image deleted successfully.",
+        variant: 'default',
+        title: 'Success',
+        color: 'green',
+        description: 'Image deleted successfully.',
       });
       refetchImages();
     },
     onError: () => {
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
-          "Something went wrong while deleting image. Please try again",
+          'Something went wrong while deleting image. Please try again',
       });
     },
   });
@@ -475,7 +475,7 @@ function SortableItem({
 }
 
 export async function getServerSideProps(
-  ctx: GetServerSidePropsContext,
+  ctx: GetServerSidePropsContext
 ): Promise<
   GetServerSidePropsResult<{
     cat: Cat;
@@ -489,7 +489,7 @@ export async function getServerSideProps(
     };
   }
 
-  if (!ctx.query?.id || typeof ctx.query.id !== "string") {
+  if (!ctx.query?.id || typeof ctx.query.id !== 'string') {
     return {
       notFound: true,
     };
@@ -507,7 +507,7 @@ export async function getServerSideProps(
           },
         },
         orderBy: {
-          priority: "asc",
+          priority: 'asc',
         },
       },
     },
