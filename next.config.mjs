@@ -46,6 +46,18 @@ const config = {
         },
       ],
     ],
+    outputFileTracingExcludes: {
+      '*': [
+        './.prisma/client/libquery_engine-debian*', // prisma ubuntu binary
+        './@swc/core-linux-x64-gnu*',
+        './@swc/core-linux-x64-musl*',
+        './@esbuild*',
+        './webpack/',
+        './rollup*',
+        './terser*',
+        './sharp*',
+      ],
+    },
   },
 };
 

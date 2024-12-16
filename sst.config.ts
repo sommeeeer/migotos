@@ -31,6 +31,7 @@ export default {
           domainAlias: stack.stage === 'prod' ? 'www.migotos.com' : undefined,
           hostedZone: 'migotos.com',
         },
+        runtime: 'nodejs20.x',
         environment: {
           NEXTAUTH_URL:
             app.mode === 'dev'
@@ -42,7 +43,7 @@ export default {
             app.stage === 'prod' ? env.DATABASE_URL : env.DATABASE_URL_DEV,
         },
         bind: [bucket],
-        buildCommand: 'npx @opennextjs/aws@latest build',
+        buildCommand: 'npx @opennextjs/aws@3.2.2 build',
         permissions: ['ssm'],
       });
 

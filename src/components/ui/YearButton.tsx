@@ -23,7 +23,7 @@ export default function YearButton({
       disabled={currentYear === year}
       onClick={() => filterByYear(year)}
     >
-      {year}
+      {year.toString()}
     </button>
   );
 }
