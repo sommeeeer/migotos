@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import type { GetStaticPropsContext, GetStaticPropsResult } from 'next/types';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import AddImagesButton from '~/components/AddImagesButton';
 import Comment from '~/components/Comment';
 import CommentForm from '~/components/CommentForm';
@@ -20,9 +20,14 @@ import { IMAGE_QUALITY } from '~/lib/utils';
 import { db } from '~/server/db';
 import { api } from '~/utils/api';
 import type { BlogPostWithTagsAndImages } from '~/utils/types';
+import KenTvAppearance from './_custom/KenTvAppearance';
 
 type Props = {
   blogPost: BlogPostWithTagsAndImages;
+};
+
+const CustomBlogPosts: Record<number, React.FC> = {
+  164: KenTvAppearance,
 };
 
 function BlogPost({ blogPost }: Props) {
@@ -46,6 +51,8 @@ function BlogPost({ blogPost }: Props) {
       '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">$1</a>'
     );
   };
+
+  const CustomBlogPost = CustomBlogPosts[blogPost.id];
 
   return (
     <>
@@ -92,22 +99,28 @@ function BlogPost({ blogPost }: Props) {
             )}
           </div>
         </header>
-        <div
-          className="max-w-2xl whitespace-break-spaces py-2 text-base leading-loose"
-          dangerouslySetInnerHTML={{
-            __html: convertMarkdownLinks(blogPost.body.trim()),
-          }}
-        />
-        {blogPost.image_url && (
-          <Image
-            src={blogPost.image_url}
-            width="0"
-            height="0"
-            sizes="100vw"
-            className="h-auto w-full max-w-xl"
-            alt={`${blogPost.title} image`}
-            quality={IMAGE_QUALITY}
-          />
+        {CustomBlogPost ? (
+          <CustomBlogPost />
+        ) : (
+          <>
+            <div
+              className="max-w-2xl whitespace-break-spaces py-2 text-base leading-loose"
+              dangerouslySetInnerHTML={{
+                __html: convertMarkdownLinks(blogPost.body.trim()),
+              }}
+            />
+            {blogPost.image_url && (
+              <Image
+                src={blogPost.image_url}
+                width="0"
+                height="0"
+                sizes="100vw"
+                className="h-auto w-full max-w-xl"
+                alt={`${blogPost.title} image`}
+                quality={IMAGE_QUALITY}
+              />
+            )}
+          </>
         )}
         {blogPost.images.length > 0 && (
           <section className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3">
