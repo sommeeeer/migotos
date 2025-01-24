@@ -32,6 +32,9 @@ export default {
           hostedZone: 'migotos.com',
         },
         runtime: 'nodejs20.x',
+        imageOptimization: {
+          staticImageOptimization: true,
+        },
         environment: {
           NEXTAUTH_URL:
             app.mode === 'dev'
