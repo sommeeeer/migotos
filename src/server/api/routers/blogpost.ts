@@ -202,7 +202,7 @@ export const blogpostRouter = createTRPCRouter({
 
         await revalidateAndInvalidate(
           ctx.res,
-          ['/', '/news'].concat(
+          ['/', '/news', `/news/${blogpost.id}`].concat(
             updatedBlogPost.tags.map(
               (tag) => `/news/tag/${tag.blogposttag.value.toLowerCase()}`
             )
