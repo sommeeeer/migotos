@@ -141,9 +141,6 @@ export async function revalidateAndInvalidate(
 ) {
   if (process.env.NODE_ENV !== 'development') {
     for (const path of paths) {
-      if (path === '/') {
-        continue;
-      }
       let retries = 0;
 
       while (retries < maxRetries) {

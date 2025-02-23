@@ -44,11 +44,6 @@ export const blogpostRouter = createTRPCRouter({
             },
           },
         });
-        try {
-          await ctx.res.revalidate('/');
-        } catch (err) {
-          console.error('[RES_VALIDATE_ERROR_CREATE_BLOGPOST]: ', err);
-        }
         await revalidateAndInvalidate(
           ctx.res,
           ['/', '/news'].concat(
@@ -95,11 +90,6 @@ export const blogpostRouter = createTRPCRouter({
         });
         if (blogpost.image_url) {
           await deleteImages([blogpost.image_url]);
-        }
-        try {
-          await ctx.res.revalidate('/');
-        } catch (err) {
-          console.error('[RES_VALIDATE_ERROR_DELETE_BLOGPOST]: ', err);
         }
         await revalidateAndInvalidate(
           ctx.res,
@@ -199,7 +189,6 @@ export const blogpostRouter = createTRPCRouter({
             })
           )
         );
-
         await revalidateAndInvalidate(
           ctx.res,
           ['/', '/news', `/news/${blogpost.id}`].concat(

@@ -61,11 +61,6 @@ export const litterRouter = createTRPCRouter({
             },
           },
         });
-        try {
-          await ctx.res.revalidate('/');
-        } catch (err) {
-          console.error('[RES_VALIDATE_ERROR_CREATE_LITTER]: ', err);
-        }
         await revalidateAndInvalidate(ctx.res, ['/', '/kittens']);
         return litter;
       } catch (err) {
@@ -129,11 +124,6 @@ export const litterRouter = createTRPCRouter({
           ).concat(profileImages.filter(Boolean))
         );
 
-        try {
-          await ctx.res.revalidate('/');
-        } catch (err) {
-          console.error('[RES_VALIDATE_ERROR_DELETE_LITTER]: ', err);
-        }
         await revalidateAndInvalidate(
           ctx.res,
           ['/', '/kittens', `/kittens/${deletedLitter.slug}`].concat(
@@ -244,12 +234,6 @@ export const litterRouter = createTRPCRouter({
             litter_id: updatedLitter.id,
           })),
         });
-
-        try {
-          await ctx.res.revalidate('/');
-        } catch (err) {
-          console.error('[RES_VALIDATE_ERROR_UPDATE_LITTER]: ', err);
-        }
         await revalidateAndInvalidate(ctx.res, [
           '/',
           '/kittens',
