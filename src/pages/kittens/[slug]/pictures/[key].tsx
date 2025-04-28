@@ -1,4 +1,7 @@
-import { type Prisma, type KittenPictureImage } from '@prisma/client';
+import {
+  type Prisma,
+  type KittenPictureImage,
+} from '../../../../../prisma/generated/browser';
 import type { GetStaticPropsContext, GetStaticPropsResult } from 'next';
 import BorderText from '~/components/BorderText';
 import Image from 'next/image';
@@ -8,8 +11,8 @@ import { useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import ImageCarousel from '~/components/ImageCarousel';
-import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 type LitterWithPictureWeeks = Prisma.LitterGetPayload<{
   include: {

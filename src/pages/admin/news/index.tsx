@@ -1,4 +1,4 @@
-import { type BlogPost } from '@prisma/client';
+import { type BlogPost } from '../../../../prisma/generated/browser';
 import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
@@ -39,7 +39,6 @@ import { db } from '~/server/db';
 import { checkAdminSession } from '~/server/helpers';
 import { api } from '~/utils/api';
 import AdminLayout from '../AdminLayout';
-
 type NewsProps = {
   blogposts: BlogPost[];
 };

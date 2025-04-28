@@ -1,13 +1,13 @@
-import { formatDistanceToNow } from 'date-fns';
-import type { Session } from 'next-auth';
-import Image from 'next/image';
-import { MdDeleteForever } from 'react-icons/md';
-import { api } from '~/utils/api';
-import LoadingSpinner from './ui/LoadingSpinner';
-import { motion } from 'framer-motion';
-import { Role } from '@prisma/client';
-import { toast } from './ui/use-toast';
-import { createGravatarURL } from '~/utils/helpers';
+import { formatDistanceToNow } from "date-fns";
+import type { Session } from "next-auth";
+import Image from "next/image";
+import { MdDeleteForever } from "react-icons/md";
+import { api } from "~/utils/api";
+import LoadingSpinner from "./ui/LoadingSpinner";
+import { motion } from "framer-motion";
+import { Role } from "../../prisma/generated/browser";
+import { toast } from "./ui/use-toast";
+import { createGravatarURL } from "~/utils/helpers";
 
 interface CommentProps {
   name: string | null;

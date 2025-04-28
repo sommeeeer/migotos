@@ -18,9 +18,9 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import type { Cat, CatImage, Prisma } from '@prisma/client';
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import type { Cat, CatImage, Prisma } from "../../../../../prisma/generated/browser";
 
 import { db } from '~/server/db';
 import {

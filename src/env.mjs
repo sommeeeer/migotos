@@ -53,6 +53,7 @@ export const env = createEnv({
     CLOUDFRONT_DISTRIBUTION_ID: z.string(),
     S3_BUCKET_NAME: z.string(),
     S3_BUCKET_ARN: z.string(),
+    TURNSTILE_SECRET: z.string(),
   },
 
   /**
@@ -62,6 +63,8 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+    NEXT_PUBLIC_TURNSTILE_KEY: z.string(),
+    NEXT_PUBLIC_POSTS_PER_PAGE: z.string(),
   },
 
   /**
@@ -88,6 +91,9 @@ export const env = createEnv({
     CLOUDFRONT_DISTRIBUTION_ID: process.env.CLOUDFRONT_DISTRIBUTION_ID,
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
     S3_BUCKET_ARN: process.env.S3_BUCKET_ARN,
+    NEXT_PUBLIC_TURNSTILE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_KEY,
+    NEXT_PUBLIC_POSTS_PER_PAGE: process.env.NEXT_PUBLIC_POSTS_PER_PAGE,
+    TURNSTILE_SECRET: process.env.TURNSTILE_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

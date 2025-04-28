@@ -6,12 +6,21 @@ import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
-} from '~/server/api/trpc';
-import { db } from '~/server/db';
-import { sendEmail } from '~/server/helpers';
+} from "~/server/api/trpc";
+import { db } from "~/server/db";
+import { sendEmail, validateTurnstile } from "~/server/helpers";
 
 export const contactRouter = createTRPCRouter({
   hello: publicProcedure.input(contactSchema).mutation(async ({ input }) => {
+    const validated = await validateTurnstile(input.turnstileToken);
+    if (!validated) {
+      console.error("[CONTACT] Turnstile validation failed", validated, input);
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Failed to validate Turnstile",
+      });
+    }
+
     const msg = await db.contactMessage.create({
       data: {
         name: input.name,

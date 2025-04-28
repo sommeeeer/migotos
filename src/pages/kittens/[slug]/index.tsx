@@ -1,10 +1,10 @@
-import { useRef } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { Role, type Cat, type Prisma } from '@prisma/client';
-import { AnimatePresence } from 'framer-motion';
-import { type GetStaticPropsResult, type GetStaticPropsContext } from 'next';
+import { useRef } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { Role, type Cat, type Prisma } from "../../../..//prisma/generated/browser";
+import { AnimatePresence } from "framer-motion";
+import { type GetStaticPropsResult, type GetStaticPropsContext } from "next";
 
 import CatProfile from '~/components/CatProfile';
 import Footer from '~/components/Footer';

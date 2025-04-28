@@ -14,6 +14,7 @@ export default {
     app.stack(function Site({ stack }) {
       const bucket = new Bucket(stack, 'bucketid', {
         cdk: {
+          // @ts-expect-error This is valid
           bucket: s3.Bucket.fromBucketArn(
             stack,
             env.S3_BUCKET_NAME,

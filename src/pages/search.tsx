@@ -1,13 +1,13 @@
-import type { BlogPost, Litter } from '@prisma/client';
-import { Search } from 'lucide-react';
-import type { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
-import Footer from '~/components/Footer';
-import { db } from '~/server/db';
-import { type CatWithImage } from './cats';
-import Image from 'next/image';
-import Link from 'next/link';
-import Head from 'next/head';
+import type { BlogPost, Litter } from "../../prisma/generated/browser";
+import { Search } from "lucide-react";
+import type { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import Footer from "~/components/Footer";
+import { db } from "~/server/db";
+import { type CatWithImage } from "./cats";
+import Image from "next/image";
+import Link from "next/link";
+import Head from "next/head";
 
 type Props = {
   searchResults: {

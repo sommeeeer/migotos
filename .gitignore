@@ -49,6 +49,7 @@ src/server/api/routers/test.ts
 
 #testing, backup and seeding
 prisma/*.ts
+prisma/generated/*
 src/pages/api/test.ts
 src/pages/api/seed.ts
 backup.sql

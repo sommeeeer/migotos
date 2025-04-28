@@ -1,11 +1,11 @@
-import { useRouter } from 'next/router';
-import { FaCat } from 'react-icons/fa';
-import { GrGallery } from 'react-icons/gr';
-import Link from 'next/link';
-import { twMerge } from 'tailwind-merge';
-import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
-import { format } from 'date-fns';
-import { type Cat } from '@prisma/client';
+import { useRouter } from "next/router";
+import { FaCat } from "react-icons/fa";
+import { GrGallery } from "react-icons/gr";
+import Link from "next/link";
+import { twMerge } from "tailwind-merge";
+import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+import { format } from "date-fns";
+import { type Cat } from "../../../../prisma/generated/browser";
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,

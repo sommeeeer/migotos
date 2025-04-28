@@ -1,4 +1,4 @@
-import type { Litter } from '@prisma/client';
+import type { Litter } from "../../../../prisma/generated/browser";
 
 import AdminLayout from '../AdminLayout';
 import {

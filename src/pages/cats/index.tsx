@@ -1,10 +1,10 @@
-import { db } from '~/server/db';
-import { type Cat, type CatImage } from '@prisma/client';
-import { type GetStaticPropsResult } from 'next';
-import BorderText from '~/components/BorderText';
-import CatsGrid from '~/components/CatsGrid';
-import Footer from '~/components/Footer';
-import Head from 'next/head';
+import { db } from "~/server/db";
+import { type Cat, type CatImage } from "../../../prisma/generated/browser";
+import { type GetStaticPropsResult } from "next";
+import BorderText from "~/components/BorderText";
+import CatsGrid from "~/components/CatsGrid";
+import Footer from "~/components/Footer";
+import Head from "next/head";
 
 export interface CatWithImage extends Cat {
   CatImage: CatImage[];

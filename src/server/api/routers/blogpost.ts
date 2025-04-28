@@ -253,18 +253,18 @@ export const blogpostRouter = createTRPCRouter({
             return updatedBlogImage;
           })
         );
-        const cat = await db.blogPost.findFirst({
+        const blog = await db.blogPost.findFirst({
           where: {
             id: input.blogpost_id,
           },
         });
-        if (!cat) {
+        if (!blog) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'BLogpost not found',
           });
         }
-        await revalidateAndInvalidate(ctx.res, [`/news/${cat.id}`]);
+        await revalidateAndInvalidate(ctx.res, [`/news/${blog.id}`]);
         return updatedBlogPostImages;
       } catch (err) {
         console.error(err);

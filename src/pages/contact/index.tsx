@@ -1,5 +1,6 @@
-import Footer from '~/components/Footer';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import TextareaAutosize from 'react-textarea-autosize';
+import Footer from '~/components/Footer';
 import { contactSchema } from '~/lib/validators/contact';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type SubmitHandler, useForm } from 'react-hook-form';
@@ -12,6 +13,7 @@ import { BsFacebook, BsInstagram } from 'react-icons/bs';
 import LoadingSpinner from '~/components/ui/LoadingSpinner';
 import ErrorParagraph from '~/components/ui/ErrorParagraph';
 import Head from 'next/head';
+import Script from 'next/script';
 
 type StatusType = '' | 'sent' | 'error';
 
@@ -20,6 +22,10 @@ export default function Contact() {
     register,
     reset,
     handleSubmit,
+    trigger,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
@@ -37,6 +43,9 @@ export default function Contact() {
     },
     onError() {
       setStatus('error');
+      setValue('turnstileToken', '', { shouldValidate: true });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      (window as any).turnstile.reset();
     },
   });
 
@@ -49,12 +58,44 @@ export default function Contact() {
     }
   }, [status]);
 
-  const onSubmit: SubmitHandler<z.infer<typeof contactSchema>> = (data) =>
+  useEffect(() => {
+    // Expose callbacks for the Turnstile widget
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    (window as any).onTurnstileSuccess = (token: string) => {
+      setValue('turnstileToken', token, { shouldValidate: true });
+      clearErrors('turnstileToken');
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    (window as any).onTurnstileExpired = () => {
+      setValue('turnstileToken', '', { shouldValidate: true });
+      setError('turnstileToken', {
+        type: 'manual',
+        message: 'Verification expired. Please retry.',
+      });
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    (window as any).onTurnstileError = () => {
+      setValue('turnstileToken', '', { shouldValidate: true });
+      setError('turnstileToken', {
+        type: 'manual',
+        message: 'Verification failed. Please try again.',
+      });
+    };
+  }, [clearErrors, setError, setValue, trigger]);
+
+  const onSubmit: SubmitHandler<z.infer<typeof contactSchema>> = (data) => {
     mutate(data);
+  };
 
   return (
     <>
       <PageHead />
+
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+      />
       <div className="flex w-full flex-col items-center">
         <section className="flex h-52 w-full flex-col items-center justify-center gap-4 bg-[#F7F7F7] text-center">
           <div className="flex flex-col gap-2">
@@ -109,6 +150,23 @@ export default function Contact() {
                 <ErrorParagraph message={errors.message?.message} />
               )}
 
+              <input type="hidden" {...register('turnstileToken')} />
+
+              <div
+                className="cf-turnstile"
+                data-sitekey={
+                  process.env.NODE_ENV === 'development'
+                    ? '3x00000000000000000000FF'
+                    : process.env.NEXT_PUBLIC_TURNSTILE_KEY
+                }
+                data-callback="onTurnstileSuccess"
+                data-expired-callback="onTurnstileExpired"
+                data-error-callback="onTurnstileError"
+              ></div>
+
+              {errors.turnstileToken?.message && (
+                <ErrorParagraph message={errors.turnstileToken?.message} />
+              )}
               <button
                 className="h-14 w-4/6 cursor-pointer rounded-md border-2 border-solid border-gray-200 px-5 py-4 text-base transition-all duration-300 ease-in-out hover:bg-hoverbg hover:text-white disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-200 disabled:text-gray-600"
                 type="submit"
@@ -124,8 +182,8 @@ export default function Contact() {
                 )}
               </button>
             </form>
+            <ContactInfo />
           </div>
-          <ContactInfo />
         </section>
         <Footer />
       </div>

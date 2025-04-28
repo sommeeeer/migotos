@@ -2,7 +2,7 @@ import {
   type CatImage as CatImageType,
   type Cat as Cat,
   Role,
-} from '@prisma/client';
+} from '../../../prisma/generated/browser';
 import { db } from '~/server/db';
 import Footer from '~/components/Footer';
 import CatImage from '~/components/CatImage';

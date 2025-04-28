@@ -1,12 +1,12 @@
-import { type Prisma } from '@prisma/client';
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
-import { db } from '~/server/db';
-import { useRouter } from 'next/router';
-import AdminLayout from '../AdminLayout';
-import Link from 'next/link';
-import { FaComments } from 'react-icons/fa';
-import { checkAdminSession } from '~/server/helpers';
-import { Button } from '~/components/ui/button';
+import { type Prisma } from "../../../../prisma/generated/browser";
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { db } from "~/server/db";
+import { useRouter } from "next/router";
+import AdminLayout from "../AdminLayout";
+import Link from "next/link";
+import { FaComments } from "react-icons/fa";
+import { checkAdminSession } from "~/server/helpers";
+import { Button } from "~/components/ui/button";
 
 type UserWithComments = Prisma.UserGetPayload<{
   include: {

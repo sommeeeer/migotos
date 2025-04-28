@@ -1,10 +1,10 @@
-import { type Prisma, Role } from '@prisma/client';
-import AdminLayout from '../AdminLayout';
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
-import { db } from '~/server/db';
-import { format } from 'date-fns';
-import { AiFillDelete } from 'react-icons/ai';
-import { RiAdminFill } from 'react-icons/ri';
+import { type Prisma, Role } from "../../../../prisma/generated/browser";
+import AdminLayout from "../AdminLayout";
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { db } from "~/server/db";
+import { format } from "date-fns";
+import { AiFillDelete } from "react-icons/ai";
+import { RiAdminFill } from "react-icons/ri";
 
 import {
   Table,

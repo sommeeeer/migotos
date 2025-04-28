@@ -16,6 +16,7 @@ export const contactSchema = z.object({
     .max(100, { message: 'Subject is too long' }),
   message: z
     .string()
-    .min(3, { message: 'Message needs to be longer than 3 characters' })
-    .max(1000, { message: 'Message is too long' }),
+    .min(3, { message: "Message needs to be longer than 3 characters" })
+    .max(1000, { message: "Message is too long" }),
+  turnstileToken: z.string().min(1, { message: "Please verify that you are a human" }),
 });

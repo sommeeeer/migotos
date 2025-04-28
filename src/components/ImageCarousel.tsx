@@ -2,7 +2,7 @@ import type {
   BlogPostImage,
   CatImage,
   KittenPictureImage,
-} from '@prisma/client';
+} from '../../prisma/generated/browser';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import Image from 'next/image';

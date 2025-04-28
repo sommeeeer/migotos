@@ -9,9 +9,9 @@ import GoogleProvider from 'next-auth/providers/google';
 import FacebookProvider from 'next-auth/providers/facebook';
 import EmailProvider from 'next-auth/providers/email';
 
-import { env } from '~/env.mjs';
-import { db } from '~/server/db';
-import { type Role } from '@prisma/client';
+import { env } from "~/env.mjs";
+import { db } from "~/server/db";
+import { type Role } from "../../prisma/generated/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`

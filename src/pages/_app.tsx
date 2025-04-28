@@ -145,6 +145,7 @@ function PageHead() {
         sizes="512x400"
       />
       <link rel="icon" href="/static/icons/socialicon.png" />
+      <link rel="preconnect" href="https://challenges.cloudflare.com" />
     </Head>
   );
 }
