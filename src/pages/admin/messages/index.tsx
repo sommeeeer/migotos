@@ -1,11 +1,11 @@
-import { type ContactMessage } from "../../../../prisma/generated/browser";
-import AdminLayout from "../AdminLayout";
-import type { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { db } from "~/server/db";
-import { format } from "date-fns";
-import { BiMessageAltDetail } from "react-icons/bi";
-import { AiFillDelete, AiOutlineMail } from "react-icons/ai";
-import { BiTime } from "react-icons/bi";
+import { type ContactMessage } from '../../../../prisma/generated/browser';
+import AdminLayout from '../AdminLayout';
+import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import { db } from '~/server/db';
+import { format } from 'date-fns';
+import { BiMessageAltDetail } from 'react-icons/bi';
+import { AiFillDelete, AiOutlineMail } from 'react-icons/ai';
+import { BiTime } from 'react-icons/bi';
 import {
   Dialog,
   DialogContent,

@@ -2,9 +2,9 @@ import { imageDimensionsFromStream } from 'image-dimensions';
 import {
   type NextApiResponse,
   type GetServerSidePropsContext,
-} from "next/types";
-import { getServerAuthSession } from "~/server/auth";
-import { Role } from "../../prisma/generated/client";
+} from 'next/types';
+import { getServerAuthSession } from '~/server/auth';
+import { Role } from '../../prisma/generated/client';
 import {
   DeleteObjectCommand,
   PutObjectCommand,
@@ -260,17 +260,17 @@ export async function sendEmail({
 export async function validateTurnstile(token: string) {
   try {
     const response = await fetch(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           secret: env.TURNSTILE_SECRET,
           response: token,
         }),
-      },
+      }
     );
 
     const result = (await response.json()) as {
@@ -279,7 +279,7 @@ export async function validateTurnstile(token: string) {
 
     return result.success;
   } catch (error) {
-    console.error("Turnstile validation error:", error);
-    return { success: false, "error-codes": ["internal-error"] };
+    console.error('Turnstile validation error:', error);
+    return { success: false, 'error-codes': ['internal-error'] };
   }
 }

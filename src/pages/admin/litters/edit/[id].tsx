@@ -38,16 +38,16 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { api } from "~/utils/api";
-import CreateableSelect from "react-select/creatable";
-import { db } from "~/server/db";
-import type { Prisma } from "../../../../../prisma/generated/browser";
-import { AiFillEdit } from "react-icons/ai";
-import { ImageUpload } from "~/components/ImageUpload";
-import CreatableSelect from "react-select/creatable";
-import type { EditKittenType } from "~/utils/types";
-import EditKittenModal from "~/components/EditKittenModal";
+} from '~/components/ui/tooltip';
+import { api } from '~/utils/api';
+import CreateableSelect from 'react-select/creatable';
+import { db } from '~/server/db';
+import type { Prisma } from '../../../../../prisma/generated/browser';
+import { AiFillEdit } from 'react-icons/ai';
+import { ImageUpload } from '~/components/ImageUpload';
+import CreatableSelect from 'react-select/creatable';
+import type { EditKittenType } from '~/utils/types';
+import EditKittenModal from '~/components/EditKittenModal';
 
 type LitterWithKittens = Prisma.LitterGetPayload<{
   include: {

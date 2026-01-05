@@ -1,17 +1,17 @@
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
-} from "next/types";
-import CreateableSelect from "react-select/creatable";
-import { useRouter } from "next/router";
-import { format } from "date-fns";
-import type { Prisma } from "../../../../../prisma/generated/browser";
-import { AiFillEdit } from "react-icons/ai";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { addHours } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { type z } from "zod";
+} from 'next/types';
+import CreateableSelect from 'react-select/creatable';
+import { useRouter } from 'next/router';
+import { format } from 'date-fns';
+import type { Prisma } from '../../../../../prisma/generated/browser';
+import { AiFillEdit } from 'react-icons/ai';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { addHours } from 'date-fns';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { type z } from 'zod';
 
 import AdminLayout from '../../AdminLayout';
 import { db } from '~/server/db';

@@ -1,8 +1,8 @@
-import { Role } from "../../../prisma/generated/client";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { z, type TypeOf } from "zod";
-import { getServerAuthSession } from "~/server/auth";
-import { getSignedURLS } from "~/server/helpers";
+import { Role } from '../../../prisma/generated/client';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z, type TypeOf } from 'zod';
+import { getServerAuthSession } from '~/server/auth';
+import { getSignedURLS } from '~/server/helpers';
 
 type ResponseData = {
   message?: string;

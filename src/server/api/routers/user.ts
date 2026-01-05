@@ -1,6 +1,6 @@
-import { Role } from "../../../../prisma/generated/client";
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { Role } from '../../../../prisma/generated/client';
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import { db } from '~/server/db';

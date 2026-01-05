@@ -1,12 +1,12 @@
-import clsx from "clsx";
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
-import { type NextRouter, useRouter } from "next/router";
-import LoginModal from "./LoginModal";
-import { useSession } from "next-auth/react";
-import { Role } from "../../prisma/generated/browser";
-import { Search } from "lucide-react";
-import { cn } from "~/lib/utils";
+import clsx from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
+import { type NextRouter, useRouter } from 'next/router';
+import LoginModal from './LoginModal';
+import { useSession } from 'next-auth/react';
+import { Role } from '../../prisma/generated/browser';
+import { Search } from 'lucide-react';
+import { cn } from '~/lib/utils';
 
 interface NavbarProps {
   isOpen: boolean;
