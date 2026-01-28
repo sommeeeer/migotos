@@ -5,7 +5,7 @@ import { MdDeleteForever } from 'react-icons/md';
 import { api } from '~/utils/api';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { motion } from 'framer-motion';
-import { Role } from '../../prisma/generated/browser';
+import { Role } from '@prisma/client/browser';
 import { toast } from './ui/use-toast';
 import { createGravatarURL } from '~/utils/helpers';
 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { twMerge } from 'tailwind-merge';
 import { AiFillDelete, AiFillEdit } from 'react-icons/ai';
 import { format } from 'date-fns';
-import { type Cat } from '../../../../prisma/generated/browser';
+import { type Cat } from '@prisma/client/browser';
 import type {
   GetServerSidePropsContext,
   GetServerSidePropsResult,

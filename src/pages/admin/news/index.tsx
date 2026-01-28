@@ -1,4 +1,4 @@
-import { type BlogPost } from '../../../../prisma/generated/browser';
+import { type BlogPost } from '@prisma/client/browser';
 import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';

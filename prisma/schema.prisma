@@ -1,9 +1,6 @@
 generator client {
-  provider               = "prisma-client"
-  output                 = "./generated"
-  engineType             = "client"
-  importFileExtension = ""
-  runtime = "nodejs"
+  provider            = "prisma-client"
+  output              = "./generated"
 }
 
 datasource db {

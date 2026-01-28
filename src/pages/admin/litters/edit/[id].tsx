@@ -42,7 +42,7 @@ import {
 import { api } from '~/utils/api';
 import CreateableSelect from 'react-select/creatable';
 import { db } from '~/server/db';
-import type { Prisma } from '../../../../../prisma/generated/browser';
+import type { Prisma } from '@prisma/client/browser';
 import { AiFillEdit } from 'react-icons/ai';
 import { ImageUpload } from '~/components/ImageUpload';
 import CreatableSelect from 'react-select/creatable';

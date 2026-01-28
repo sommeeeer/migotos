@@ -1,4 +1,4 @@
-import { type BlogPostTag } from '../../../../prisma/generated/browser';
+import { type BlogPostTag } from '@prisma/client/browser';
 import { type GetStaticPropsResult } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';

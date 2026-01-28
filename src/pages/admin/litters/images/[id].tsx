@@ -18,7 +18,7 @@ import type {
   KittenPictureImage,
   LitterPictureWeek,
   Prisma,
-} from '../../../../../prisma/generated/browser';
+} from '@prisma/client/browser';
 
 import { db } from '~/server/db';
 import { checkAdminSession } from '~/server/helpers';

@@ -1,4 +1,4 @@
-import type { BlogPost, Litter } from '../../prisma/generated/browser';
+import type { BlogPost, Litter } from '@prisma/client/browser';
 import { Search } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';

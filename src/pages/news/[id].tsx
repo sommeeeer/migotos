@@ -1,4 +1,4 @@
-import { Role, type BlogPost } from '../../../prisma/generated/browser';
+import { Role, type BlogPost } from '@prisma/client/browser';
 import { format } from 'date-fns';
 import { AnimatePresence } from 'framer-motion';
 import { useSession } from 'next-auth/react';

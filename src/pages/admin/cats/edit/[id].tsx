@@ -5,7 +5,7 @@ import {
 import CreateableSelect from 'react-select/creatable';
 import { useRouter } from 'next/router';
 import { format } from 'date-fns';
-import type { Prisma } from '../../../../../prisma/generated/browser';
+import type { Prisma } from '@prisma/client/browser';
 import { AiFillEdit } from 'react-icons/ai';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addHours } from 'date-fns';

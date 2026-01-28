@@ -11,10 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { AiFillEdit } from 'react-icons/ai';
-import {
-  type BlogPostTag,
-  type Prisma,
-} from '../../../../../prisma/generated/browser';
+import { type BlogPostTag, type Prisma } from '@prisma/client/browser';
 
 import AdminLayout from '~/pages/admin/AdminLayout';
 import { db } from '~/server/db';

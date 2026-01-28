@@ -20,11 +20,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type {
-  Cat,
-  CatImage,
-  Prisma,
-} from '../../../../../prisma/generated/browser';
+import type { Cat, CatImage, Prisma } from '@prisma/client/browser';
 
 import { db } from '~/server/db';
 import {

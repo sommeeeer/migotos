@@ -7,7 +7,7 @@
  * need to use are documented accordingly near the end.
  */
 
-import { Role } from '../../../prisma/generated/client';
+import { Role } from '@prisma/client/browser';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
 import { type NextApiResponse } from 'next';

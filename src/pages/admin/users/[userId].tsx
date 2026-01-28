@@ -1,4 +1,4 @@
-import { type Prisma } from '../../../../prisma/generated/browser';
+import { type Prisma } from '@prisma/client/browser';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { db } from '~/server/db';
 import { useRouter } from 'next/router';

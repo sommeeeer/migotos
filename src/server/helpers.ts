@@ -4,7 +4,7 @@ import {
   type GetServerSidePropsContext,
 } from 'next/types';
 import { getServerAuthSession } from '~/server/auth';
-import { Role } from '../../prisma/generated/client';
+import { Role } from '@prisma/client/browser';
 import {
   DeleteObjectCommand,
   PutObjectCommand,

@@ -1,4 +1,4 @@
-import { type Prisma, Role } from '../../../../prisma/generated/browser';
+import { type Prisma, Role } from '@prisma/client/browser';
 import AdminLayout from '../AdminLayout';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { db } from '~/server/db';

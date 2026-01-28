@@ -1,4 +1,4 @@
-import type { Prisma } from '../../prisma/generated/client';
+import type { Prisma } from '@prisma/client/browser';
 import { z } from 'zod';
 import type { kittenSchema } from '~/lib/validators/litter';
 

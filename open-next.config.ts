@@ -1,4 +1,5 @@
-import type { OpenNextConfig } from 'open-next/types/open-next';
+import type { OpenNextConfig } from '@opennextjs/aws/types/open-next';
+
 const config = {
   // buildCommand: "echo 'Skippinig next build'",
   default: {

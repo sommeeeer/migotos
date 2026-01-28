@@ -1,7 +1,4 @@
-import {
-  type Prisma,
-  type KittenPictureImage,
-} from '../../../../../prisma/generated/browser';
+import { type Prisma, type KittenPictureImage } from '@prisma/client/browser';
 import type { GetStaticPropsContext, GetStaticPropsResult } from 'next';
 import BorderText from '~/components/BorderText';
 import Image from 'next/image';

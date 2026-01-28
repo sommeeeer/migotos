@@ -1,4 +1,4 @@
-import { Role } from '../../../../prisma/generated/client';
+import { Role } from '@prisma/client/browser';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 

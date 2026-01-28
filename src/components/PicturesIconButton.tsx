@@ -2,7 +2,7 @@ import { cn } from '~/lib/utils';
 import { PiImages } from 'react-icons/pi';
 
 interface Props {
-  picturesRef: React.RefObject<HTMLElement>;
+  picturesRef: React.RefObject<HTMLElement | null>;
   className?: string;
 }
 

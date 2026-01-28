@@ -1,4 +1,4 @@
-import { type ContactMessage } from '../../../../prisma/generated/browser';
+import { type ContactMessage } from '@prisma/client/browser';
 import AdminLayout from '../AdminLayout';
 import type { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { db } from '~/server/db';

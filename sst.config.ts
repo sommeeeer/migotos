@@ -12,9 +12,12 @@ export default {
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
+      stack.setDefaultFunctionProps({
+        runtime: 'nodejs22.x',
+      });
+
       const bucket = new Bucket(stack, 'bucketid', {
         cdk: {
-          // @ts-expect-error This is valid
           bucket: s3.Bucket.fromBucketArn(
             stack,
             env.S3_BUCKET_NAME,
@@ -32,7 +35,7 @@ export default {
           domainAlias: stack.stage === 'prod' ? 'www.migotos.com' : undefined,
           hostedZone: 'migotos.com',
         },
-        runtime: 'nodejs20.x',
+        runtime: 'nodejs22.x',
         imageOptimization: {
           staticImageOptimization: true,
         },
@@ -47,7 +50,7 @@ export default {
             app.stage === 'prod' ? env.DATABASE_URL : env.DATABASE_URL_DEV,
         },
         bind: [bucket],
-        buildCommand: 'npx @opennextjs/aws@3.2.2 build',
+        buildCommand: 'npx @opennextjs/aws@3.9.14 build',
         permissions: ['ssm'],
       });
 

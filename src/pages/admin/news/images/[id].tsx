@@ -15,10 +15,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type {
-  BlogPostImage,
-  Prisma,
-} from '../../../../../prisma/generated/browser';
+import type { BlogPostImage, Prisma } from '@prisma/client/browser';
 import { AnimatePresence, motion } from 'framer-motion';
 import { GripVertical, ImagePlus, RotateCcw, Save, Upload } from 'lucide-react';
 import Image from 'next/image';

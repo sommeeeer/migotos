@@ -1,4 +1,4 @@
-import { Role } from '../../../prisma/generated/client';
+import { Role } from '@prisma/client/browser';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z, type TypeOf } from 'zod';
 import { getServerAuthSession } from '~/server/auth';

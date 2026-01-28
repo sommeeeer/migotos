@@ -2,7 +2,7 @@ import { FaRegComments } from 'react-icons/fa';
 import { cn } from '~/lib/utils';
 
 interface Props {
-  commentsRef: React.RefObject<HTMLElement>;
+  commentsRef: React.RefObject<HTMLElement | null>;
   className?: string;
   commentsLength?: number;
 }

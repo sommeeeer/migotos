@@ -1,5 +1,5 @@
 import { db } from '~/server/db';
-import { type Cat, type CatImage } from '../../../prisma/generated/browser';
+import { type Cat, type CatImage } from '@prisma/client/browser';
 import { type GetStaticPropsResult } from 'next';
 import BorderText from '~/components/BorderText';
 import CatsGrid from '~/components/CatsGrid';
