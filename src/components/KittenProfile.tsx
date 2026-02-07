@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import femaleImg from '../../public/static/female-50x50.png';
-import maleImg from '../../public/static/female-50x50.png';
+import maleImg from '../../public/static/male-50x50.png';
 import { KittenOrderStatus } from '@prisma/client/enums';
 
 export interface KittenProfileProps {
