@@ -1,11 +1,14 @@
 import { type GetStaticPropsResult, type GetStaticPropsContext } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Footer from '~/components/Footer';
+import PageBanner from '~/components/PageBanner';
 import NewsCard from '~/components/ui/NewsCard';
 import { db } from '~/server/db';
 import { capitalizeString } from '~/utils/helpers';
 import type { BlogPostWithTags } from '~/utils/types';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -19,16 +22,18 @@ function TagPage({ blogPosts }: Props) {
     <>
       <PageHead title={title as string} />
       <div className="flex w-full flex-col items-center gap-8">
-        <section className="mt-16 flex max-w-6xl flex-col gap-4 px-4 text-center">
-          <h1 className="font-playfair text-4xl">
-            <em className="capitalize">{title}</em>
-          </h1>
-          <p className="text-base text-zinc-600">{`Total posts: ${blogPosts.length}`}</p>
-          <p className="text-base leading-loose text-zinc-500">
-            Click on the card to read more.
+        <PageBanner title={<em className="capitalize">{title}</em>}>
+          <p className="text-xs uppercase tracking-wider text-hoverbg">
+            {blogPosts.length} {blogPosts.length === 1 ? 'post' : 'posts'}
           </p>
-        </section>
-        <section className="mb-8 grid max-w-6xl gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">
+          <Link
+            href="/news/tag"
+            className="relative text-sm text-stone-500 underline underline-offset-4 hover:text-hoverbg"
+          >
+            All categories
+          </Link>
+        </PageBanner>
+        <section className="mb-8 grid w-full max-w-6xl justify-items-center gap-6 px-6 py-4 md:grid-cols-2 xl:grid-cols-3 xl:gap-8">
           {blogPosts.map((blogPost, idx) => (
             <NewsCard
               key={blogPost.id}
@@ -51,7 +56,7 @@ export default TagPage;
 
 type Params = { tag: string };
 
-export async function getStaticProps({
+export const getStaticProps = withSuperJSONProps(async function ({
   params,
 }: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
   const tag = params?.tag;
@@ -95,7 +100,7 @@ export async function getStaticProps({
       blogPosts,
     },
   };
-}
+});
 
 export async function getStaticPaths() {
   const tags = await db.blogPostTag.findMany({

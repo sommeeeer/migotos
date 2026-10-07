@@ -8,6 +8,7 @@ import { type CatWithImage } from './cats';
 import Image from 'next/image';
 import Link from 'next/link';
 import Head from 'next/head';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type Props = {
   searchResults: {
@@ -125,7 +126,7 @@ export default function Home({ searchResults }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+const getSearchProps: GetServerSideProps = async (context) => {
   const q = context.query.q as string;
 
   if (!q || q.length < 1) {
@@ -297,3 +298,5 @@ function PageHead() {
     </Head>
   );
 }
+
+export const getServerSideProps = withSuperJSONProps(getSearchProps);

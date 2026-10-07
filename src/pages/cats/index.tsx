@@ -5,6 +5,7 @@ import BorderText from '~/components/BorderText';
 import CatsGrid from '~/components/CatsGrid';
 import Footer from '~/components/Footer';
 import Head from 'next/head';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 export interface CatWithImage extends Cat {
   CatImage: CatImage[];
@@ -61,7 +62,9 @@ function Cats({
 }
 export default Cats;
 
-export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
+export const getStaticProps = withSuperJSONProps(async function (): Promise<
+  GetStaticPropsResult<Props>
+> {
   const [fertileMaleCats, fertileFemaleCats, formerMaleCats, formerFemaleCats] =
     await Promise.all([
       db.cat.findMany({
@@ -117,7 +120,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       formerFemaleCats: formerFemaleCats,
     },
   };
-}
+});
 
 function PageHead() {
   return (

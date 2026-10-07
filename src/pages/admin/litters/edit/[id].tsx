@@ -48,6 +48,7 @@ import { ImageUpload } from '~/components/ImageUpload';
 import CreatableSelect from 'react-select/creatable';
 import type { EditKittenType } from '~/utils/types';
 import EditKittenModal from '~/components/EditKittenModal';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type LitterWithKittens = Prisma.LitterGetPayload<{
   include: {
@@ -567,7 +568,7 @@ export default function EditLitter({
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<EditLitterProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -646,4 +647,4 @@ export async function getServerSideProps(
       tags,
     },
   };
-}
+});

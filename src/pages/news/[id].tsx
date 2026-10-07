@@ -4,8 +4,10 @@ import { AnimatePresence } from 'framer-motion';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import type { GetStaticPropsContext, GetStaticPropsResult } from 'next/types';
 import React, { useRef, useState } from 'react';
+import { FaArrowLeft, FaPaw } from 'react-icons/fa';
 import AddImagesButton from '~/components/AddImagesButton';
 import Comment from '~/components/Comment';
 import CommentForm from '~/components/CommentForm';
@@ -14,6 +16,7 @@ import EditIconButton from '~/components/EditIconButton';
 import Footer from '~/components/Footer';
 import ImageCarousel from '~/components/ImageCarousel';
 import LoginButton from '~/components/LoginButton';
+import PageBanner from '~/components/PageBanner';
 import LoadingSpinner from '~/components/ui/LoadingSpinner';
 import Tag from '~/components/ui/Tag';
 import { IMAGE_QUALITY } from '~/lib/utils';
@@ -21,6 +24,7 @@ import { db } from '~/server/db';
 import { api } from '~/utils/api';
 import type { BlogPostWithTagsAndImages } from '~/utils/types';
 import KenTvAppearance from './_custom/KenTvAppearance';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type Props = {
   blogPost: BlogPostWithTagsAndImages;
@@ -48,7 +52,7 @@ function BlogPost({ blogPost }: Props) {
     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
     return text.replace(
       linkRegex,
-      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline">$1</a>'
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="font-medium text-hoverbg underline underline-offset-4">$1</a>'
     );
   };
 
@@ -65,46 +69,45 @@ function BlogPost({ blogPost }: Props) {
           name={blogPost.title}
         />
       )}
-      <div className="flex max-w-3xl flex-col items-center gap-8 px-3 py-4">
-        <header className="flex flex-col items-center gap-4">
-          <h1 className="text-center text-xl sm:text-2xl">{blogPost.title}</h1>
-          <div className="flex w-full items-center justify-center gap-2 border-b-2 border-t-zinc-100 text-[#777777]">
-            <span className="text-sm">
-              {format(new Date(blogPost.post_date), 'MMMM d, yyyy')}
-            </span>
-            <span>•</span>
-            <div className="flex items-center gap-0">
-              {blogPost.tags.map((tag) => (
-                <Tag
-                  key={tag.blogposttag.id}
-                  className="m-0 p-1 text-sm font-normal text-[#777777]"
-                  value={tag.blogposttag.value}
-                />
-              ))}
-              <span>•</span>
-              <CommentsIconButton
-                commentsLength={comments?.length}
-                className="ml-2 h-5 w-5 text-[#777777]"
-                commentsRef={commentsRef}
-              />
+      <PageBanner title={blogPost.title}>
+        <Link
+          href="/news"
+          className="relative order-first mb-2 flex items-center gap-2 text-sm text-stone-500 hover:text-hoverbg"
+        >
+          <FaArrowLeft aria-hidden />
+          All stories
+        </Link>
+        <p className="text-xs uppercase tracking-wider text-hoverbg">
+          {format(new Date(blogPost.post_date), 'MMMM d, yyyy')}
+        </p>
+        <div className="relative flex flex-wrap items-center justify-center gap-2">
+          {blogPost.tags.map((tag) => (
+            <Tag
+              key={tag.blogposttag.id}
+              className="m-0 bg-white text-hoverbg hover:bg-stone-200"
+              value={tag.blogposttag.value}
+            />
+          ))}
+          <CommentsIconButton
+            commentsLength={comments?.length}
+            className="h-5 w-5 text-hoverbg"
+            commentsRef={commentsRef}
+          />
+          {session?.user.role === Role.ADMIN && (
+            <div className="flex">
+              <EditIconButton className="" link={`news/edit/${blogPost.id}`} />
+              <AddImagesButton link={`news/images/${blogPost.id}`} />
             </div>
-            {session?.user.role === Role.ADMIN && (
-              <div className="flex">
-                <EditIconButton
-                  className=""
-                  link={`news/edit/${blogPost.id}`}
-                />
-                <AddImagesButton link={`news/images/${blogPost.id}`} />
-              </div>
-            )}
-          </div>
-        </header>
+          )}
+        </div>
+      </PageBanner>
+      <div className="flex w-full max-w-3xl flex-col items-center gap-10 px-6 py-10">
         {CustomBlogPost ? (
           <CustomBlogPost />
         ) : (
           <>
             <div
-              className="max-w-2xl whitespace-break-spaces py-2 text-base leading-loose"
+              className="max-w-2xl whitespace-break-spaces text-base leading-loose text-stone-700"
               dangerouslySetInnerHTML={{
                 __html: convertMarkdownLinks(blogPost.body.trim()),
               }}
@@ -114,8 +117,8 @@ function BlogPost({ blogPost }: Props) {
                 src={blogPost.image_url}
                 width="0"
                 height="0"
-                sizes="100vw"
-                className="h-auto w-full max-w-xl"
+                sizes="(min-width: 640px) 576px, 100vw"
+                className="h-auto max-h-[75vh] w-auto max-w-full rounded-2xl shadow-lg"
                 alt={`${blogPost.title} image`}
                 quality={IMAGE_QUALITY}
               />
@@ -123,36 +126,44 @@ function BlogPost({ blogPost }: Props) {
           </>
         )}
         {blogPost.images.length > 0 && (
-          <section className="grid grid-cols-2 items-center gap-4 sm:grid-cols-3">
+          <section className="flex w-full flex-wrap justify-center gap-3 sm:gap-4">
             {blogPost.images.map((img, idx) => {
               return (
-                <picture
+                <button
+                  type="button"
+                  aria-label={`Open picture ${idx + 1}`}
                   onClick={() => {
                     setCurrentImageIndex(idx);
                     setCarouselOpen(true);
                   }}
                   key={img.id}
-                  className="relative h-40 w-40 cursor-pointer shadow-lg sm:h-52 sm:w-52 xl:h-60 xl:w-60"
+                  className="group relative aspect-square w-[calc(50%-0.375rem)] overflow-hidden rounded-xl shadow-md sm:w-[calc(33.333%-0.667rem)]"
                 >
                   <Image
                     src={img.src}
                     alt={`${img.id} picture`}
                     fill
-                    className="rounded-md object-cover object-center"
+                    sizes="(min-width: 640px) 240px, 50vw"
+                    className="rounded-none object-cover object-center transition-transform duration-500 group-hover:scale-105"
                     {...(img.blururl
                       ? { placeholder: 'blur', blurDataURL: img.blururl }
                       : {})}
                   />
-                </picture>
+                </button>
               );
             })}
           </section>
         )}
-        <div className="mb-4 w-full border-t border-zinc-200" />
-        <div className="flex w-full flex-col gap-2 px-2" ref={commentsRef}>
-          <h1 className="text-lg uppercase text-[#777777]">
-            {comments?.length ?? '0'} comments
-          </h1>
+        <div className="flex items-center gap-3 text-hoverbg/40">
+          <span className="h-px w-16 bg-current" />
+          <FaPaw aria-hidden />
+          <span className="h-px w-16 bg-current" />
+        </div>
+        <div className="flex w-full flex-col gap-2" ref={commentsRef}>
+          <h2 className="font-playfair text-2xl text-stone-900">
+            {comments?.length ?? '0'}{' '}
+            {comments?.length === 1 ? 'comment' : 'comments'}
+          </h2>
           <div className="mt-2 flex max-w-2xl flex-col gap-6">
             <AnimatePresence>
               {isLoading && <LoadingSpinner />}
@@ -195,7 +206,7 @@ function BlogPost({ blogPost }: Props) {
 export default BlogPost;
 type Params = { id: string };
 
-export async function getStaticProps({
+export const getStaticProps = withSuperJSONProps(async function ({
   params,
 }: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
   if (!params?.id || isNaN(Number(params.id))) {
@@ -239,7 +250,7 @@ export async function getStaticProps({
       blogPost,
     },
   };
-}
+});
 
 export async function getStaticPaths() {
   const blogPosts = await db.blogPost.findMany();

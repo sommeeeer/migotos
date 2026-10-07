@@ -35,6 +35,7 @@ import Link from 'next/link';
 import { cn } from '~/lib/utils';
 import { checkAdminSession } from '~/server/helpers';
 import { toast } from '~/components/ui/use-toast';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type UserWithComment = Prisma.UserGetPayload<{
   include: {
@@ -208,7 +209,7 @@ export default function Users({ users }: UsersProps) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<UsersProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -233,4 +234,4 @@ export async function getServerSideProps(
       users,
     },
   };
-}
+});

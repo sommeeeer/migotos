@@ -41,6 +41,7 @@ import { toast } from '~/components/ui/use-toast';
 import { useState } from 'react';
 import { cn } from '~/lib/utils';
 import { Inbox, MailCheck, MailOpen, RotateCcw, Trash2 } from 'lucide-react';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type MessagesProps = {
   initialMessages: ContactMessage[];
@@ -259,7 +260,7 @@ export default function Messages({ initialMessages }: MessagesProps) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<MessagesProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -281,4 +282,4 @@ export async function getServerSideProps(
       initialMessages,
     },
   };
-}
+});

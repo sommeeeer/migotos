@@ -39,6 +39,7 @@ import { db } from '~/server/db';
 import { checkAdminSession } from '~/server/helpers';
 import { api } from '~/utils/api';
 import AdminLayout from '../AdminLayout';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 type NewsProps = {
   blogposts: BlogPost[];
 };
@@ -162,7 +163,7 @@ export default function News({ blogposts }: NewsProps) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<NewsProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -184,4 +185,4 @@ export async function getServerSideProps(
       blogposts,
     },
   };
-}
+});

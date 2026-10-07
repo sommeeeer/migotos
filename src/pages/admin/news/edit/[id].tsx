@@ -38,6 +38,7 @@ import { api } from '~/utils/api';
 import { blogPostSchema } from '~/lib/validators/blogpost';
 import { checkAdminSession } from '~/server/helpers';
 import { ImageUpload } from '~/components/ImageUpload';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type BlogPostWithTags = Prisma.BlogPostGetPayload<{
   include: { tags: true };
@@ -265,7 +266,7 @@ export default function EditBlogPost({ blogpost, tags }: EditBlogPostProps) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<EditBlogPostProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -308,4 +309,4 @@ export async function getServerSideProps(
       tags,
     },
   };
-}
+});

@@ -27,6 +27,7 @@ import PicturesIconButton from '~/components/PicturesIconButton';
 import EditIconButton from '~/components/EditIconButton';
 import AddImagesButton from '~/components/AddImagesButton';
 import { IMAGE_QUALITY } from '~/lib/utils';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type Props = {
   cat: Cat & { CatImage: CatImageType[] };
@@ -294,7 +295,7 @@ export default Cat;
 
 type Params = { slug: string };
 
-export async function getStaticProps({
+export const getStaticProps = withSuperJSONProps(async function ({
   params,
 }: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
   const slug = params?.slug;
@@ -364,7 +365,7 @@ export async function getStaticProps({
       father,
     },
   };
-}
+});
 
 export async function getStaticPaths() {
   const cats = await db.cat.findMany();

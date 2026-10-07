@@ -72,6 +72,7 @@ import {
 import { useUploadImages } from '~/hooks/use-upload-images';
 import { Progress } from '~/components/ui/progress';
 import ImageDropzone from '~/components/ImageDropzone';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type LitterWithImages = Prisma.LitterGetPayload<{
   include: {
@@ -810,7 +811,7 @@ function KittenImage({
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<EditLitterImagesProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -851,4 +852,4 @@ export async function getServerSideProps(
       litter,
     },
   };
-}
+});

@@ -38,6 +38,7 @@ import { toast } from '~/components/ui/use-toast';
 import AdminLayout from '../AdminLayout';
 import { checkAdminSession } from '~/server/helpers';
 import { Loader2 } from 'lucide-react';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type CatsProps = {
   cats: Pick<
@@ -178,7 +179,7 @@ export default function Cats({ cats }: CatsProps) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<CatsProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -210,4 +211,4 @@ export async function getServerSideProps(
       cats,
     },
   };
-}
+});

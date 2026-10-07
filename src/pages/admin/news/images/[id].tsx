@@ -61,6 +61,7 @@ import { useUploadImages } from '~/hooks/use-upload-images';
 import { cn } from '~/lib/utils';
 import { api } from '~/utils/api';
 import { bytesToMB, handleImageChange } from '~/utils/helpers';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type BlogPostWithImage = Prisma.BlogPostGetPayload<{
   include: {
@@ -476,7 +477,7 @@ function SortableItem({
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<
   GetServerSidePropsResult<{
@@ -525,4 +526,4 @@ export async function getServerSideProps(
       blogpost,
     },
   };
-}
+});

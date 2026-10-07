@@ -3,7 +3,9 @@ import { type GetStaticPropsResult } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import Footer from '~/components/Footer';
+import PageBanner from '~/components/PageBanner';
 import { db } from '~/server/db';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type Props = {
   tags: BlogPostTag[];
@@ -14,18 +16,17 @@ function Tags({ tags }: Props) {
     <>
       <PageHead />
       <div className="flex w-full flex-col items-center gap-8">
-        <header>
-          <h1 className="mt-8 text-xl">List of categories</h1>
-          <h3 className="text-center text-xs text-gray-600">
-            Click one to go to there
-          </h3>
-        </header>
-        <section className="mb-8 flex max-w-6xl flex-col gap-4 px-4 text-center">
+        <PageBanner title={<em>Categories</em>}>
+          <p className="text-sm text-stone-500 sm:text-base">
+            Pick a category to see its stories.
+          </p>
+        </PageBanner>
+        <section className="mb-8 flex max-w-3xl flex-wrap justify-center gap-3 px-6 py-4">
           {tags.map((tag) => (
             <Link
               key={tag.id}
               href={`/news/tag/${tag.value.toLowerCase()}`}
-              className="rounded-full bg-gray-100 px-4 py-2 hover:bg-gray-200"
+              className="rounded-full border border-hoverbg/30 bg-white px-5 py-2 text-sm font-medium text-hoverbg transition-colors duration-300 hover:border-hoverbg"
             >
               {tag.value}
             </Link>
@@ -37,7 +38,9 @@ function Tags({ tags }: Props) {
   );
 }
 
-export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
+export const getStaticProps = withSuperJSONProps(async function (): Promise<
+  GetStaticPropsResult<Props>
+> {
   const tags = await db.blogPostTag.findMany({});
 
   return {
@@ -45,7 +48,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       tags,
     },
   };
-}
+});
 
 export default Tags;
 

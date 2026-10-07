@@ -21,6 +21,7 @@ import CommentsIconButton from '~/components/CommentsIconButton';
 import PicturesIconButton from '~/components/PicturesIconButton';
 import EditIconButton from '~/components/EditIconButton';
 import AddImagesButton from '~/components/AddImagesButton';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type LitterWithKittensAndTagsAndPictures = Prisma.LitterGetPayload<{
   include: {
@@ -198,7 +199,7 @@ export default LitterPage;
 
 type Params = { slug: string };
 
-export async function getStaticProps({
+export const getStaticProps = withSuperJSONProps(async function ({
   params,
 }: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
   const slug = params?.slug;
@@ -270,7 +271,7 @@ export async function getStaticProps({
       father,
     },
   };
-}
+});
 
 export async function getStaticPaths() {
   const litters = await db.litter.findMany();

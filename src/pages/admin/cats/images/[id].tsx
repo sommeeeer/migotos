@@ -61,6 +61,7 @@ import { cn } from '~/lib/utils';
 import { useUploadImages } from '~/hooks/use-upload-images';
 import { Progress } from '~/components/ui/progress';
 import ImageDropzone from '~/components/ImageDropzone';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -474,7 +475,7 @@ function SortableItem({
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<
   GetServerSidePropsResult<{
@@ -523,4 +524,4 @@ export async function getServerSideProps(
       cat,
     },
   };
-}
+});

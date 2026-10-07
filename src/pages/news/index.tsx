@@ -1,10 +1,12 @@
 import Head from 'next/head';
 import { type GetStaticPropsResult } from 'next/types';
 import Footer from '~/components/Footer';
+import PageBanner from '~/components/PageBanner';
 import PaginationMenu from '~/components/PaginationMenu';
 import NewsCard from '~/components/ui/NewsCard';
 import { db } from '~/server/db';
 import type { BlogPostWithTags } from '~/utils/types';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type Props = {
   blogPosts: BlogPostWithTags[];
@@ -19,18 +21,21 @@ function News({ blogPosts, pagination }: Props) {
     <>
       <PageHead />
       <div className="flex w-full flex-col items-center gap-8">
-        <section className="mt-8 flex max-w-6xl flex-col gap-4 px-4 text-center">
-          <h1 className="font-playfair text-lg tracking-wider sm:text-xl md:text-2xl">
-            <em>All Blog Posts</em>
-          </h1>
-          <p className="text-xs text-gray-500">
-            Showing page {pagination.currentPage} of {pagination.totalPages}
+        <PageBanner
+          title={
+            <>
+              <em>News &amp;</em> Stories
+            </>
+          }
+        >
+          <p className="text-sm text-stone-500 sm:text-base">
+            Show results, new arrivals and other news from the cattery.
           </p>
-          <p className="text-base leading-loose text-zinc-500">
-            Click on the card to read more.
+          <p className="text-xs uppercase tracking-wider text-hoverbg">
+            Page {pagination.currentPage} of {pagination.totalPages}
           </p>
-        </section>
-        <section className="grid max-w-6xl gap-6 p-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3 xl:gap-8">
+        </PageBanner>
+        <section className="grid w-full max-w-6xl justify-items-center gap-6 px-6 py-4 md:grid-cols-2 xl:grid-cols-3 xl:gap-8">
           {blogPosts.map((blogPost, idx) => (
             <NewsCard
               key={blogPost.id}
@@ -55,7 +60,9 @@ function News({ blogPosts, pagination }: Props) {
 }
 export default News;
 
-export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
+export const getStaticProps = withSuperJSONProps(async function (): Promise<
+  GetStaticPropsResult<Props>
+> {
   const blogPostCount = await db.blogPost.count();
   const blogPostTotalCount = blogPostCount - 1;
 
@@ -93,7 +100,7 @@ export async function getStaticProps(): Promise<GetStaticPropsResult<Props>> {
       },
     },
   };
-}
+});
 
 function PageHead() {
   return (

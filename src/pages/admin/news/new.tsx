@@ -36,6 +36,7 @@ import { blogPostSchema } from '~/lib/validators/blogpost';
 import { ImageUpload } from '~/components/ImageUpload';
 import CreatableSelect from 'react-select/creatable';
 import { db } from '~/server/db';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
   const router = useRouter();
@@ -239,7 +240,7 @@ export default function NewBlogPost({ tags }: { tags: { value: string }[] }) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<
   GetServerSidePropsResult<{
@@ -265,4 +266,4 @@ export async function getServerSideProps(
       tags,
     },
   };
-}
+});

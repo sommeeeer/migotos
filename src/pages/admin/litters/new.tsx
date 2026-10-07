@@ -48,6 +48,7 @@ import { checkAdminSession } from '~/server/helpers';
 import { api } from '~/utils/api';
 import type { EditKittenType } from '~/utils/types';
 import AdminLayout from '../AdminLayout';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 interface NewLitterProps {
   motherNames: { name: string; stamnavn: string }[];
@@ -531,7 +532,7 @@ export default function NewLitter({
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<NewLitterProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -588,4 +589,4 @@ export async function getServerSideProps(
       tags,
     },
   };
-}
+});

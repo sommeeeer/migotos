@@ -38,16 +38,6 @@ const config: NextConfig = {
       },
     ],
   },
-  experimental: {
-    swcPlugins: [
-      [
-        'superjson-next',
-        {
-          excluded: [],
-        },
-      ],
-    ],
-  },
   outputFileTracingExcludes: {
     '*': [
       './.prisma/client/libquery_engine-debian*', // prisma ubuntu binary

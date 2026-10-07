@@ -39,6 +39,7 @@ import { Button } from '~/components/ui/button';
 import AdminLayout from '../AdminLayout';
 import { db } from '~/server/db';
 import { ImageUpload } from '~/components/ImageUpload';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 interface NewCatProps {
   motherNames: { name: string }[];
@@ -376,7 +377,7 @@ export default function NewCat({ motherNames, fatherNames }: NewCatProps) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<NewCatProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -418,4 +419,4 @@ export async function getServerSideProps(
       fatherNames,
     },
   };
-}
+});

@@ -6,6 +6,7 @@ import Footer from '~/components/Footer';
 import LitterProfile from '~/components/LitterProfile';
 import { db } from '~/server/db';
 import type { LitterWithTags } from '~/utils/types';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 interface LittersProps {
   litters: LitterWithTags[];
@@ -67,7 +68,7 @@ function Litters({ litters, yearsArray }: LittersProps) {
 }
 export default Litters;
 
-export async function getStaticProps(): Promise<
+export const getStaticProps = withSuperJSONProps(async function (): Promise<
   GetStaticPropsResult<LittersProps>
 > {
   const litters = await db.litter.findMany({
@@ -91,7 +92,7 @@ export async function getStaticProps(): Promise<
       yearsArray,
     },
   };
-}
+});
 
 function PageHead() {
   return (

@@ -81,7 +81,7 @@ export default function ImageCarousel({
           scale: 1,
           transition: { duration: 0.3 },
         }}
-        className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+        className="fixed inset-0 z-50 flex flex-col justify-center"
       >
         <div className="absolute inset-0 bg-black backdrop-blur-2xl"></div>
 
@@ -118,10 +118,10 @@ export default function ImageCarousel({
             <span className="sr-only">Download image</span>
           </a>
         )}
-        <CarouselContent>
+        <CarouselContent className="ml-0">
           {images.map((image, index) => (
             <CarouselItem
-              className="flex items-center justify-center pl-0"
+              className="flex h-dvh items-center justify-center px-2 py-16 pl-2 sm:px-20"
               key={image.id}
             >
               <Image
@@ -130,7 +130,7 @@ export default function ImageCarousel({
                 alt={`Profile image of ${name}`}
                 width={image.width}
                 height={image.height}
-                className="md:max-w-3xl lg:max-w-4xl xl:max-w-5xl"
+                className="h-auto max-h-full w-auto max-w-full object-contain"
                 quality={IMAGE_QUALITY}
               />
             </CarouselItem>

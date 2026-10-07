@@ -40,6 +40,7 @@ import { Checkbox } from '~/components/ui/checkbox';
 import { api } from '~/utils/api';
 import { checkAdminSession } from '~/server/helpers';
 import { ImageUpload } from '~/components/ImageUpload';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type CatWithImage = Prisma.CatGetPayload<{
   include: {
@@ -401,7 +402,7 @@ export default function EditCat({
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<EditCatProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -465,4 +466,4 @@ export async function getServerSideProps(
       fatherNames,
     },
   };
-}
+});

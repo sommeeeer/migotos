@@ -8,7 +8,8 @@ import Header from '~/components/Header';
 import NextNProgress from 'nextjs-progressbar';
 
 import { Poppins, Playfair_Display } from 'next/font/google';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { deserializeProps } from '~/utils/superjson-props';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -24,8 +25,12 @@ const playfair = Playfair_Display({
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: serializedPageProps,
 }) => {
+  const { session, ...pageProps } = useMemo(
+    () => deserializeProps(serializedPageProps),
+    [serializedPageProps]
+  );
   useEffect(() => {
     async function fetchCount() {
       const visited = localStorage.getItem('visited');

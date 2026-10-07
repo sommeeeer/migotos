@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import ImageCarousel from '~/components/ImageCarousel';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type LitterWithPictureWeeks = Prisma.LitterGetPayload<{
   include: {
@@ -103,7 +104,7 @@ export default KittenPictures;
 
 type Params = { slug: string; key: string };
 
-export async function getStaticProps({
+export const getStaticProps = withSuperJSONProps(async function ({
   params,
 }: GetStaticPropsContext<Params>): Promise<GetStaticPropsResult<Props>> {
   const litter = await db.litter.findFirst({
@@ -147,7 +148,7 @@ export async function getStaticProps({
       alternativeTitle: images.title,
     },
   };
-}
+});
 
 export async function getStaticPaths() {
   const litters = await db.litter.findMany({

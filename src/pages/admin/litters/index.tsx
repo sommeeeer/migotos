@@ -38,6 +38,7 @@ import { api } from '~/utils/api';
 import { toast } from '~/components/ui/use-toast';
 import { useRouter } from 'next/router';
 import { Loader2 } from 'lucide-react';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type LittersProps = {
   litters: Litter[];
@@ -168,7 +169,7 @@ export default function Litters({ litters }: LittersProps) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<LittersProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -189,4 +190,4 @@ export async function getServerSideProps(
       litters,
     },
   };
-}
+});

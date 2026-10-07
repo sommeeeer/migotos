@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { FaComments } from 'react-icons/fa';
 import { checkAdminSession } from '~/server/helpers';
 import { Button } from '~/components/ui/button';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 type UserWithComments = Prisma.UserGetPayload<{
   include: {
@@ -73,7 +74,7 @@ export default function UserPage({ user }: UserProps) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<UserProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -115,4 +116,4 @@ export async function getServerSideProps(
       user,
     },
   };
-}
+});

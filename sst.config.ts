@@ -50,7 +50,7 @@ export default {
             app.stage === 'prod' ? env.DATABASE_URL : env.DATABASE_URL_DEV,
         },
         bind: [bucket],
-        buildCommand: 'npx -y @opennextjs/aws@4.0.2 build',
+        buildCommand: 'node /home/lillemagga/Koding/git/opennextjs-aws/packages/open-next/dist/index.js build',
         permissions: ['ssm'],
       });
 

@@ -8,6 +8,7 @@ import AdminLayout from './AdminLayout';
 import StatsCard from '~/components/StatsCard';
 import { checkAdminSession } from '~/server/helpers';
 import { db } from '~/server/db';
+import { withSuperJSONProps } from '~/utils/superjson-props';
 
 export type AdminProps = {
   counts: {
@@ -34,7 +35,7 @@ export default function Admin({ counts }: AdminProps) {
   );
 }
 
-export async function getServerSideProps(
+export const getServerSideProps = withSuperJSONProps(async function (
   ctx: GetServerSidePropsContext
 ): Promise<GetServerSidePropsResult<AdminProps>> {
   const adminSession = await checkAdminSession(ctx);
@@ -114,4 +115,4 @@ export async function getServerSideProps(
       counts,
     },
   };
-}
+});
