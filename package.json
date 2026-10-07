@@ -7,7 +7,7 @@
     "build": "next build",
     "db:push": "prisma db push",
     "db:pull": "prisma db pull",
-    "dev": "sst bind next dev --webpack",
+    "dev": "sst bind \"next dev --webpack\"",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start",
