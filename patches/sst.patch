@@ -1,0 +1,228 @@
+diff --git a/cli/commands/deploy.js b/cli/commands/deploy.js
+index 3acc2be75c84fae21e5bbb5bbbb772d5e9f7c33e..a62706f4362fba3a343b6660f42591eda7f6147e 100644
+--- a/cli/commands/deploy.js
++++ b/cli/commands/deploy.js
+@@ -52,6 +52,7 @@ export const deploy = (program) => program.command("deploy [filter]", "Deploy yo
+                 await exit();
+             }
+         }
++        console.log("MAGNUS HERE")
+         Colors.line(`${Colors.primary.bold(`SST v${project.version}`)}`);
+         Colors.gap();
+         Colors.line(`${Colors.primary(`➜`)}  ${Colors.bold("App:")}     ${project.config.name}`);
+diff --git a/constructs/EdgeFunction.d.ts b/constructs/EdgeFunction.d.ts
+index 1d9dafb94751d1e68c86d966cb4a2e5d127c6a99..4b62fcf79e4d5a5e5a955f529c596721ee785b25 100644
+--- a/constructs/EdgeFunction.d.ts
++++ b/constructs/EdgeFunction.d.ts
+@@ -9,7 +9,7 @@ import { Permissions } from "./util/permission.js";
+ export interface EdgeFunctionProps {
+     bundle?: string;
+     handler: string;
+-    runtime?: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x";
++    runtime?: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x" | "nodejs26.x";
+     timeout?: number | Duration;
+     memorySize?: number | Size;
+     permissions?: Permissions;
+diff --git a/constructs/Function.d.ts b/constructs/Function.d.ts
+index 377e9f05ffbe267b9259925973992572f803f8a1..cc71608f24151c17858876d18b8431f1fe5188ff 100644
+--- a/constructs/Function.d.ts
++++ b/constructs/Function.d.ts
+@@ -18,6 +18,7 @@ declare const supportedRuntimes: {
+     "nodejs18.x": CDKRuntime;
+     "nodejs20.x": CDKRuntime;
+     "nodejs22.x": CDKRuntime;
++    "nodejs26.x": CDKRuntime;
+     "python3.7": CDKRuntime;
+     "python3.8": CDKRuntime;
+     "python3.9": CDKRuntime;
+@@ -798,7 +799,7 @@ export declare class Function extends CDKFunction implements SSTConstruct {
+         type: "Function";
+         data: {
+             arn: string;
+-            runtime: "container" | "rust" | "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x" | "python3.7" | "python3.8" | "python3.9" | "python3.10" | "python3.11" | "python3.12" | "python3.13" | "dotnetcore3.1" | "dotnet6" | "dotnet8" | "java8" | "java11" | "java17" | "java21" | "go1.x" | "go" | undefined;
++            runtime: "container" | "rust" | "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x" | "nodejs26.x" | "python3.7" | "python3.8" | "python3.9" | "python3.10" | "python3.11" | "python3.12" | "python3.13" | "dotnetcore3.1" | "dotnet6" | "dotnet8" | "java8" | "java11" | "java17" | "java21" | "go1.x" | "go" | undefined;
+             handler: string | undefined;
+             missingSourcemap: boolean | undefined;
+             localId: string;
+diff --git a/constructs/Function.js b/constructs/Function.js
+index 2d3e11ef57a3b39910aeb8410d2bff48d851a60a..7652f2140762c20c1bbfbcbb3d7d18e503d53e26 100644
+--- a/constructs/Function.js
++++ b/constructs/Function.js
+@@ -19,7 +19,7 @@ import { VisibleError } from "../error.js";
+ import { useRuntimeHandlers } from "../runtime/handlers.js";
+ import { createAppContext } from "./context.js";
+ import { useWarning } from "./util/warning.js";
+-import { Architecture, AssetCode, Code, Function as CDKFunction, FunctionUrlAuthType, Handler as CDKHandler, LayerVersion, Runtime as CDKRuntime, Tracing, InvokeMode, } from "aws-cdk-lib/aws-lambda";
++import { Architecture, AssetCode, Code, Function as CDKFunction, FunctionUrlAuthType, Handler as CDKHandler, LayerVersion, Runtime as CDKRuntime, RuntimeFamily as CDKRuntimeFamily, Tracing, InvokeMode, } from "aws-cdk-lib/aws-lambda";
+ import { RetentionDays } from "aws-cdk-lib/aws-logs";
+ import { Token, Size as CDKSize, Duration as CDKDuration, IgnoreMode, CustomResource, } from "aws-cdk-lib/core";
+ import { Effect, Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
+@@ -37,6 +37,7 @@ const supportedRuntimes = {
+     "nodejs18.x": CDKRuntime.NODEJS_18_X,
+     "nodejs20.x": CDKRuntime.NODEJS_20_X,
+     "nodejs22.x": CDKRuntime.NODEJS_22_X,
++    "nodejs26.x": new CDKRuntime("nodejs26.x", CDKRuntimeFamily.NODEJS, { supportsInlineCode: true }),
+     "python3.7": CDKRuntime.PYTHON_3_7,
+     "python3.8": CDKRuntime.PYTHON_3_8,
+     "python3.9": CDKRuntime.PYTHON_3_9,
+diff --git a/constructs/NextjsSite.js b/constructs/NextjsSite.js
+index c3d8f4fcae6b2329bedde2eadd229aa690704e50..608578fa6717b260f8d6a4c73090508c33c37537 100644
+--- a/constructs/NextjsSite.js
++++ b/constructs/NextjsSite.js
+@@ -2,7 +2,12 @@ import fs from "fs";
+ import path from "path";
+ import crypto from "crypto";
+ import { Duration as CdkDuration, RemovalPolicy, CustomResource, Fn, } from "aws-cdk-lib/core";
+-import { Code, Runtime, Function as CdkFunction, Architecture, } from "aws-cdk-lib/aws-lambda";
++import { Code, Runtime, RuntimeFamily, Function as CdkFunction, Architecture, } from "aws-cdk-lib/aws-lambda";
++function resolveAuxRuntime(runtime) {
++    return runtime === "nodejs26.x"
++        ? new Runtime("nodejs26.x", RuntimeFamily.NODEJS, { supportsInlineCode: true })
++        : Runtime.NODEJS_22_X;
++}
+ import { AttributeType, Billing, TableV2 as Table, } from "aws-cdk-lib/aws-dynamodb";
+ import { Provider } from "aws-cdk-lib/custom-resources";
+ import { Queue } from "aws-cdk-lib/aws-sqs";
+@@ -156,7 +161,7 @@ export class NextjsSite extends SsrSite {
+                         description: "Next.js Image Optimization Function",
+                         handler: imageOpt.handler,
+                         code: Code.fromAsset(path.join(sitePath, imageOpt.bundle)),
+-                        runtime: Runtime.NODEJS_22_X,
++                        runtime: resolveAuxRuntime(this.props.runtime),
+                         architecture: Architecture.ARM_64,
+                         environment: {
+                             BUCKET_NAME: bucket.bucketName,
+@@ -230,7 +235,7 @@ export class NextjsSite extends SsrSite {
+             description: "Next.js revalidator",
+             handler: "index.handler",
+             code: Code.fromAsset(path.join(this.props.path, ".open-next", "revalidation-function")),
+-            runtime: Runtime.NODEJS_22_X,
++            runtime: resolveAuxRuntime(this.props.runtime),
+             timeout: CdkDuration.seconds(30),
+             ...cdk?.revalidation,
+         });
+@@ -274,7 +279,7 @@ export class NextjsSite extends SsrSite {
+                 description: "Next.js revalidation data insert",
+                 handler: "index.handler",
+                 code: Code.fromAsset(dynamodbProviderPath),
+-                runtime: Runtime.NODEJS_22_X,
++                runtime: resolveAuxRuntime(this.props.runtime),
+                 timeout: CdkDuration.minutes(15),
+                 memorySize: Math.min(10240, Math.max(128, Math.ceil(prerenderedRouteCount / 4000) * 128)),
+                 initialPolicy: [
+diff --git a/constructs/SsrFunction.d.ts b/constructs/SsrFunction.d.ts
+index 2f72f788467894783eb8518c35f8f01481ee7a9b..6254104c6b959e26d93f553dda70449d283563ed 100644
+--- a/constructs/SsrFunction.d.ts
++++ b/constructs/SsrFunction.d.ts
+@@ -11,7 +11,7 @@ import { Duration } from "./util/duration.js";
+ export interface SsrFunctionProps extends Omit<FunctionOptions, "memorySize" | "timeout" | "runtime"> {
+     bundle?: string;
+     handler: string;
+-    runtime?: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x";
++    runtime?: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x" | "nodejs26.x";
+     timeout?: number | Duration;
+     memorySize?: number | Size;
+     permissions?: Permissions;
+@@ -58,7 +58,7 @@ export declare class SsrFunction extends Construct implements SSTConstruct {
+         type: "Function";
+         data: {
+             arn: string;
+-            runtime: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x" | undefined;
++            runtime: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x" | "nodejs26.x" | undefined;
+             handler: string;
+             missingSourcemap: boolean | undefined;
+             localId: string;
+diff --git a/constructs/SsrFunction.js b/constructs/SsrFunction.js
+index 89ef325bbf54e156221a6d94200f99744fd0b70b..d45eba80b654c767b6bb5ea619ca74e8a8c6b658 100644
+--- a/constructs/SsrFunction.js
++++ b/constructs/SsrFunction.js
+@@ -6,7 +6,7 @@ import spawn from "cross-spawn";
+ import { Construct } from "constructs";
+ import { Effect, Policy, PolicyStatement, } from "aws-cdk-lib/aws-iam";
+ import { RetentionDays } from "aws-cdk-lib/aws-logs";
+-import { Architecture, AssetCode, Runtime, Code, Function as CdkFunction, } from "aws-cdk-lib/aws-lambda";
++import { Architecture, AssetCode, Runtime, RuntimeFamily, Code, Function as CdkFunction, } from "aws-cdk-lib/aws-lambda";
+ import { Bucket } from "aws-cdk-lib/aws-s3";
+ import { Duration as CdkDuration, CustomResource, } from "aws-cdk-lib/core";
+ import { useProject } from "../project.js";
+@@ -107,11 +107,13 @@ export class SsrFunction extends Construct {
+             handler: handler.split(path.sep).join(path.posix.sep),
+             logRetention: logRetention ?? RetentionDays.THREE_DAYS,
+             code: Code.fromBucket(Bucket.fromBucketName(this, "IServerFunctionBucket", assetBucket), assetKey),
+-            runtime: runtime === "nodejs22.x"
+-                ? Runtime.NODEJS_22_X
+-                : runtime === "nodejs20.x"
+-                    ? Runtime.NODEJS_20_X
+-                    : Runtime.NODEJS_18_X,
++            runtime: runtime === "nodejs26.x"
++                ? new Runtime("nodejs26.x", RuntimeFamily.NODEJS, { supportsInlineCode: true })
++                : runtime === "nodejs22.x"
++                    ? Runtime.NODEJS_22_X
++                    : runtime === "nodejs20.x"
++                        ? Runtime.NODEJS_20_X
++                        : Runtime.NODEJS_18_X,
+             architecture,
+             memorySize: typeof memorySize === "string"
+                 ? toCdkSize(memorySize).toMebibytes()
+diff --git a/constructs/SsrSite.d.ts b/constructs/SsrSite.d.ts
+index f91f090f8c810a6491a5f46fa08e3915f0099ea9..ab1a385053d262f8bcae65b1400ae94c4638d755 100644
+--- a/constructs/SsrSite.d.ts
++++ b/constructs/SsrSite.d.ts
+@@ -139,7 +139,7 @@ export interface SsrSiteProps {
+      * runtime: "nodejs20.x",
+      * ```
+      */
+-    runtime?: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x";
++    runtime?: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x" | "nodejs26.x";
+     /**
+      * Used to configure nodejs function properties
+      */
+@@ -465,7 +465,7 @@ export declare abstract class SsrSite extends Construct implements SSTConstruct
+         data: {
+             mode: "placeholder" | "deployed";
+             path: string;
+-            runtime: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x";
++            runtime: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x" | "nodejs26.x";
+             customDomainUrl: string | undefined;
+             url: string | undefined;
+             edge: boolean | undefined;
+diff --git a/constructs/SsrSite.js b/constructs/SsrSite.js
+index 9e83cd1fe4d6c714a88a1727402f9a4e863eb4dc..049e06c1ae45188e0535b7584a0fb067f7d7e35c 100644
+--- a/constructs/SsrSite.js
++++ b/constructs/SsrSite.js
+@@ -9,7 +9,12 @@ import { Construct } from "constructs";
+ import { Fn, Token, Duration as CdkDuration, RemovalPolicy, CustomResource, } from "aws-cdk-lib/core";
+ import { BlockPublicAccess, Bucket, } from "aws-cdk-lib/aws-s3";
+ import { Effect, Role, Policy, PolicyStatement, AccountPrincipal, ServicePrincipal, CompositePrincipal, } from "aws-cdk-lib/aws-iam";
+-import { Function as CdkFunction, Code, Runtime, FunctionUrlAuthType, InvokeMode, } from "aws-cdk-lib/aws-lambda";
++import { Function as CdkFunction, Code, Runtime, RuntimeFamily, FunctionUrlAuthType, InvokeMode, } from "aws-cdk-lib/aws-lambda";
++function resolveAuxRuntime(runtime) {
++    return runtime === "nodejs26.x"
++        ? new Runtime("nodejs26.x", RuntimeFamily.NODEJS, { supportsInlineCode: true })
++        : Runtime.NODEJS_22_X;
++}
+ import { Asset } from "aws-cdk-lib/aws-s3-assets";
+ import { ViewerProtocolPolicy, AllowedMethods, CachedMethods, LambdaEdgeEventType, CachePolicy, CacheQueryStringBehavior, CacheHeaderBehavior, CacheCookieBehavior, OriginRequestPolicy, Function as CfFunction, FunctionCode as CfFunctionCode, FunctionEventType as CfFunctionEventType, } from "aws-cdk-lib/aws-cloudfront";
+ import { S3Origin, HttpOrigin, OriginGroup, } from "aws-cdk-lib/aws-cloudfront-origins";
+@@ -229,7 +234,7 @@ export class SsrSite extends Construct {
+             const warmer = new CdkFunction(self, "WarmerFunction", {
+                 description: "SSR warmer",
+                 code: Code.fromAsset(plan.warmer?.function ?? path.join(__dirname, "../support/ssr-warmer")),
+-                runtime: Runtime.NODEJS_22_X,
++                runtime: resolveAuxRuntime(self.props.runtime),
+                 handler: "index.handler",
+                 timeout: CdkDuration.minutes(15),
+                 memorySize: 128,
+diff --git a/constructs/deprecated/NextjsSite.d.ts b/constructs/deprecated/NextjsSite.d.ts
+index 6e2aae890da71486f8d67e4237f7b9292f7bd21f..e6da5c2ce480d367cc167a4f6c05ce3b47378d57 100644
+--- a/constructs/deprecated/NextjsSite.d.ts
++++ b/constructs/deprecated/NextjsSite.d.ts
+@@ -83,7 +83,7 @@ export interface NextjsSiteProps {
+              * })
+              *```
+              */
+-            runtime?: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x";
++            runtime?: "nodejs16.x" | "nodejs18.x" | "nodejs20.x" | "nodejs22.x" | "nodejs26.x";
+         };
+     };
+     /**

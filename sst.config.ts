@@ -13,7 +13,7 @@ export default {
   stacks(app) {
     app.stack(function Site({ stack }) {
       stack.setDefaultFunctionProps({
-        runtime: 'nodejs22.x',
+        runtime: 'nodejs26.x',
       });
 
       const bucket = new Bucket(stack, 'bucketid', {
@@ -35,7 +35,7 @@ export default {
           domainAlias: stack.stage === 'prod' ? 'www.migotos.com' : undefined,
           hostedZone: 'migotos.com',
         },
-        runtime: 'nodejs22.x',
+        runtime: 'nodejs26.x',
         imageOptimization: {
           staticImageOptimization: true,
         },
@@ -50,7 +50,7 @@ export default {
             app.stage === 'prod' ? env.DATABASE_URL : env.DATABASE_URL_DEV,
         },
         bind: [bucket],
-        buildCommand: 'node /home/lillemagga/Koding/git/opennextjs-aws/packages/open-next/dist/index.js build',
+        buildCommand: 'pnpm dlx https://pkg.pr.new/@opennextjs/aws@1310 build',
         permissions: ['ssm'],
       });
 

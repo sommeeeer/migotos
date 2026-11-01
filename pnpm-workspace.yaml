@@ -6,3 +6,5 @@ allowBuilds:
   prisma: true
   sharp: true
   unrs-resolver: true
+patchedDependencies:
+  sst: patches/sst.patch
